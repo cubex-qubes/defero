@@ -36,7 +36,16 @@ class CampaignConsumer implements IQueueConsumer
     $this->_queueDelay = 0;
     if($message instanceof IProcessMessage)
     {
-      $pass = $this->runProcess($message, $message->currentProcess());
+      try
+      {
+        $pass = $this->runProcess($message, $message->currentProcess());
+      }
+      catch(\Exception $e)
+      {
+        Log::error($e->getMessage());
+        $pass = false;
+      }
+
       //If the process fails, the message should be dropped
       if($pass)
       {
