@@ -9,6 +9,7 @@ class ProcessDef implements IProcessDef
 {
   protected $_class;
   protected $_queueName;
+  protected $_queueService;
   protected $_configuration = [];
 
   public function setConfiguration($config)
@@ -74,14 +75,25 @@ class ProcessDef implements IProcessDef
     return $this;
   }
 
-  public function setQueueServiceName($name)
+  public function setQueueName($name)
   {
     $this->_queueName = $name;
     return $this;
   }
 
-  public function getQueueServiceName()
+  public function getQueueName()
   {
     return $this->_queueName;
+  }
+
+  public function setQueueService($name)
+  {
+    $this->_queueService = $name;
+    return $this;
+  }
+
+  public function getQueueService()
+  {
+    return $this->_queueService;
   }
 }
