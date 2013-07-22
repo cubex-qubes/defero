@@ -30,4 +30,6 @@ interface IProcessDef
    * @return string
    */
   public function getProcessClass();
+
+  public function getQueueServiceName();
 }

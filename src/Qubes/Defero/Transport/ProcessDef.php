@@ -8,6 +8,7 @@ namespace Qubes\Defero\Transport;
 class ProcessDef implements IProcessDef
 {
   protected $_class;
+  protected $_queueName;
   protected $_configuration = [];
 
   public function setConfiguration($config)
@@ -71,5 +72,16 @@ class ProcessDef implements IProcessDef
   {
     $this->_class = $class;
     return $this;
+  }
+
+  public function setQueueServiceName($name)
+  {
+    $this->_queueName = $name;
+    return $this;
+  }
+
+  public function getQueueServiceName()
+  {
+    return $this->_queueName;
   }
 }
