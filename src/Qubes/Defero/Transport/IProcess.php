@@ -5,12 +5,8 @@
 
 namespace Qubes\Defero\Transport;
 
-use Cubex\Foundation\Config\IConfigurable;
-
-interface IProcess extends IConfigurable
+interface IProcess extends IMessageProcessor
 {
-  public function __construct(IProcessMessage $message);
-
   /**
    * @return bool
    */

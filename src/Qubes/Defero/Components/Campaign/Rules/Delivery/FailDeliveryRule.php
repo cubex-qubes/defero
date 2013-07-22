@@ -17,7 +17,7 @@ class FailDeliveryRule extends StdRule implements IDeliveryRule
   /**
    * @return bool if the message can be delivered
    */
-  public function canDeliver()
+  public function canProcess()
   {
     return false;
   }

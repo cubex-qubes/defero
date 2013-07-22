@@ -3,12 +3,11 @@
  * @author  brooke.bryan
  */
 
-namespace Qubes\Defero\Components\Campaign\Rules;
+namespace Qubes\Defero\Transport;
 
 use Cubex\Foundation\Config\ConfigTrait;
-use Qubes\Defero\Transport\IProcessMessage;
 
-abstract class StdRule implements IRule
+abstract class StdProcess implements IProcess
 {
   use ConfigTrait;
 

@@ -9,5 +9,4 @@ use Qubes\Defero\Components\Campaign\Rules\IRule;
 
 interface IFilterRule extends IRule
 {
-  public function isFilterValid();
 }

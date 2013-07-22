@@ -5,10 +5,12 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules;
 
-use Cubex\Foundation\Config\IConfigurable;
-use Qubes\Defero\Transport\IProcessMessage;
+use Qubes\Defero\Transport\IMessageProcessor;
 
-interface IRule extends IConfigurable
+interface IRule extends IMessageProcessor
 {
-  public function __construct(IProcessMessage $message);
+  /**
+   * @return bool can proceed past this rule
+   */
+  public function canProcess();
 }

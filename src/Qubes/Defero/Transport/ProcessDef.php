@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Transport;
 
+use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Foundation\Config\ConfigTrait;
 
 class ProcessDef implements IProcessDef
@@ -14,6 +15,11 @@ class ProcessDef implements IProcessDef
   protected $_class;
   protected $_queueName;
   protected $_queueService;
+
+  public function __construct()
+  {
+    $this->_configuration = new ConfigGroup();
+  }
 
   /**
    * Returns class responsible for processing

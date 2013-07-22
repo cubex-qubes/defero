@@ -9,7 +9,7 @@ use Cubex\Data\Handler\HandlerTrait;
 
 class ProcessMessage implements IProcessMessage
 {
-  use HandlerTrait
+  use HandlerTrait;
 
   protected $_currentStep = 0;
   protected $_processQueue = [];

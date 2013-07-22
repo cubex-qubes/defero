@@ -6,7 +6,6 @@
 namespace Qubes\Defero\Components\Campaign\Rules\Filter;
 
 use Qubes\Defero\Components\Campaign\Rules\StdRule;
-use Qubes\Defero\Transport\IProcessMessage;
 
 class AttributeFilter extends StdRule implements IFilterRule
 {
@@ -21,10 +20,8 @@ class AttributeFilter extends StdRule implements IFilterRule
   const MATCH_END      = 'ends';
   const MATCH_CONTAINS = 'contains';
 
-  public function __construct(IProcessMessage $message)
+  protected function _configure()
   {
-    parent::__construct($message);
-
     $config = $this->config('process');
 
     $this->_attribute = $config->getStr("attribute_name");
@@ -46,8 +43,10 @@ class AttributeFilter extends StdRule implements IFilterRule
     }
   }
 
-  public function isFilterValid()
+  public function canProcess()
   {
+    $this->_configure();
+
     $this->_value = $this->_message->getRaw($this->_attribute);
     if($this->_value === null)
     {
