@@ -21,7 +21,7 @@ class SampleMessage extends CliCommand
   public function execute()
   {
     $message = new ProcessMessage();
-    $message->setData("firstName", "Brookes");
+    $message->setData("firstName", "Brooke");
     $message->setData("lastName", "Bryan");
     $message->setData("name", "Brooke Bryan");
     $message->setData("email", "brooke@bajb.net");

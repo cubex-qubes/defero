@@ -52,17 +52,12 @@ class CampaignConsumer implements IQueueConsumer
         $message->setStep($message->getCurrentStep() + 1);
         if(!$message->isComplete())
         {
-          Log::debug("ReQueueing Message");
           //TODO: Add Queue Delays with $this->_queueDelay;
           \Queue::getAccessor($message->currentProcess()->getQueueService())
           ->push(
             new StdQueue($message->currentProcess()->getQueueName()),
             serialize($message)
           );
-        }
-        else
-        {
-          Log::debug("Message Complete");
         }
       }
     }
@@ -104,7 +99,6 @@ class CampaignConsumer implements IQueueConsumer
       }
       else if($proc instanceof IProcess)
       {
-        Log::debug("Processing Process");
         return $proc->process();
       }
     }
