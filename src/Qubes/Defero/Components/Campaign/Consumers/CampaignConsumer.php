@@ -11,7 +11,7 @@ use Cubex\Queue\IQueue;
 use Cubex\Queue\IQueueConsumer;
 use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Rules\Delivery\IDeliveryRule;
-use Qubes\Defero\Components\Campaign\Rules\IRule;
+use Qubes\Defero\Transport\IRule;
 use Qubes\Defero\Transport\IProcess;
 use Qubes\Defero\Transport\IProcessDef;
 use Qubes\Defero\Transport\IProcessMessage;

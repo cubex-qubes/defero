@@ -5,7 +5,7 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Filter;
 
-use Qubes\Defero\Components\Campaign\Rules\StdRule;
+use Qubes\Defero\Transport\StdRule;
 
 class AttributeFilter extends StdRule implements IFilterRule
 {

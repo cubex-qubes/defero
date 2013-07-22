@@ -3,7 +3,7 @@
  * @author  brooke.bryan
  */
 
-namespace Qubes\Defero\Components\Campaign\Rules;
+namespace Qubes\Defero\Transport;
 
 use Qubes\Defero\Transport\IMessageProcessor;
 

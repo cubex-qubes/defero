@@ -5,7 +5,7 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Filter;
 
-use Qubes\Defero\Components\Campaign\Rules\IRule;
+use Qubes\Defero\Transport\IRule;
 
 interface IFilterRule extends IRule
 {

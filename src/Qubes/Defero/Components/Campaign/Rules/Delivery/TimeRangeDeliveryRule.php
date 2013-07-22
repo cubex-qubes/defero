@@ -5,7 +5,7 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Delivery;
 
-use Qubes\Defero\Components\Campaign\Rules\StdRule;
+use Qubes\Defero\Transport\StdRule;
 
 class TimeRangeDeliveryRule extends StdRule implements IDeliveryRule
 {
