@@ -5,14 +5,10 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Delivery;
 
-use Qubes\Defero\Transport\IProcessMessage;
+use Qubes\Defero\Components\Campaign\Rules\StdRule;
 
-class TimeRangeDeliveryRule implements IDeliveryRule
+class TimeRangeDeliveryRule extends StdRule implements IDeliveryRule
 {
-  public function __construct(IProcessMessage $message)
-  {
-  }
-
   public function getOffsetRange()
   {
     return [0, 3600];

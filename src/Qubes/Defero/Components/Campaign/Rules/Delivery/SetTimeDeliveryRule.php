@@ -5,15 +5,11 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Delivery;
 
-use Qubes\Defero\Transport\IProcessMessage;
+use Qubes\Defero\Components\Campaign\Rules\StdRule;
 
-class SetTimeDeliveryRule implements IDeliveryRule
+class SetTimeDeliveryRule extends StdRule implements IDeliveryRule
 {
   protected $_sendTime;
-
-  public function __construct(IProcessMessage $message)
-  {
-  }
 
   public function setSendTime($timestamp)
   {

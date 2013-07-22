@@ -25,19 +25,21 @@ class AttributeFilter extends StdRule implements IFilterRule
   {
     parent::__construct($message);
 
-    $this->_attribute = $this->_message->getConfigValue("attribute_name");
+    $config = $this->config('process');
+
+    $this->_attribute = $config->getStr("attribute_name");
     if($this->_attribute === null)
     {
       throw new \Exception("Attribute name not configured");
     }
 
-    $this->_check = $this->_message->getConfigValue("attribute_check");
+    $this->_check = $config->getRaw("attribute_check");
     if($this->_check === null)
     {
       throw new \Exception("Attribute check not configured");
     }
 
-    $this->_checkType = $this->_message->getConfigValue("attribute_check_type");
+    $this->_checkType = $config->getStr("attribute_check_type");
     if($this->_checkType === null)
     {
       throw new \Exception("Attribute check type not configured");
@@ -46,7 +48,7 @@ class AttributeFilter extends StdRule implements IFilterRule
 
   public function isFilterValid()
   {
-    $this->_value = $this->_message->getAttribute($this->_attribute);
+    $this->_value = $this->_message->getRaw($this->_attribute);
     if($this->_value === null)
     {
       throw new \Exception("Attribute value is null");

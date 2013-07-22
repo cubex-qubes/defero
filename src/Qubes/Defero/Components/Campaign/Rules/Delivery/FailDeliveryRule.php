@@ -5,14 +5,10 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Delivery;
 
-use Qubes\Defero\Transport\IProcessMessage;
+use Qubes\Defero\Components\Campaign\Rules\StdRule;
 
-class FailDeliveryRule implements IDeliveryRule
+class FailDeliveryRule extends StdRule implements IDeliveryRule
 {
-  public function __construct(IProcessMessage $message)
-  {
-  }
-
   public function getSendDelay()
   {
     return 0;

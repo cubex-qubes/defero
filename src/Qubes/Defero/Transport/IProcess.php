@@ -3,12 +3,16 @@
  * @author  brooke.bryan
  */
 
-namespace Qubes\Defero\Components\Campaign\Rules;
+namespace Qubes\Defero\Transport;
 
 use Cubex\Foundation\Config\IConfigurable;
-use Qubes\Defero\Transport\IProcessMessage;
 
-interface IRule extends IConfigurable
+interface IProcess extends IConfigurable
 {
   public function __construct(IProcessMessage $message);
+
+  /**
+   * @return bool
+   */
+  public function process();
 }
