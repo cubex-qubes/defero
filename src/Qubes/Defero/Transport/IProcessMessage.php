@@ -5,12 +5,14 @@
 
 namespace Qubes\Defero\Transport;
 
+use Cubex\Data\Handler\IDataHandler;
+
 /**
  * Message to be sent around the queues for processing
  *
  * @package Qubes\Defero\Transport
  */
-interface IProcessMessage
+interface IProcessMessage extends IDataHandler
 {
   /**
    * @return mixed
@@ -48,38 +50,4 @@ interface IProcessMessage
    * @return bool
    */
   public function isComplete();
-
-  /**
-   * Keyed array of configuration items
-   *
-   * @return array
-   */
-  public function getConfiguration();
-
-  /**
-   * Retrieve a single configuration item
-   *
-   * @param string $key     configuration key for item
-   * @param null   $default Default value if config item not available
-   *
-   * @return mixed config value or default
-   */
-  public function getConfigValue($key, $default = null);
-
-  /**
-   * Keyed array of attributes
-   *
-   * @return array
-   */
-  public function getAttributes();
-
-  /**
-   * Retrieve a single attribute
-   *
-   * @param string $name    attribute key
-   * @param null   $default Default value if attribute is not available
-   *
-   * @return mixed attribute or default
-   */
-  public function getAttribute($name, $default = null);
 }
