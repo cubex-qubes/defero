@@ -5,12 +5,10 @@
 
 namespace Qubes\Defero\Components\Campaign\Rules\Delivery;
 
-use Qubes\Defero\Transport\IProcessMessage;
+use Qubes\Defero\Components\Campaign\Rules\IRule;
 
-interface IDeliveryRule
+interface IDeliveryRule extends IRule
 {
-  public function __construct(IProcessMessage $message);
-
   public function getSendDelay();
 
   /**

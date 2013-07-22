@@ -65,4 +65,21 @@ interface IProcessMessage
    * @return mixed config value or default
    */
   public function getConfigValue($key, $default = null);
+
+  /**
+   * Keyed array of attributes
+   *
+   * @return array
+   */
+  public function getAttributes();
+
+  /**
+   * Retrieve a single attribute
+   *
+   * @param string $name    attribute key
+   * @param null   $default Default value if attribute is not available
+   *
+   * @return mixed attribute or default
+   */
+  public function getAttribute($name, $default = null);
 }

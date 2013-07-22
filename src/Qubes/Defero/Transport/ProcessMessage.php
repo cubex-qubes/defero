@@ -10,6 +10,7 @@ class ProcessMessage implements IProcessMessage
   protected $_currentStep = 0;
   protected $_processQueue = [];
   protected $_configuration = [];
+  protected $_dataAttributes = [];
 
   public function setConfiguration($config)
   {
@@ -111,5 +112,34 @@ class ProcessMessage implements IProcessMessage
   public function isComplete()
   {
     return $this->_currentStep >= count($this->_processQueue);
+  }
+
+  public function addAttribute($key, $value)
+  {
+    $this->_dataAttributes[$key] = $value;
+    return $this;
+  }
+
+  public function addAttributes($attributes)
+  {
+    foreach($attributes as $k => $v)
+    {
+      $this->addAttribute($k, $v);
+    }
+    return $this;
+  }
+
+  public function getAttributes()
+  {
+    return $this->_dataAttributes;
+  }
+
+  public function getAttribute($name, $default = null)
+  {
+    if(isset($this->_dataAttributes[$name]))
+    {
+      return $this->_dataAttributes[$name];
+    }
+    return $default;
   }
 }
