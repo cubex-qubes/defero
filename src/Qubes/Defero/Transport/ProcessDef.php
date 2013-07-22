@@ -16,7 +16,7 @@ class ProcessDef implements IProcessDef
     return $this;
   }
 
-  public function addConfigurationItem($name, $value = null)
+  public function addConfigItem($name, $value = null)
   {
     $this->_configuration[$name] = $value;
     return $this;

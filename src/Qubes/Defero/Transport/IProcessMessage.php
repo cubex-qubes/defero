@@ -48,4 +48,21 @@ interface IProcessMessage
    * @return bool
    */
   public function isComplete();
+
+  /**
+   * Keyed array of configuration items
+   *
+   * @return array
+   */
+  public function getConfiguration();
+
+  /**
+   * Retrieve a single configuration item
+   *
+   * @param string $key     configuration key for item
+   * @param null   $default Default value if config item not available
+   *
+   * @return mixed config value or default
+   */
+  public function getConfigValue($key, $default = null);
 }
