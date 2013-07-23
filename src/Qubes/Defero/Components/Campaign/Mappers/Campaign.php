@@ -23,4 +23,5 @@ class Campaign extends RecordMapper
    */
   public $type;
   public $contactId;
+  public $active = false;
 }

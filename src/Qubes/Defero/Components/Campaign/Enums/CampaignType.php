@@ -14,6 +14,8 @@ class CampaignType extends Enum
   const ACTION = 'action';
   //CF of Type | Date - Key | Microtime - CN, UID - Val
   const SOURCE_EVENT = 'source';
+  //Query loader
+  const QUERY = 'query';
   //Mass Group Email - One time campaign
   const MASS = 'massmail';
 }
