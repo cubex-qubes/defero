@@ -52,11 +52,11 @@ class CampaignConsumer implements IQueueConsumer
         $message->setStep($message->getCurrentStep() + 1);
         if(!$message->isComplete())
         {
-          //TODO: Add Queue Delays with $this->_queueDelay;
           \Queue::getAccessor($message->currentProcess()->getQueueService())
           ->push(
             new StdQueue($message->currentProcess()->getQueueName()),
-            serialize($message)
+            serialize($message),
+            $this->_queueDelay
           );
         }
       }

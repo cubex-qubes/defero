@@ -63,8 +63,14 @@ class SampleMessage extends CliCommand
       'Qubes\Defero\Components\Campaign\Rules\Delivery\FailDeliveryRule'
     );
     $process->setProcessClass(
-      'Qubes\Defero\Components\Campaign\Rules\Delivery\ImmediateDeliveryRule'
+      'Qubes\Defero\Components\Campaign\Rules\Delivery\DelayDeliveryRule'
     );
+    $config = new Config();
+    $config->setData("delay", 10);
+    $configGroup = new ConfigGroup();
+    $configGroup->addConfig("process", $config);
+    $process->configure($configGroup);
+
     $process->setQueueName("defero");
     $process->setQueueService("queue");
     $message->addProcess($process);
