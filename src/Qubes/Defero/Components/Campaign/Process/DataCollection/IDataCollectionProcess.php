@@ -7,6 +7,10 @@ namespace Qubes\Defero\Components\Campaign\Process\DataCollection;
 
 use Qubes\Defero\Transport\IProcess;
 
-interface DataCollectionProcess extends IProcess
+interface IDataCollectionProcess extends IProcess
 {
+  /**
+   * @return DataCollectionAttribute[]
+   */
+  public function getAttributes();
 }

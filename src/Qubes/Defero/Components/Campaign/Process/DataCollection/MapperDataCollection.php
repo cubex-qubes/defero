@@ -5,11 +5,37 @@
 
 namespace Qubes\Defero\Components\Campaign\Process\DataCollection;
 
+use Cubex\Helpers\Strings;
 use Cubex\Mapper\DataMapper;
 use Qubes\Defero\Transport\StdProcess;
 
-class MapperDataCollection extends StdProcess implements DataCollectionProcess
+class MapperDataCollection extends StdProcess implements IDataCollectionProcess
 {
+  /**
+   * @return DataCollectionAttribute[]
+   */
+  public function getAttributes()
+  {
+    $attrs  = [];
+    $source = $this->_getMapper();
+    if($source !== null)
+    {
+      $attributes = $source->getRawAttributes();
+      if($attributes)
+      {
+        foreach($attributes as $attribute)
+        {
+          $attrs[] = new DataCollectionAttribute(
+            $attribute->sourceProperty(),
+            Strings::humanize($attribute->name()),
+            ''
+          );
+        }
+      }
+    }
+    return $attrs;
+  }
+
   /**
    * @return bool
    */
@@ -17,14 +43,14 @@ class MapperDataCollection extends StdProcess implements DataCollectionProcess
   {
     $config = $this->config("process");
 
-    $mapperClass = $config->getStr("mapper_class");
-    $loadId      = $config->getRaw("mapper_id");
-    $attrMap     = $config->getArr("attribute_map");
+    $loadId  = $config->getRaw("mapper_id");
+    $attrMap = $config->getArr("attribute_map");
 
     //Load Mapper Class with ID
-    $source = new $mapperClass($loadId);
-    if($source instanceof DataMapper)
+    $source = $this->_getMapper();
+    if($source !== null)
     {
+      $source->load($loadId);
       if(!$source->exists())
       {
         return false;
@@ -43,5 +69,20 @@ class MapperDataCollection extends StdProcess implements DataCollectionProcess
     }
 
     return true;
+  }
+
+  /**
+   * @return DataMapper|null
+   */
+  protected function _getMapper()
+  {
+    $config      = $this->config("process");
+    $mapperClass = $config->getStr("mapper_class");
+    $source      = new $mapperClass();
+    if($source instanceof DataMapper)
+    {
+      return $source;
+    }
+    return null;
   }
 }
