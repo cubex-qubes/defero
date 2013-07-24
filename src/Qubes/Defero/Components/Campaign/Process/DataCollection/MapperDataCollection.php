@@ -28,7 +28,7 @@ class MapperDataCollection extends StdProcess implements IDataCollectionProcess
           $attrs[] = new DataCollectionAttribute(
             $attribute->sourceProperty(),
             Strings::humanize($attribute->name()),
-            ''
+            $attribute->getDescription()
           );
         }
       }
