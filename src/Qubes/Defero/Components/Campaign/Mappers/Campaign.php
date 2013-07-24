@@ -17,11 +17,19 @@ class Campaign extends RecordMapper
   public $reference;
   public $name;
   public $description;
-  public $subject;
   /**
    * @enumclass \Qubes\Defero\Components\Campaign\Enums\CampaignType
    */
   public $type;
   public $contactId;
   public $active = false;
+
+  /**
+   * @return Message
+   */
+  public function message()
+  {
+    $this->newInstanceOnFailedRelation(true);
+    return $this->hasOne(new Message());
+  }
 }
