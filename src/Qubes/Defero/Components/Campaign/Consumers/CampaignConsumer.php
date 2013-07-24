@@ -7,6 +7,7 @@ namespace Qubes\Defero\Components\Campaign\Consumers;
 
 use Cubex\Foundation\Config\IConfigurable;
 use Cubex\Log\Log;
+use Cubex\Queue\IBatchQueueConsumer;
 use Cubex\Queue\IQueue;
 use Cubex\Queue\IQueueConsumer;
 use Cubex\Queue\StdQueue;
@@ -16,28 +17,57 @@ use Qubes\Defero\Transport\IProcess;
 use Qubes\Defero\Transport\IProcessDef;
 use Qubes\Defero\Transport\IProcessMessage;
 
-class CampaignConsumer implements IQueueConsumer
+class CampaignConsumer implements IBatchQueueConsumer
 {
-  protected $_queueDelay;
-
   /**
-   * @param $queue
-   * @param $message
-   *
-   * @return bool
+   * @var IProcessMessage
    */
-  public function process(IQueue $queue, $message)
+  protected $_batch;
+  protected $_queueDelays = [];
+
+  public function process(IQueue $queue, $message, $taskID = null)
   {
     if(is_scalar($message))
     {
       $message = unserialize($message);
     }
-    $this->_queueDelay = 0;
     if($message instanceof IProcessMessage)
+    {
+      $this->_batch[$taskID] = $message;
+    }
+    return true;
+  }
+
+  protected function _passMessage(IProcessMessage $message, $taskId)
+  {
+    //Increment step to change currentProcess return
+    $message->setStep($message->getCurrentStep() + 1);
+    if(!$message->isComplete())
+    {
+      \Queue::getAccessor($message->currentProcess()->getQueueService())
+      ->push(
+        new StdQueue($message->currentProcess()->getQueueName()),
+        serialize($message),
+        $this->_queueDelays[$taskId]
+      );
+    }
+  }
+
+  public function runBatch()
+  {
+    $results = [];
+    /**
+     * @var $message IProcessMessage
+     */
+    foreach($this->_batch as $taskId => $message)
     {
       try
       {
-        $pass = $this->runProcess($message, $message->currentProcess());
+        $pass = $this->runProcess(
+          $message,
+          $message->currentProcess(),
+          $taskId
+        );
       }
       catch(\Exception $e)
       {
@@ -48,25 +78,26 @@ class CampaignConsumer implements IQueueConsumer
       //If the process fails, the message should be dropped
       if($pass)
       {
-        //Increment step to change currentProcess return
-        $message->setStep($message->getCurrentStep() + 1);
-        if(!$message->isComplete())
-        {
-          \Queue::getAccessor($message->currentProcess()->getQueueService())
-          ->push(
-            new StdQueue($message->currentProcess()->getQueueName()),
-            serialize($message),
-            $this->_queueDelay
-          );
-        }
+        $this->_passMessage($message, $taskId);
       }
+
+      $results[$taskId] = true;
     }
-    return true;
+    $this->_batch = [];
+    return $results;
   }
 
-  public function runProcess(IProcessMessage $message, IProcessDef $process)
+  public function getBatchSize()
   {
-    $class = $process->getProcessClass();
+    return 1;
+  }
+
+  public function runProcess(
+    IProcessMessage $message, IProcessDef $process, $taskId
+  )
+  {
+    $this->_queueDelays[$taskId] = 0;
+    $class                       = $process->getProcessClass();
     if(class_exists($class))
     {
       $ruleClass = 'Qubes\Defero\Transport\IMessageProcessor';
@@ -90,8 +121,10 @@ class CampaignConsumer implements IQueueConsumer
         {
           if($proc instanceof IDeliveryRule)
           {
-            $this->_queueDelay = (int)$proc->getSendDelay();
-            Log::debug("Setting queue delay to " . $this->_queueDelay);
+            $this->_queueDelays[$taskId] = (int)$proc->getSendDelay();
+            Log::debug(
+              "Setting queue delay to " . $this->_queueDelays[$taskId]
+            );
           }
           return true;
         }
