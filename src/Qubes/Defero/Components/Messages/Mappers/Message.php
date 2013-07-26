@@ -12,12 +12,15 @@ class Message extends I18nRecordMapper
 {
   public $campaignId;
   public $subject;
-  public $message;
+  public $plainText;
+  public $htmlContent;
+  public $messageType;
 
   protected function _configure()
   {
     $this->_addTranslationAttribute("subject");
-    $this->_addTranslationAttribute("message");
+    $this->_addTranslationAttribute("plainText");
+    $this->_addTranslationAttribute("htmlContent");
   }
 
   /**

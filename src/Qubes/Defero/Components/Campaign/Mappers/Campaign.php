@@ -21,6 +21,10 @@ class Campaign extends RecordMapper
    * @enumclass \Qubes\Defero\Components\Campaign\Enums\CampaignType
    */
   public $type;
+  /**
+   * @enumclass \Qubes\Defero\Components\Campaign\Enums\SendType
+   */
+  public $sendType;
   public $contactId;
   public $active = false;
 
