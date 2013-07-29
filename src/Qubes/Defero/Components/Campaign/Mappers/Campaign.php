@@ -6,6 +6,7 @@
 namespace Qubes\Defero\Components\Campaign\Mappers;
 
 use Cubex\Mapper\Database\RecordMapper;
+use Qubes\Defero\Components\Messages\Mappers\Message;
 
 class Campaign extends RecordMapper
 {
@@ -26,6 +27,10 @@ class Campaign extends RecordMapper
    */
   public $sendType;
   public $contactId;
+  /**
+   * @datatype tinyint
+   * @default  0
+   */
   public $active = false;
 
   /**
@@ -34,6 +39,7 @@ class Campaign extends RecordMapper
   public function message()
   {
     $this->newInstanceOnFailedRelation(true);
+
     return $this->hasOne(new Message());
   }
 }

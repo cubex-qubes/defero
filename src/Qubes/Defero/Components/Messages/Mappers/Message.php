@@ -3,10 +3,12 @@
  * @author  brooke.bryan
  */
 
-namespace Qubes\Defero\Components\Campaign\Mappers;
+namespace Qubes\Defero\Components\Messages\Mappers;
 
 use Cubex\Mapper\Database\I18n\I18nRecordMapper;
 use Cubex\Mapper\Database\I18n\TextContainer;
+use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Messages\Mappers\Translatable;
 
 class Message extends I18nRecordMapper
 {
@@ -15,6 +17,7 @@ class Message extends I18nRecordMapper
   public $plainText;
   public $htmlContent;
   public $messageType;
+  public $message;
 
   protected function _configure()
   {
