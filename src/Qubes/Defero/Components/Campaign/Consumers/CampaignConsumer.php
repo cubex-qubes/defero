@@ -9,7 +9,6 @@ use Cubex\Foundation\Config\IConfigurable;
 use Cubex\Log\Log;
 use Cubex\Queue\IBatchQueueConsumer;
 use Cubex\Queue\IQueue;
-use Cubex\Queue\IQueueConsumer;
 use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Rules\Delivery\IDeliveryRule;
 use Qubes\Defero\Transport\IRule;
