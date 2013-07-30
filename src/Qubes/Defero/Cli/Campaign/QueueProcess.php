@@ -38,7 +38,7 @@ class QueueProcess extends CliCommand
   public function execute()
   {
     echo Shell::colourText(
-      (new Figlet("speed"))->render("Defero Processor"),
+      (new Figlet("speed"))->render("Defero"),
       Shell::COLOUR_FOREGROUND_GREEN
     );
     echo "\n";

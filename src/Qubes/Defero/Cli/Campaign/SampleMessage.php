@@ -93,8 +93,8 @@ class SampleMessage extends CliCommand
     $message->addProcess($process);
 
     // Here we add a delivery rule,
-    /*$process = new ProcessDefinition();
-    $process->setProcessClass(
+    $process = new ProcessDefinition();
+    /*$process->setProcessClass(
       'Qubes\Defero\Components\Campaign\Rules\Delivery\FailDeliveryRule'
     );*/
     $process->setProcessClass(
