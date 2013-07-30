@@ -8,7 +8,7 @@ namespace Qubes\Defero\Transport;
 use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Foundation\Config\ConfigTrait;
 
-class ProcessDef implements IProcessDef
+class ProcessDefinition implements IProcessDefinition
 {
   use ConfigTrait;
 

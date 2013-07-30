@@ -11,10 +11,13 @@ use Cubex\Facade\Queue;
 use Cubex\Figlet\Figlet;
 use Cubex\Log\Log;
 use Cubex\Queue\StdQueue;
+use Psr\Log\LogLevel;
 use Qubes\Defero\Components\Campaign\Consumers\CampaignConsumer;
 
 class QueueProcess extends CliCommand
 {
+  protected $_echoLevel = LogLevel::DEBUG;
+
   /**
    * Queue Provider Service to read messages from
    *

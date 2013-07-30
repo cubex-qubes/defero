@@ -5,8 +5,6 @@
 
 namespace Qubes\Defero\Transport;
 
-use Qubes\Defero\Transport\IMessageProcessor;
-
 interface IRule extends IMessageProcessor
 {
   /**

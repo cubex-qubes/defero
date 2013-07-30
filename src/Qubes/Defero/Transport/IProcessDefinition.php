@@ -7,7 +7,7 @@ namespace Qubes\Defero\Transport;
 
 use Cubex\Foundation\Config\IConfigurable;
 
-interface IProcessDef extends IConfigurable
+interface IProcessDefinition extends IConfigurable
 {
   /**
    * Returns class responsible for processing

@@ -24,7 +24,7 @@ class ProcessMessage implements IProcessMessage
     return $this;
   }
 
-  public function addProcess(IProcessDef $process)
+  public function addProcess(IProcessDefinition $process)
   {
     $this->_processQueue[] = $process;
     return $this;

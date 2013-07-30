@@ -14,7 +14,7 @@ use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Rules\Delivery\IDeliveryRule;
 use Qubes\Defero\Transport\IRule;
 use Qubes\Defero\Transport\IProcess;
-use Qubes\Defero\Transport\IProcessDef;
+use Qubes\Defero\Transport\IProcessDefinition;
 use Qubes\Defero\Transport\IProcessMessage;
 
 class CampaignConsumer implements IBatchQueueConsumer
@@ -93,7 +93,7 @@ class CampaignConsumer implements IBatchQueueConsumer
   }
 
   public function runProcess(
-    IProcessMessage $message, IProcessDef $process, $taskId
+    IProcessMessage $message, IProcessDefinition $process, $taskId
   )
   {
     $this->_queueDelays[$taskId] = 0;

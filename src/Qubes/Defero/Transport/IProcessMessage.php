@@ -20,12 +20,12 @@ interface IProcessMessage extends IDataHandler
   public function remainingProcesses();
 
   /**
-   * @return IProcessDef|null
+   * @return IProcessDefinition|null
    */
   public function currentProcess();
 
   /**
-   * @return IProcessDef[]
+   * @return IProcessDefinition[]
    */
   public function getProcessQueue();
 

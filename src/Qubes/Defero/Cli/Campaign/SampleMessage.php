@@ -10,7 +10,7 @@ use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Rules\Filter\AttributeFilter;
-use Qubes\Defero\Transport\ProcessDef;
+use Qubes\Defero\Transport\ProcessDefinition;
 use Qubes\Defero\Transport\ProcessMessage;
 
 class SampleMessage extends CliCommand
@@ -33,7 +33,7 @@ class SampleMessage extends CliCommand
 
     $configGroup = new ConfigGroup();
     $configGroup->addConfig("process", $config);
-    $process = new ProcessDef();
+    $process = new ProcessDefinition();
     $process->setProcessClass(
       'Qubes\Defero\Components\Campaign\Rules\Filter\AttributeFilter'
     );
@@ -49,7 +49,7 @@ class SampleMessage extends CliCommand
 
     $configGroup = new ConfigGroup();
     $configGroup->addConfig("process", $config);
-    $process = new ProcessDef();
+    $process = new ProcessDefinition();
     $process->setProcessClass(
       'Qubes\Defero\Components\Campaign\Rules\Filter\AttributeFilter'
     );
@@ -58,7 +58,7 @@ class SampleMessage extends CliCommand
     $process->configure($configGroup);
     $message->addProcess($process);
 
-    $process = new ProcessDef();
+    $process = new ProcessDefinition();
     $process->setProcessClass(
       'Qubes\Defero\Components\Campaign\Rules\Delivery\FailDeliveryRule'
     );
@@ -75,7 +75,7 @@ class SampleMessage extends CliCommand
     $process->setQueueService("queue");
     $message->addProcess($process);
 
-    $process = new ProcessDef();
+    $process = new ProcessDefinition();
     $process->setQueueName("defero");
     $process->setQueueService("queue");
     $process->setProcessClass(
