@@ -17,6 +17,9 @@ use Qubes\Defero\Components\Contact\Mappers\Contact;
 class CampaignContact extends RecordMapper
 {
   public $campaignId;
+  /**
+   * @length 2
+   */
   public $language;
   public $contactId;
 
