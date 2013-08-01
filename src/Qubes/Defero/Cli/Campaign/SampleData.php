@@ -47,17 +47,17 @@ Cubex Tester
 
     $message->setLanguage('en');
     $message->subject = "This is my subject";
-    $message->message = "Hello {{name}}. how are you today?";
+    $message->plainText = "Hello {{name}}. how are you today?";
     $message->saveAsNew();
 
     $message->setLanguage('es');
     $message->subject = "Este es mi tema";
-    $message->message = "Hola {{name}}. ¿Cómo estás hoy?";
+    $message->plainText = "Hola {{name}}. ¿Cómo estás hoy?";
     $message->saveAsNew();
 
     $message->setLanguage('de');
     $message->subject = "Dies ist mein Thema";
-    $message->message = "Hallo {{name}}. Wie geht es Ihnen heute?";
+    $message->plainText = "Hallo {{name}}. Wie geht es Ihnen heute?";
     $message->saveAsNew();
   }
 }

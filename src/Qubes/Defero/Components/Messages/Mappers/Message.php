@@ -17,7 +17,6 @@ class Message extends I18nRecordMapper
   public $plainText;
   public $htmlContent;
   public $messageType;
-  public $message;
 
   protected function _configure()
   {
