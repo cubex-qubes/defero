@@ -5,18 +5,11 @@
 
 namespace Qubes\Defero\Cli;
 
-use Cubex\Cli\ArgumentException;
-use Cubex\Cli\CliCommand;
 use Cubex\Text\TextTable;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 
-class Contacts extends CliCommand
+class Contacts extends MapperCliCommand
 {
-  /**
-   * @valuerequired
-   * @validator INT
-   */
-  public $id;
   /**
    * @valuerequired
    */
@@ -31,7 +24,7 @@ class Contacts extends CliCommand
   public $name;
   /**
    * @valuerequired
-   * @validator EMAIL
+   * @validator email
    */
   public $email;
   /**
@@ -42,11 +35,6 @@ class Contacts extends CliCommand
    * @valuerequired
    */
   public $signature;
-
-  public function execute()
-  {
-    $this->_help();
-  }
 
   public function get()
   {
@@ -104,49 +92,16 @@ class Contacts extends CliCommand
 
     $contact = new Contact($this->id);
 
-    $updates = [];
+    $updatables = [
+      "reference",
+      "description",
+      "name",
+      "email",
+      "jobTitle",
+      "signature",
+    ];
 
-    if($contact->exists())
-    {
-      $updatables = [
-        "reference",
-        "description",
-        "name",
-        "email",
-        "jobTitle",
-        "signature",
-      ];
-
-      foreach($updatables as $updatable)
-      {
-        if($this->argumentIsSet($updatable))
-        {
-          $updates[] = [
-            "old" => $contact->{$updatable},
-            "new" => $this->{$updatable},
-          ];
-          $contact->{$updatable} = $this->{$updatable};
-        }
-      }
-
-      if($updates)
-      {
-        $contact->saveChanges();
-
-        echo "Contact {$contact->id()} updated;\n\n";
-
-        echo TextTable::fromArray($updates);
-      }
-      else
-      {
-        echo "No updates were made\n";
-        echo "Updatable fields: " . implode(", ", $updatables);
-      }
-    }
-    else
-    {
-      echo "Contact {$this->id} does not exist, did you mean to call 'add'?";
-    }
+    $this->_edit($contact, $updatables);
   }
 
   public function remove()
@@ -156,26 +111,5 @@ class Contacts extends CliCommand
     (new Contact($this->id))->delete();
 
     echo "Contact {$this->id} removed";
-  }
-
-  /**
-   * @param string      $arg
-   * @param null|string $type
-   *
-   * @throws \Cubex\Cli\ArgumentException
-   */
-  private function _throwIfNotSet($arg, $type = null)
-  {
-    if($type === null)
-    {
-      $type = debug_backtrace()[1]['function'];
-    }
-
-    if(!$this->argumentIsSet($arg))
-    {
-      throw new ArgumentException(
-        "'{$arg}' must be set when calling '{$type}'"
-      );
-    }
   }
 }
