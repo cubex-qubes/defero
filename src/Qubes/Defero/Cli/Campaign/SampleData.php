@@ -9,6 +9,7 @@ use Cubex\Cli\CliCommand;
 use Cubex\FileSystem\FileSystem;
 use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Campaign\Mappers\CampaignContact;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 
 class SampleData extends CliCommand
@@ -18,6 +19,18 @@ class SampleData extends CliCommand
    */
   public function execute()
   {
+
+    /*$campaignContact = new CampaignContact();
+    $campaignContact->campaignId = rand(1,9);
+    $campaignContact->language = array_rand(
+      ["en" => "en", "es" => "es", "de" => "de",]
+    );
+    $campaignContact->contactId = rand(1,9);
+    $campaignContact->saveChanges();
+
+
+    return 0;*/
+
     $contact              = new Contact();
     $contact->name        = "John Smith";
     $contact->description = "John the test monkey";
