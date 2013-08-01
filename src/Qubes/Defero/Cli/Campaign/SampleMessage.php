@@ -115,7 +115,7 @@ class SampleMessage extends CliCommand
     $process->setQueueName("defero");
     $process->setQueueService("queue");
     $process->setProcessClass(
-      'Qubes\Defero\Components\Campaign\Process\EmailService\AmazonSes'
+      'Qubes\Defero\Components\Campaign\Process\EmailService\Smtp'
     );
     $message->addProcess($process);
 
