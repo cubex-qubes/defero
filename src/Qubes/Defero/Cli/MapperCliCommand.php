@@ -30,52 +30,42 @@ abstract class MapperCliCommand extends CliCommand
 
   /**
    * @param string      $arg
-   * @param null|string $type
+   * @param null|string $cliMethod
    *
    * @throws \Cubex\Cli\ArgumentException
    */
-  protected function _throwIfNotSet($arg, $type = null)
+  protected function _throwIfNotSet($arg, $cliMethod = null)
   {
-    if($type === null)
-    {
-      $type = debug_backtrace()[1]['function'];
-    }
-
     if(!$this->argumentIsSet($arg))
     {
+      if($cliMethod === null)
+      {
+        $cliMethod = debug_backtrace()[1]['function'];
+      }
+
       throw new ArgumentException(
-        "'{$arg}' must be set when calling '{$type}'"
+        "'{$arg}' must be set when calling '{$cliMethod}'"
       );
     }
   }
 
-  protected function _edit(DataMapper $mappper, array $updatables)
+  /**
+   * @param DataMapper $mapper
+   * @param array      $updatables array of arguments that are allowed to be
+   *                               updated in the mapper
+   */
+  protected function _edit(DataMapper $mapper, array $updatables)
   {
-    $className = class_shortname($mappper);
+    $className = class_shortname($mapper);
 
-    if($mappper->exists())
+    if($mapper->exists())
     {
-      $updates = [];
-
-      foreach($updatables as $updatable)
-      {
-        if($this->argumentIsSet($updatable))
-        {
-          $updates[] = [
-            "field" => $updatable,
-            "old"   => $mappper->{$updatable},
-            "new"   => $this->{$updatable},
-          ];
-          $mappper->{$updatable} = $this->{$updatable};
-        }
-      }
+      $updates = $this->_updateMapper($mapper, $updatables);
 
       if($updates)
       {
-        $mappper->saveChanges();
-
-        echo "{$className} {$mappper->id()} updated;\n\n";
-
+        $mapper->saveChanges();
+        echo "{$className} {$mapper->id()} updated;\n\n";
         echo TextTable::fromArray($updates);
       }
       else
@@ -88,5 +78,35 @@ abstract class MapperCliCommand extends CliCommand
     {
       echo "{$className} {$this->id} doesn't exist, did you mean to call add?";
     }
+  }
+
+  /**
+   * @param DataMapper $mapper
+   * @param array      $updatables
+   *
+   * @return array[][
+   *   'field' => 'afield',
+   *   'old'   => 'old_value',
+   *   'new'   => 'new_value',
+   * ]
+   */
+  private function _updateMapper(DataMapper $mapper, array $updatables)
+  {
+    $updates = [];
+
+    foreach($updatables as $updatable)
+    {
+      if($this->argumentIsSet($updatable))
+      {
+        $updates[] = [
+          "field" => $updatable,
+          "old"   => $mapper->{$updatable},
+          "new"   => $this->{$updatable},
+        ];
+        $mapper->{$updatable} = $this->{$updatable};
+      }
+    }
+
+    return $updates;
   }
 }
