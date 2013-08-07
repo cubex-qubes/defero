@@ -15,7 +15,8 @@
   "require":           {
     "php":         ">=5.4.0",
     "cubex/cubex": "*",
-    "swiftmailer/swiftmailer": "v5.0.1"
+    "swiftmailer/swiftmailer": "v5.0.1",
+    "themed/sidekick": "*"
   },
   "autoload":          {
     "psr-0": {
