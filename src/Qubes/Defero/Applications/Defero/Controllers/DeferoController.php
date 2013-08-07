@@ -6,35 +6,19 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Core\Controllers\WebpageController;
-use Cubex\View\HtmlElement;
-use Cubex\View\RenderGroup;
+use Qubes\Defero\Applications\Defero\Views\Header;
 use Qubes\Defero\Applications\Defero\Views\Index;
 
 class DeferoController extends WebpageController
 {
   public function renderIndex()
   {
-    $this->tryNest(
-      "header",
-      (new HtmlElement("ul", ["class" => "nav"]))->nest(
-        new RenderGroup(
-          (new HtmlElement("li"))->nestElement(
-            "a", ["href" => "/campaigns"], "Campaigns"
-          ),
-          (new HtmlElement("li"))->nestElement(
-            "a", ["href" => "/contacts"], "Contacts"
-          ),
-          (new HtmlElement("li"))->nestElement(
-            "a", ["href" => "/message-processors"], "Message Processors"
-          )
-        )
-      )
-    );
+    $this->tryNest("header", new Header());
     return new Index();
   }
 
   public function getRoutes()
   {
-    return ["*" => "index",];
+    return ["(.*)" => "index",];
   }
 }
