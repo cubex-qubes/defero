@@ -7,13 +7,13 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 
 class ProcessorsController extends BaseDeferoController
 {
-  public function renderIndex()
+  public function renderIndex($type)
   {
-    echo "Processors";
+    echo "Processors: {$type}";
   }
 
   public function getRoutes()
   {
-    return ["(.*)" => "index",];
+    return ["/:type@alpha" => "index",];
   }
 }

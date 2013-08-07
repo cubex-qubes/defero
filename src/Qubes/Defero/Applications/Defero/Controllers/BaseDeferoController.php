@@ -13,5 +13,6 @@ abstract class BaseDeferoController extends WebpageController
   public function preRender()
   {
     $this->tryNest("header", new Header());
+    $this->requireCss("defero");
   }
 }
