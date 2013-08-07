@@ -1,6 +1,7 @@
 <?php
 /**
- * @author  brooke.bryan
+ * @author brooke.bryan
+ * @author gareth.evans
  */
 
 namespace Qubes\Defero\Components\Campaign\Mappers;
@@ -36,6 +37,33 @@ class Campaign extends RecordMapper
    * @default  0
    */
   public $active = false;
+
+  protected function _configure()
+  {
+    $this->_attribute('reference')
+      ->addValidator(Validator::VALIDATE_SCALAR)
+      ->setRequired(true);
+
+    $this->_attribute('name')
+      ->addValidator(Validator::VALIDATE_SCALAR)
+      ->setRequired(true);
+
+    $this->_attribute('type')
+      ->addValidator(Validator::VALIDATE_ENUM, [new CampaignType])
+      ->setRequired(true);
+
+    $this->_attribute('sendType')
+      ->addValidator(Validator::VALIDATE_ENUM, [new SendType()])
+      ->setRequired(true);
+
+    $this->_attribute('contactId')
+      ->addValidator(Validator::VALIDATE_INT)
+      ->setRequired(true);
+
+    $this->_attribute('active')
+      ->addValidator(Validator::VALIDATE_BOOL)
+      ->setRequired(true);
+  }
 
   /**
    * @return Message
