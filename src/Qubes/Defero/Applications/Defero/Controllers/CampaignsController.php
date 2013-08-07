@@ -5,13 +5,11 @@
 
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
-use Qubes\Defero\Applications\Defero\Views\Index;
-
-class DeferoController extends BaseDeferoController
+class CampaignsController extends BaseDeferoController
 {
   public function renderIndex()
   {
-    return new Index();
+    echo "Campaigns";
   }
 
   public function getRoutes()

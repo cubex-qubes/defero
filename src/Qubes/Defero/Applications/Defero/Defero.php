@@ -28,4 +28,13 @@ class Defero extends Application
   {
     return new Controllers\DeferoController();
   }
+
+  public function getRoutes()
+  {
+    return [
+      "/campaigns/(.*)"  => "Campaigns",
+      "/contacts/(.*)"   => "Contacts",
+      "/processors/(.*)" => "Processors",
+    ];
+  }
 }
