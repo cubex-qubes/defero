@@ -8,25 +8,27 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Form\Form;
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\Templates\ResourceTemplate;
+use Cubex\Facade\Redirect;
+use Cubex\Facade\Session;
+use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
+use Qubes\Defero\Applications\Defero\Views\CampaignView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsController extends BaseDeferoController
 {
   public function renderNew()
   {
-    return $this->_buildCampaignForm();
+    return new CampaignView($this->_buildCampaignForm());
   }
 
-  public function renderEdit($id)
+  public function renderEdit($id, CampaignForm $campaignForm = null)
   {
-    return $this->_buildCampaignForm($id);
+    return new CampaignView($campaignForm ? : $this->_buildCampaignForm($id));
   }
 
   public function actionUpdate($id)
   {
-    $campaign = $this->_updateCampaign($id);
-
-    echo "Campaign {$campaign->id()} updated";
+    return $this->_updateCampaign($id);
   }
 
   public function actionDestroy($id)
@@ -38,14 +40,19 @@ class CampaignsController extends BaseDeferoController
 
   public function renderShow($id)
   {
-    echo nl2br(json_pretty(new Campaign($id)));
+    if(Session::getFlash('msg'))
+    {
+      echo Session::getFlash('msg');
+      echo nl2br(json_pretty(new Campaign($id)));
+      die;
+    }
+
+    return nl2br(json_pretty(new Campaign($id)));
   }
 
   public function actionCreate()
   {
-    $campaign = $this->_updateCampaign();
-
-    echo "Campaign {$campaign->id()} created";
+    return $this->_updateCampaign();
   }
 
   public function renderIndex($page = 1)
@@ -63,19 +70,33 @@ class CampaignsController extends BaseDeferoController
 
   private function _updateCampaign($id = null)
   {
-    $campaign = new Campaign($id);
-    $campaign
-      ->hydrate($this->request()->postVariables())
-      ->saveChanges();
+    $form = $this->_buildCampaignForm($id);
+    $form->hydrate($this->request()->postVariables());
 
-    return $campaign;
+    if($form->isValid() && $form->csrfCheck(true))
+    {
+      $form->saveChanges();
+
+
+      Redirect::to("/campaigns/{$form->getMapper()->id()}")
+        ->with("msg", "boo ya")
+        ->now();
+    }
+
+    return $this->renderEdit($id, $form);
   }
 
+  /**
+   * @param null|int $id
+   *
+   * @return CampaignForm
+   */
   private function _buildCampaignForm($id = null)
   {
     $action = $id ? "/campaigns/{$id}" : "/campaigns";
 
-    return (new Form("campaign", $action))->bindMapper(new Campaign($id));
+    return (new CampaignForm("campaign", $action))
+      ->bindMapper(new Campaign($id));
   }
 
   public function getRoutes()
