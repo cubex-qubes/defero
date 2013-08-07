@@ -50,7 +50,7 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
-    return $nav;
+    return (new HtmlElement("span", ["class" => "brand"], "Defero")) . $nav;
   }
 
   protected function _getNavItemState($startsWith)
