@@ -14,7 +14,7 @@ use Cubex\Facade\Session;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\CampaignsView;
-use Qubes\Defero\Applications\Defero\Views\CampaignView;
+use Qubes\Defero\Applications\Defero\Views\CampaignFormView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsController extends BaseDeferoController
@@ -22,11 +22,11 @@ class CampaignsController extends BaseDeferoController
   /**
    * Show a blank campaign form
    *
-   * @return CampaignView
+   * @return CampaignFormView
    */
   public function renderNew()
   {
-    return new CampaignView($this->_buildCampaignForm());
+    return new CampaignFormView($this->_buildCampaignForm());
   }
 
   /**
@@ -35,11 +35,11 @@ class CampaignsController extends BaseDeferoController
    * @param int          $id
    * @param CampaignForm $campaignForm
    *
-   * @return CampaignView
+   * @return CampaignFormView
    */
   public function renderEdit($id, CampaignForm $campaignForm = null)
   {
-    return new CampaignView($campaignForm ? : $this->_buildCampaignForm($id));
+    return new CampaignFormView($campaignForm ? : $this->_buildCampaignForm($id));
   }
 
   /**
@@ -47,7 +47,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return CampaignView
+   * @return CampaignFormView
    */
   public function actionUpdate($id)
   {
@@ -96,7 +96,7 @@ class CampaignsController extends BaseDeferoController
   /**
    * Create a new campaign
    *
-   * @return CampaignView
+   * @return CampaignFormView
    */
   public function postCreate()
   {
@@ -107,6 +107,8 @@ class CampaignsController extends BaseDeferoController
    * Show a paginated list of campaigns
    *
    * @param int $page
+   *
+   * @return CampaignsView
    */
   public function renderIndex($page = 1)
   {
@@ -127,7 +129,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @param null|int $id
    *
-   * @return CampaignView
+   * @return CampaignFormView
    */
   private function _updateCampaign($id = null)
   {
@@ -138,8 +140,11 @@ class CampaignsController extends BaseDeferoController
     {
       $form->saveChanges();
 
+      $msg = "Campaign '{$form->name}'";
+      $msg .= $id ? " Updated" : " Created";
+
       Redirect::to("/campaigns/{$form->getMapper()->id()}")
-        ->with("msg", "boo ya")
+        ->with("msg", new TransportMessage("info", $msg))
         ->now();
     }
 

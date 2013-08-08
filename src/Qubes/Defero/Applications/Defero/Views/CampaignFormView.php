@@ -8,7 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Views;
 use Cubex\View\TemplatedViewModel;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 
-class CampaignView extends TemplatedViewModel
+class CampaignFormView extends TemplatedViewModel
 {
   public $campaignForm;
 
