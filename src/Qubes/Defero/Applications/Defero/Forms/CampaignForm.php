@@ -19,9 +19,11 @@ class CampaignForm extends DeferoForm
       $this->getElement("reference")->addAttribute("disabled", "disabled");
     }
 
+    $return = parent::_postBind();
+
     $this->getElement("submit")
       ->addAttribute("data-loading-text", "Submitting Campaign");
 
-    return parent::_postBind();
+    return $return;
   }
 }
