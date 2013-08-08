@@ -13,6 +13,11 @@ use Cubex\Facade\Session;
     <?= Session::getFlash('msg')->message ?>
   </div>
   <?php endif; ?>
+  <div class="text-right">
+    <a href="/campaigns/new" class="btn btn-primary btn-small">
+      Create Campaign
+    </a>
+  </div>
   <div>
     <table class="table table-striped">
       <caption><?= $this->pagerInfo ?></caption>
