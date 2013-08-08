@@ -2,14 +2,48 @@
 /**
  * @author gareth.evans
  *
- * @var $this \Qubes\Defero\Applications\Defero\Views\CampaignFormView
+ * @var $this \Qubes\Defero\Applications\Defero\Views\CampaignView
  */
+use Cubex\Facade\Session;
 ?>
 <div class="wrappedContent">
-  <div>
-    <h2 class="text-center">
-      Campaign Form
-    </h2>
+  <div class="pull-right btn-group">
+    <a href="/campaigns/<?= $this->campaign->id() ?>/edit"
+       title="Edit <?= $this->campaign->name ?>"
+       class="btn btn-small btn-info">Edit</a>
+    <a href="/campaigns/<?= $this->campaign->id() ?>/delete"
+       title="Delete <?= $this->campaign->name ?>"
+       class="js-popover btn btn-small btn-danger"
+       data-content="<?= $this->getDeletePopover($this->campaign->id()) ?>"
+       data-placement="bottom"
+       data-html="true">Delete</a>
+    <a href="/campaigns/new" class="btn btn-primary btn-small">
+      Create Campaign
+    </a>
   </div>
-  <?= $this->campaignForm ?>
+  <div>
+    <h3><?= $this->campaign->name ?></h3>
+  </div>
+  <?php if(Session::getFlash('msg')): ?>
+  <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <?= Session::getFlash('msg')->message ?>
+  </div>
+  <?php endif; ?>
+  <div>
+    <dl class="dl-horizontal">
+      <dt>Name</dt>
+      <dd><?= $this->campaign->name ?></dd>
+      <dt>Reference</dt>
+      <dd><?= $this->campaign->reference ?></dd>
+      <dt>Type</dt>
+      <dd><?= $this->campaign->type ?></dd>
+      <dt>Send Type</dt>
+      <dd><?= $this->campaign->sendType ?></dd>
+      <dt>Active</dt>
+      <dd><?= $this->campaign->active ? "Yes" : "No" ?></dd>
+      <dt>Description</dt>
+      <dd><?= $this->campaign->description ?></dd>
+    </dl>
+  </div>
 </div>

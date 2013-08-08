@@ -15,6 +15,7 @@ use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\CampaignsView;
 use Qubes\Defero\Applications\Defero\Views\CampaignFormView;
+use Qubes\Defero\Applications\Defero\Views\CampaignView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsController extends BaseDeferoController
@@ -39,7 +40,9 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderEdit($id, CampaignForm $campaignForm = null)
   {
-    return new CampaignFormView($campaignForm ? : $this->_buildCampaignForm($id));
+    return new CampaignFormView(
+      $campaignForm ? : $this->_buildCampaignForm($id)
+    );
   }
 
   /**
@@ -67,11 +70,11 @@ class CampaignsController extends BaseDeferoController
     $campaign->forceLoad();
     $campaign->delete();
 
-    echo "Campaign {$id} deleted";
-    return Redirect::to('/campaigns')->with(
-      'msg',
-      new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
-    );
+    return Redirect::to('/campaigns')
+      ->with(
+        'msg',
+        new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
+      );
   }
 
   /**
@@ -83,14 +86,7 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderShow($id)
   {
-    if(Session::getFlash('msg'))
-    {
-      echo Session::getFlash('msg');
-      echo nl2br(json_pretty(new Campaign($id)));
-      die;
-    }
-
-    return nl2br(json_pretty(new Campaign($id)));
+    return new CampaignView(new Campaign($id));
   }
 
   /**
