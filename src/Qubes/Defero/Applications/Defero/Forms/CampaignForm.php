@@ -8,15 +8,8 @@ namespace Qubes\Defero\Applications\Defero\Forms;
 use Cubex\Data\Validator\Validator;
 use Cubex\Form\Form;
 
-class CampaignForm extends Form
+class CampaignForm extends DeferoForm
 {
-  protected function _configure()
-  {
-    $this->setNoValidate();
-
-    return parent::_configure();
-  }
-
   protected function _postBind()
   {
     $this->getElement("active")->setLabelPosition(Form::LABEL_NONE);
@@ -25,6 +18,9 @@ class CampaignForm extends Form
     {
       $this->getElement("reference")->addAttribute("disabled", "disabled");
     }
+
+    $this->getElement("submit")
+      ->addAttribute("data-loading-text", "Submitting Campaign");
 
     return parent::_postBind();
   }

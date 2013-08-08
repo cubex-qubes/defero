@@ -14,6 +14,6 @@ class CampaignView extends TemplatedViewModel
 
   public function __construct(CampaignForm $campaignForm)
   {
-    $this->campaignForm = new Forms\CampaignFormView($campaignForm);
+    $this->campaignForm = $campaignForm;
   }
 }
