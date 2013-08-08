@@ -1,0 +1,52 @@
+<?php
+/**
+ * @author gareth.evans
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\CampaignsView
+ */
+?>
+<div class="wrappedContent">
+  <div>
+    <table class="table table-striped">
+      <caption><?= $this->pagerInfo ?></caption>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Reference</th>
+          <th>Type</th>
+          <th>Send Type</th>
+          <th>Active</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($this->campaigns as $campaign): ?>
+        <tr>
+          <td>
+            <a href="/campaigns/<?= $campaign->id() ?>"
+               title="View <?= $campaign->name ?>">
+              <?= $campaign->name ?>
+            </a>
+          </td>
+          <td><?= $campaign->reference ?></td>
+          <td><?= $campaign->type ?></td>
+          <td><?= $campaign->sendType ?></td>
+          <td><?= $campaign->active ? "Yes" : "No" ?></td>
+          <td>
+            <a href="/campaigns/<?= $campaign->id() ?>/edit"
+               title="Edit <?= $campaign->name ?>">
+              <i class="icon-edit"></i></a>
+            <a href="/campaigns/<?= $campaign->id() ?>/delete"
+               title="Delete <?= $campaign->name ?>"
+               class="js-popover"
+               data-content="<?= $this->getDeletePopover($campaign->id()) ?>"
+               data-html="true">
+              <i class="icon-trash"></i></a>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <div><?= $this->pager ?></div>
+</div>
