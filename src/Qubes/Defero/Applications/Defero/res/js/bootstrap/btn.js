@@ -17,7 +17,8 @@ jQuery(document).ready(function() {
      * @handle         .js-btn-loading
      * @data-attribute data-loading-text
      */
-    $('.js-btn-loading').click(function() {
+    $(document).on('click', '.js-btn-loading', function(e) {
+      e.preventDefault();
       $(this).button('loading');
     });
 
