@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
+use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\Form;
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\Templates\ResourceTemplate;
@@ -57,12 +58,20 @@ class CampaignsController extends BaseDeferoController
    * Delete a campaign
    *
    * @param int $id
+   *
+   * @return \Cubex\Core\Http\Redirect
    */
   public function actionDestroy($id)
   {
-    (new Campaign($id))->delete();
+    $campaign = new Campaign($id);
+    $campaign->forceLoad();
+    $campaign->delete();
 
     echo "Campaign {$id} deleted";
+    return Redirect::to('/campaigns')->with(
+      'msg',
+      new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
+    );
   }
 
   /**

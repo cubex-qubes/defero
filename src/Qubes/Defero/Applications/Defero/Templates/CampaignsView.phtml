@@ -4,8 +4,15 @@
  *
  * @var $this \Qubes\Defero\Applications\Defero\Views\CampaignsView
  */
+use Cubex\Facade\Session;
 ?>
 <div class="wrappedContent">
+  <?php if(Session::getFlash('msg')): ?>
+  <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <?= Session::getFlash('msg')->message ?>
+  </div>
+  <?php endif; ?>
   <div>
     <table class="table table-striped">
       <caption><?= $this->pagerInfo ?></caption>
