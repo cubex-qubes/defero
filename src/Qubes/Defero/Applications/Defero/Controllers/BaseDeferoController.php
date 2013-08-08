@@ -14,5 +14,6 @@ abstract class BaseDeferoController extends WebpageController
   {
     $this->tryNest("header", new Header());
     $this->requireCss("defero");
+    $this->requireJsPackage("bootstrap");
   }
 }
