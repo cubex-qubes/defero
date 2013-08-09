@@ -10,6 +10,27 @@ use Cubex\View\TemplatedViewModel;
 
 class DeferoView extends TemplatedViewModel
 {
+  private $_resultsPerPage = 10;
+
+  /**
+   * @param int $perPage
+   *
+   * @return $this
+   */
+  public function setResultsPerPage($perPage)
+  {
+    $this->_resultsPerPage = (int)$perPage;
+    return $this;
+  }
+
+  /**
+   * @return int
+   */
+  public function getResultsPerPage()
+  {
+    return $this->_resultsPerPage;
+  }
+
   public function getDeletePopover($id)
   {
     $popover = (new HtmlElement(

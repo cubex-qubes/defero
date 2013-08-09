@@ -23,7 +23,7 @@ class ContactsView extends DeferoView
     RecordCollectionPagination $pagination
   )
   {
-    $pagination->setNumResultsPerPage(5);
+    $pagination->setNumResultsPerPage($this->getResultsPerPage());
 
     $this->pager = $pagination->getPager();
     $this->pagerInfo = $pagination->getInfo();

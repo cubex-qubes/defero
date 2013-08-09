@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Components\Contact\Mappers;
 
+use Cubex\Data\Validator\Validator;
 use Cubex\Mapper\Database\RecordMapper;
 
 class Contact extends RecordMapper
@@ -22,4 +23,23 @@ class Contact extends RecordMapper
   public $email;
   public $jobTitle;
   public $signature;
+
+  protected function _configure()
+  {
+    $this->_attribute('reference')
+      ->addValidator(Validator::VALIDATE_SCALAR)
+      ->setRequired(true);
+
+    $this->_attribute('name')
+      ->addValidator(Validator::VALIDATE_SCALAR)
+      ->setRequired(true);
+
+    $this->_attribute('jobTitle')
+      ->addValidator(Validator::VALIDATE_SCALAR)
+      ->setRequired(true);
+
+    $this->_attribute('email')
+      ->addValidator(Validator::VALIDATE_EMAIL)
+      ->setRequired(true);
+  }
 }
