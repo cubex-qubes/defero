@@ -50,7 +50,25 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
-    return (new HtmlElement("span", ["class" => "brand"], "Defero")) . $nav;
+    $this->requireJs('typeahead/typeahead');
+    $this->requireJs('defero');
+    $searchForm = (new HtmlElement(
+      "form",
+      ["class" => "navbar-search pull-right"]
+    ))->nestElement(
+        "input",
+        [
+          "id"           => "nav-search",
+          "type"         => "text",
+          "class"        => "search-query",
+          "placeholder"  => "Search...",
+          "autocomplete" => "off",
+          "data-provide" => "typeahead",
+        ]
+      );
+
+    return (new HtmlElement("span", ["class" => "brand"], "Defero")) .
+      $nav . $searchForm;
   }
 
   protected function _getNavItemState($startsWith)

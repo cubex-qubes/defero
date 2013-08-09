@@ -35,6 +35,7 @@ class Defero extends Application
       "/campaigns/(.*)"  => "Campaigns",
       "/contacts/(.*)"   => "Contacts",
       "/processors/(.*)" => "Processors",
+      "/typeahead/(.*)"  => "Typeahead",
     ];
   }
 }
