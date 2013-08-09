@@ -14,7 +14,7 @@ class DeferoView extends TemplatedViewModel
   {
     $popover = (new HtmlElement(
       "div", ["class" => "text-center"], "Are you sure?<br />"
-    ))->nestElement("a", ["href" => "/campaigns/{$id}/delete"], "Yes")
+    ))->nestElement("a", ["href" => "{$this->baseUri()}/{$id}/delete"], "Yes")
       ->nestElement("span", [], " | ")
       ->nestElement(
         "a",

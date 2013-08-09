@@ -1,0 +1,49 @@
+<?php
+/**
+ * @author gareth.evans
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\ContactView
+ */
+use Cubex\Facade\Session;
+?>
+<div class="wrappedContent">
+  <?php if(Session::getFlash('msg')): ?>
+    <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <?= Session::getFlash('msg')->message ?>
+    </div>
+  <?php endif; ?>
+  <div class="pull-right btn-group">
+    <a href="/contacts/<?= $this->contact->id() ?>/edit"
+       title="Edit <?= $this->contact->name ?>"
+       class="btn btn-info">Edit</a>
+    <a href="/contacts/<?= $this->contact->id() ?>/delete"
+       title="Delete <?= $this->contact->name ?>"
+       class="js-popover btn btn-danger"
+       data-content="<?= $this->getDeletePopover($this->contact->id()) ?>"
+       data-placement="bottom"
+       data-html="true"
+       data-prevent-default="true">Delete</a>
+    <a href="/contacts/new" class="btn btn-primary">
+      New</a>
+  </div>
+  <div>
+    <h3><?= $this->contact->name ?></h3>
+  </div>
+  <div>
+    <dl class="dl-horizontal">
+      <dt>Name</dt>
+      <dd><?= $this->contact->name ?></dd>
+      <dt>Reference</dt>
+      <dd><?= $this->contact->reference ?></dd>
+      <dt>Email</dt>
+      <dd><?= $this->contact->email ?></dd>
+      <dt>Job Title</dt>
+      <dd><?= $this->contact->jobTitle ?></dd>
+      <dt>Signature</dt>
+      <dd><?= $this->contact->signature ?></dd>
+      <dt>Description</dt>
+      <dd><?= $this->contact->description ?></dd>
+    </dl>
+  </div>
+</div>

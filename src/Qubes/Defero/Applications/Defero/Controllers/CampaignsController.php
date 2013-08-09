@@ -81,7 +81,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return string
+   * @return CampaignView
    */
   public function renderShow($id)
   {
