@@ -26,7 +26,7 @@ class CampaignsView extends DeferoView
   {
     $pagination->setNumResultsPerPage($this->getResultsPerPage());
 
-    $this->pager = $pagination->getPager();
+    $this->pager     = $pagination->getPager();
     $this->pagerInfo = $pagination->getInfo();
     $this->campaigns = $pagination->getPaginatedResults();
   }

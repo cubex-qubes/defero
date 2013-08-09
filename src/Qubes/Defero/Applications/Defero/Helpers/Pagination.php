@@ -24,6 +24,7 @@ class Pagination implements ITranslatable
   protected $_nextLabel = '&rarr;';
   protected $_prevLabel = '&larr;';
   protected $_paginateCalled = false;
+  protected $_goToLastPage = false;
 
   public function paginate($rePaginate = false)
   {
@@ -33,7 +34,7 @@ class Pagination implements ITranslatable
 
       $this->_pages = ceil($this->_numResults / $this->_numResultsPerPage);
 
-      if($this->getPage() > $this->_pages)
+      if($this->getPage() > $this->_pages || $this->_goToLastPage)
       {
         $this->setPage($this->_pages);
       }
@@ -214,6 +215,17 @@ HTML
 
   public function getOffset()
   {
-    return $this->_page > 1 ? ($this->_page - 1) * $this->_numResultsPerPage : 0;
+    return $this->_page > 1 ?
+      ($this->_page - 1) * $this->_numResultsPerPage : 0;
+  }
+
+  public function goToLastPage($goToLastPage = true)
+  {
+    $this->_goToLastPage = (bool)$goToLastPage;
+    if($this->_paginateCalled)
+    {
+      $this->paginate(true);
+    }
+    return $this;
   }
 }
