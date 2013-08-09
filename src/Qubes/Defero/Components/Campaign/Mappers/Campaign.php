@@ -60,9 +60,7 @@ class Campaign extends RecordMapper
       ->addValidator(Validator::VALIDATE_INT)
       ->setRequired(true);
 
-    $this->_attribute('active')
-      ->addValidator(Validator::VALIDATE_BOOL)
-      ->setRequired(true);
+    $this->_attribute('active')->addValidator(Validator::VALIDATE_BOOL);
   }
 
   /**

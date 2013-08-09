@@ -15,7 +15,7 @@ use Cubex\Facade\Session;
   <?php endif; ?>
   <div class="text-right">
     <a href="/campaigns/new" class="btn btn-primary btn-small">
-      Create Campaign
+      Create New
     </a>
   </div>
   <div>
@@ -52,7 +52,8 @@ use Cubex\Facade\Session;
                title="Delete <?= $campaign->name ?>"
                class="js-popover"
                data-content="<?= $this->getDeletePopover($campaign->id()) ?>"
-               data-html="true">
+               data-html="true"
+               data-prevent-default="true">
               <i class="icon-trash"></i></a>
           </td>
         </tr>

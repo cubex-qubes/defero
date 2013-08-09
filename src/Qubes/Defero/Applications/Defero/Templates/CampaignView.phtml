@@ -10,16 +10,16 @@ use Cubex\Facade\Session;
   <div class="pull-right btn-group">
     <a href="/campaigns/<?= $this->campaign->id() ?>/edit"
        title="Edit <?= $this->campaign->name ?>"
-       class="btn btn-small btn-info">Edit</a>
+       class="btn btn-info">Edit</a>
     <a href="/campaigns/<?= $this->campaign->id() ?>/delete"
        title="Delete <?= $this->campaign->name ?>"
-       class="js-popover btn btn-small btn-danger"
+       class="js-popover btn btn-danger"
        data-content="<?= $this->getDeletePopover($this->campaign->id()) ?>"
        data-placement="bottom"
-       data-html="true">Delete</a>
-    <a href="/campaigns/new" class="btn btn-primary btn-small">
-      Create Campaign
-    </a>
+       data-html="true"
+       data-prevent-default="true">Delete</a>
+    <a href="/campaigns/new" class="btn btn-primary">
+      New</a>
   </div>
   <div>
     <h3><?= $this->campaign->name ?></h3>

@@ -15,10 +15,12 @@ jQuery(document).ready(function() {
      * Loading
      *
      * @handle         .js-btn-loading
-     * @data-attribute data-loading-text
+     *
+     * @data-loading-text    text
+     * @data-prevent-default bool
      */
     $(document).on('click', '.js-btn-loading', function(e) {
-      e.preventDefault();
+      bsUtilPreventDefault(e, $(this));
       $(this).button('loading');
     });
 
