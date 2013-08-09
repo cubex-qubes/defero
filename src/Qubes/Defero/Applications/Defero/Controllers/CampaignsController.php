@@ -10,7 +10,6 @@ use Cubex\Form\Form;
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
-use Cubex\Facade\Session;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\CampaignsView;
@@ -108,7 +107,7 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderIndex($page = 1)
   {
-    $campaigns = new RecordCollection(new Campaign());
+    $campaigns = (new RecordCollection(new Campaign()))->setOrderBy("id");
 
     $pagination = new RecordCollectionPagination(
       $campaigns, $page

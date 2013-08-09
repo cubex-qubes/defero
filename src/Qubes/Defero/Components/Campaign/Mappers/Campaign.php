@@ -7,6 +7,7 @@
 namespace Qubes\Defero\Components\Campaign\Mappers;
 
 use Cubex\Data\Validator\Validator;
+use Cubex\Helpers\Strings;
 use Cubex\Mapper\Database\RecordMapper;
 use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
@@ -86,5 +87,19 @@ class Campaign extends RecordMapper
   public function contact()
   {
     return $this->belongsTo(new Contact());
+  }
+
+  public function getTitledType()
+  {
+    return Strings::titleize(
+      $this->types()->constFromValue((string)$this->type)
+    );
+  }
+
+  public function getTitledSendType()
+  {
+    return Strings::titleize(
+      $this->sendTypes()->constFromValue((string)$this->sendType)
+    );
   }
 }

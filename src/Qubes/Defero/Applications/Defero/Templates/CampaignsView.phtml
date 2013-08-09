@@ -15,14 +15,15 @@ use Cubex\Facade\Session;
   <?php endif; ?>
   <div class="text-right">
     <a href="/campaigns/new" class="btn btn-primary btn-small">
-      Create New
+      New Campaign
     </a>
   </div>
   <div>
-    <table class="table table-striped">
+    <table class="table table-striped table-bordered">
       <caption><?= $this->pagerInfo ?></caption>
       <thead>
         <tr>
+          <th></th>
           <th>Name</th>
           <th>Reference</th>
           <th>Type</th>
@@ -37,12 +38,13 @@ use Cubex\Facade\Session;
           <td>
             <a href="/campaigns/<?= $campaign->id() ?>"
                title="View <?= $campaign->name ?>">
-              <?= $campaign->name ?>
+              #<?= $campaign->id() ?>
             </a>
           </td>
+          <td><?= $campaign->name ?></td>
           <td><?= $campaign->reference ?></td>
-          <td><?= $campaign->type ?></td>
-          <td><?= $campaign->sendType ?></td>
+          <td><?= $campaign->getTitledType() ?></td>
+          <td><?= $campaign->getTitledSendType() ?></td>
           <td><?= $campaign->active ? "Yes" : "No" ?></td>
           <td>
             <a href="/campaigns/<?= $campaign->id() ?>/edit"

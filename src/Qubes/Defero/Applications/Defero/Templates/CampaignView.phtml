@@ -7,6 +7,12 @@
 use Cubex\Facade\Session;
 ?>
 <div class="wrappedContent">
+  <?php if(Session::getFlash('msg')): ?>
+    <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <?= Session::getFlash('msg')->message ?>
+    </div>
+  <?php endif; ?>
   <div class="pull-right btn-group">
     <a href="/campaigns/<?= $this->campaign->id() ?>/edit"
        title="Edit <?= $this->campaign->name ?>"
@@ -24,12 +30,6 @@ use Cubex\Facade\Session;
   <div>
     <h3><?= $this->campaign->name ?></h3>
   </div>
-  <?php if(Session::getFlash('msg')): ?>
-  <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <?= Session::getFlash('msg')->message ?>
-  </div>
-  <?php endif; ?>
   <div>
     <dl class="dl-horizontal">
       <dt>Name</dt>
@@ -37,9 +37,9 @@ use Cubex\Facade\Session;
       <dt>Reference</dt>
       <dd><?= $this->campaign->reference ?></dd>
       <dt>Type</dt>
-      <dd><?= $this->campaign->type ?></dd>
+      <dd><?= $this->campaign->getTitledType() ?></dd>
       <dt>Send Type</dt>
-      <dd><?= $this->campaign->sendType ?></dd>
+      <dd><?= $this->campaign->getTitledSendType() ?></dd>
       <dt>Active</dt>
       <dd><?= $this->campaign->active ? "Yes" : "No" ?></dd>
       <dt>Description</dt>
