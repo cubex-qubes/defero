@@ -58,6 +58,7 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
+    // Global typeahead search
     $searchForm = (new TypeaheadSearchFormView(TypeaheadEnum::ALL()))
       ->setNavbarSearch();
 

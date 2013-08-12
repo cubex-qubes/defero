@@ -13,6 +13,9 @@ jQuery(document).ready(function() {
     $(".js-defero-typeahead-campaigns").typeahead(
       {source: Defero.Typeahead.campaigns}
     );
+    $(".js-defero-typeahead-processors").typeahead(
+      {source: Defero.Typeahead.processors}
+    );
 
   })(jQuery);
 });

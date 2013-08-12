@@ -1,0 +1,62 @@
+<?php
+/**
+ * @author gareth.evans
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\ProcessorsView
+ */
+use Cubex\Facade\Session;
+?>
+<div class="wrappedContent">
+  <?php if(Session::getFlash('msg')): ?>
+  <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <?= Session::getFlash('msg')->message ?>
+  </div>
+  <?php endif; ?>
+  <div>
+    <div class="pull-right">
+      <a href="/processors/new" class="btn btn-primary btn-small">
+        New Processor
+      </a>
+    </div>
+    <?= $this->processorsSearch ?>
+  </div>
+  <div>
+    <table class="table table-striped table-bordered">
+      <caption><?= $this->pagerInfo ?></caption>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($this->processors as $processor): ?>
+        <tr>
+          <td>
+            <a href="/processors/<?= $processor->id() ?>"
+               title="View <?= $processor->name ?>">
+              #<?= $processor->id() ?>
+            </a>
+          </td>
+          <td><?= $processor->name ?></td>
+          <td>
+            <a href="/processors/<?= $processor->id() ?>/edit"
+               title="Edit <?= $processor->name ?>">
+              <i class="icon-edit"></i></a>
+            <a href="/processors/<?= $processor->id() ?>/delete"
+               title="Delete <?= $processor->name ?>"
+               class="js-popover"
+               data-content="<?= $this->getDeletePopover($processor->id()) ?>"
+               data-html="true"
+               data-prevent-default="true">
+              <i class="icon-trash"></i></a>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <div><?= $this->pager ?></div>
+</div>

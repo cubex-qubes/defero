@@ -10,6 +10,7 @@ use Cubex\Facade\DB;
 use Cubex\Sprintf\ParseQuery;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
+use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 
 class Typeahead extends BaseController
 {
@@ -44,12 +45,30 @@ class Typeahead extends BaseController
     return $this->_sortResults($query, $this->_getCampaigns($query));
   }
 
+  public function actionProcessors()
+  {
+    $query = $this->_getQuery();
+
+    return $this->_sortResults($query, $this->_getProcessors($query));
+  }
+
   private function _getCampaigns($query)
   {
     $campaignsSelect = $this->_getDisplayResultPattern("C", "name");
 
     return Campaign::collection()->whereLike("name", $query)
       ->setColumns([$campaignsSelect, "name"])
+      ->orderByKeys(["key"])
+      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
+      ->getFieldValues('key');
+  }
+
+  private function _getProcessors($query)
+  {
+    $processorsSelect = $this->_getDisplayResultPattern("P", "name");
+
+    return MessageProcessor::collection()->whereLike("name", $query)
+      ->setColumns([$processorsSelect, "name"])
       ->orderByKeys(["key"])
       ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
       ->getFieldValues('key');
@@ -67,8 +86,9 @@ class Typeahead extends BaseController
 
   private function _getAll($query)
   {
-    $contactSelect   = $this->_getDisplayResultPattern("c", "name");
-    $campaignsSelect = $this->_getDisplayResultPattern("C", "name");
+    $contactSelect    = $this->_getDisplayResultPattern("c", "name");
+    $campaignsSelect  = $this->_getDisplayResultPattern("C", "name");
+    $processorsSelect = $this->_getDisplayResultPattern("P", "name");
 
     $orderQueryData = $this->_getOrderByPattern($query, "name", true);
     $orderQuery     = array_shift($orderQueryData);
@@ -78,6 +98,8 @@ class Typeahead extends BaseController
         (SELECT {$contactSelect}, %C FROM %T WHERE %C LIKE %~)
         UNION ALL
         (SELECT {$campaignsSelect}, %C FROM %T WHERE %C LIKE %~)
+        UNION ALL
+        (SELECT {$processorsSelect}, %C FROM %T WHERE %C LIKE %~)
         ) %T ORDER BY {$orderQuery}",
       "key",
       "name",
@@ -86,6 +108,10 @@ class Typeahead extends BaseController
       $query,
       "name",
       Campaign::tableName(),
+      "name",
+      $query,
+      "name",
+      MessageProcessor::tableName(),
       "name",
       $query,
       "temp"
@@ -168,9 +194,10 @@ class Typeahead extends BaseController
   public function getRoutes()
   {
     return [
-      "/all"       => "all",
-      "/contacts"  => "contacts",
-      "/campaigns" => "campaigns",
+      "/all"        => "all",
+      "/contacts"   => "contacts",
+      "/campaigns"  => "campaigns",
+      "/processors" => "processors",
     ];
   }
 }

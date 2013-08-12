@@ -45,6 +45,10 @@ class TypeaheadSearchFormView extends ViewModel
         $jsTriggerClass .= "campaigns";
         $searchType = "campaigns";
         break;
+      case TypeaheadEnum::PROCESSORS:
+        $jsTriggerClass .= "processors";
+        $searchType = "processors";
+        break;
       case TypeaheadEnum::ALL:
       default:
         $jsTriggerClass .= "all";
