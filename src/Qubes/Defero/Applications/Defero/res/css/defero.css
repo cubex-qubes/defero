@@ -7,3 +7,16 @@
 .navbar-search {
   float: right;
 }
+
+.navbar .navbar-search .search-query {
+  width: 52px;
+  -webkit-transition: width 750ms, background-color 750ms;
+  -moz-transition: width 750ms, background-color 750ms;
+  -ms-transition: width 750ms, background-color 750ms;
+  -o-transition: width 750ms, background-color 750ms;
+  transition: width 750ms, background-color 750ms;
+}
+
+.navbar .navbar-search .search-query:focus {
+  width: 206px;
+}
