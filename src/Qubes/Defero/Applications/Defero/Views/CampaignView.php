@@ -39,7 +39,13 @@ class CampaignView extends DeferoView
 
   public function getContactsView()
   {
-    return (new ContactsView($this->contacts, $this->_contactsPagination, true))
-      ->setHostController($this->getHostController());
+    $contactsView = new ContactsView(
+      $this->contacts, $this->_contactsPagination, true
+    );
+    $controller = clone $this->getHostController();
+    $controller->setBaseUri(
+      sprintf("/campaigns/%d/contacts", $this->campaign->id())
+    );
+    return $contactsView->setHostController($controller);
   }
 }

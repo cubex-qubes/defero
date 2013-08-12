@@ -39,11 +39,11 @@ use Cubex\Facade\Session;
       </thead>
       <tbody>
         <?php foreach($this->contacts as $contact): ?>
-        <tr data-href="/contacts/<?= $contact->id() ?>"
+        <tr data-href="<?= $this->baseUri() ?>/<?= $contact->id() ?>"
             class="js-href"
             title="View <?= $contact->name ?>">
           <td>
-            <a href="/contacts/<?= $contact->id() ?>"
+            <a href="<?= $this->baseUri() ?>/<?= $contact->id() ?>"
                title="View <?= $contact->name ?>">
               #<?= $contact->id() ?>
             </a>
@@ -54,10 +54,10 @@ use Cubex\Facade\Session;
           <td><?= $contact->jobTitle ?></td>
           <td><?= $contact->language ?></td>
           <td>
-            <a href="/contacts/<?= $contact->id() ?>/edit"
+            <a href="<?= $this->baseUri() ?>/<?= $contact->id() ?>/edit"
                title="Edit <?= $contact->name ?>">
               <i class="icon-edit"></i></a>
-            <a href="/contacts/<?= $contact->id() ?>/delete"
+            <a href="<?= $this->baseUri() ?>/<?= $contact->id() ?>/delete"
                title="Delete <?= $contact->name ?>"
                class="js-popover"
                data-content="<?= $this->getDeletePopover($contact->id()) ?>"

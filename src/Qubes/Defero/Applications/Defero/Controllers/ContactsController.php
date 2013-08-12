@@ -151,11 +151,11 @@ class ContactsController extends BaseDeferoController
    *
    * @return ContactForm
    */
-  private function _buildContactForm($id = null)
+  protected function _buildContactForm($id = null)
   {
     $action = $id ? "/contacts/{$id}" : "/contacts";
 
-    return (new ContactForm("campaign", $action))
+    return (new ContactForm("contact", $action))
       ->bindMapper(new Contact($id));
   }
 
