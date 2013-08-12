@@ -126,7 +126,7 @@ class ProcessorsController extends BaseDeferoController
    *
    * @return ProcessorFormView
    */
-  private function _updateContact($id = null)
+  private function _updateProcessor($id = null)
   {
     $form = $this->_buildProcessorForm($id);
     $form->hydrate($this->request()->postVariables());
@@ -138,7 +138,7 @@ class ProcessorsController extends BaseDeferoController
       $msg = "Processor '{$form->name}'";
       $msg .= $id ? " Updated" : " Created";
 
-      Redirect::to("/processor/{$form->getMapper()->id()}")
+      Redirect::to("/processors/{$form->getMapper()->id()}")
         ->with("msg", new TransportMessage("info", $msg))
         ->now();
     }
@@ -156,7 +156,7 @@ class ProcessorsController extends BaseDeferoController
    */
   private function _buildProcessorForm($id = null)
   {
-    $action = $id ? "/processor/{$id}" : "/processor";
+    $action = $id ? "/processors/{$id}" : "/processors";
 
     return (new ProcessorForm("processor", $action))
       ->bindMapper(new MessageProcessor($id));
