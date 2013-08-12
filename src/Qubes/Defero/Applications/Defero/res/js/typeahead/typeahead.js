@@ -61,9 +61,3 @@
     }
   };
 })(jQuery, window);
-
-
-function typeaheadAll(query, process) {
-  var typeahead = new $.Typeahead("all", query);
-  return typeahead.getResults();
-}
