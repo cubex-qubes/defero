@@ -108,9 +108,7 @@ class ContactsController extends BaseDeferoController
   {
     $contacts = (new RecordCollection(new Contact()))->setOrderBy("id");
 
-    $pagination = new RecordCollectionPagination(
-      $contacts, $page
-    );
+    $pagination = new RecordCollectionPagination($contacts, $page);
     $pagination->setUri("/contacts/page");
 
     return new ContactsView($contacts, $pagination);

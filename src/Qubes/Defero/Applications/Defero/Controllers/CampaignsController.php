@@ -8,6 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\Form;
 use Cubex\Mapper\Database\RecordCollection;
+use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
@@ -80,12 +81,15 @@ class CampaignsController extends BaseDeferoController
    * Output a single campaign
    *
    * @param int $id
+   * @param int $page
    *
    * @return CampaignView
    */
-  public function renderShow($id)
+  public function renderShow($id, $page = 1)
   {
-    return new CampaignView(new Campaign($id));
+    $campaign = new Campaign($id);
+
+    return new CampaignView($campaign, $campaign->getContacts(), $page);
   }
 
   /**
@@ -164,6 +168,12 @@ class CampaignsController extends BaseDeferoController
 
   public function getRoutes()
   {
-    return ResourceTemplate::getRoutes();
+    $routes = ResourceTemplate::getRoutes();
+    $routes[] = (new StdRoute('/:id/page/:pnumber', 'show', ['ANY']))
+      ->excludeVerb('POST')
+      ->excludeVerb('DELETE')
+      ->excludeVerb('PUT');
+
+    return $routes;
   }
 }

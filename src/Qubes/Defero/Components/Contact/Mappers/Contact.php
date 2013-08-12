@@ -23,6 +23,10 @@ class Contact extends RecordMapper
   public $email;
   public $jobTitle;
   public $signature;
+  /**
+   * @length 2
+   */
+  public $language;
 
   protected function _configure()
   {
@@ -42,6 +46,10 @@ class Contact extends RecordMapper
 
     $this->_attribute('email')
       ->addValidator(Validator::VALIDATE_EMAIL)
+      ->setRequired(true);
+
+    $this->_attribute('language')
+      ->addValidator(Validator::VALIDATE_LENGTH, [2, 2])
       ->setRequired(true);
   }
 }

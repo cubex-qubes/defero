@@ -44,6 +44,14 @@ use Cubex\Facade\Session;
       <dd><?= $this->campaign->active ? "Yes" : "No" ?></dd>
       <dt>Description</dt>
       <dd><?= $this->campaign->description ?></dd>
+      <dt>Default Contact</dt>
+      <dd><?= $this->contacts[$this->campaign->contactId]->name ?></dd>
     </dl>
+  </div>
+  <div>
+    <h4>Contacts</h4>
+  </div>
+  <div>
+    <?= $this->contactsView ?>
   </div>
 </div>

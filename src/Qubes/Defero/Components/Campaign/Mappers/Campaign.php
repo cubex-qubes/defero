@@ -8,6 +8,7 @@ namespace Qubes\Defero\Components\Campaign\Mappers;
 
 use Cubex\Data\Validator\Validator;
 use Cubex\Helpers\Strings;
+use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Mapper\Database\RecordMapper;
 use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
@@ -86,9 +87,46 @@ class Campaign extends RecordMapper
     return new SendType();
   }
 
-  public function contact()
+  public function contacts()
   {
     return $this->belongsTo(new Contact());
+  }
+
+  /**
+   * @param string $language
+   *
+   * @return Contact
+   */
+  public function getContact($language)
+  {
+    $contact = CampaignContact::collection()->loadOneWhere(
+      [
+        "language"    => $language,
+        "campaign_id" => $this->id()
+      ]
+    );
+
+    if(!$contact)
+    {
+      $contact = new Contact($this->contactId);
+    }
+
+    return $contact;
+  }
+
+  /**
+   * @return RecordCollection
+   */
+  public function getContacts()
+  {
+    $contactIds = CampaignContact::collection(['campaign_id' => $this->id()])
+      ->getKeyPair("contact_id", "contact_id");
+
+    $contactIds[$this->contactId] = $this->contactId;
+
+    $contacts = Contact::collection()->loadIds($contactIds);
+
+    return $contacts;
   }
 
   public function getTitledType()

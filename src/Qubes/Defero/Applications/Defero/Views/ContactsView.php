@@ -21,19 +21,29 @@ class ContactsView extends DeferoView
 
   public $contactsSearch;
 
+  private $_tableOnly;
+
   public function __construct(
     RecordCollection $contacts,
-    RecordCollectionPagination $pagination
+    RecordCollectionPagination $pagination,
+    $tableOnly = false
   )
   {
     $pagination->setNumResultsPerPage($this->getResultsPerPage());
 
-    $this->pager = $pagination->getPager();
+    $this->pager     = $pagination->getPager();
     $this->pagerInfo = $pagination->getInfo();
-    $this->contacts = $pagination->getPaginatedResults();
+    $this->contacts  = $pagination->getPaginatedResults();
 
     $this->contactsSearch = new TypeaheadSearchFormView(
       TypeaheadEnum::CONTACTS(), "Search Contacts..."
     );
+
+    $this->_tableOnly = (bool)$tableOnly;
+  }
+
+  public function tableOnly()
+  {
+    return $this->_tableOnly;
   }
 }

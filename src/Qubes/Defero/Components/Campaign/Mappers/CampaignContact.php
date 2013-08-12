@@ -12,7 +12,7 @@ use Qubes\Defero\Components\Contact\Mappers\Contact;
  * Class CampaignContact
  * @package Qubes\Defero\Components\Campaign\Mappers
  *
- * @unique campaign_id,language,contact_id
+ * @unique campaign_id,language
  */
 class CampaignContact extends RecordMapper
 {
