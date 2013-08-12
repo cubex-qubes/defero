@@ -5,36 +5,19 @@ Defero.Typeahead = {
     campaigns:  "campaigns",
     processors: "processors"
   },
-  all:       function (query, process)
-  {
-    return (
-      new jQuery.DeferoTypeahead(
-        Defero.Typeahead.const.all, query
-      )
-      ).getResults();
+  all:       function (query, process) {
+    return this._deferoTypeahead(Defero.Typeahead.const.all, query);
   },
-  contacts:  function (query, process)
-  {
-    return (
-      new jQuery.DeferoTypeahead(
-        Defero.Typeahead.const.contacts, query
-      )
-      ).getResults();
+  contacts:  function (query, process) {
+    return this._deferoTypeahead(Defero.Typeahead.const.contacts, query);
   },
-  campaigns: function (query, process)
-  {
-    return (
-      new jQuery.DeferoTypeahead(
-        Defero.Typeahead.const.campaigns, query
-      )
-      ).getResults();
+  campaigns: function (query, process) {
+    return this._deferoTypeahead(Defero.Typeahead.const.campaigns, query);
   },
-  processors: function (query, process)
-  {
-    return (
-      new jQuery.DeferoTypeahead(
-        Defero.Typeahead.const.processors, query
-      )
-      ).getResults();
+  processors: function (query, process) {
+    return this._deferoTypeahead(Defero.Typeahead.const.processors, query);
+  },
+  _deferoTypeahead: function(type, query) {
+    return (new jQuery.DeferoTypeahead(type, query)).getResults();
   }
 };
