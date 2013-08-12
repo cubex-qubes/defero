@@ -41,6 +41,8 @@ class Campaign extends RecordMapper
 
   protected function _configure()
   {
+    $this->_dbServiceName = "defero_db";
+
     $this->_attribute('reference')
       ->addValidator(Validator::VALIDATE_SCALAR)
       ->setRequired(true);

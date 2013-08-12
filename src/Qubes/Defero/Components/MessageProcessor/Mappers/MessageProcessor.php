@@ -18,4 +18,9 @@ class MessageProcessor extends RecordMapper
    * @datatype TEXT
    */
   public $config;
+
+  protected function _configure()
+  {
+    $this->_dbServiceName = "defero_db";
+  }
 }

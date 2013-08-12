@@ -9,4 +9,8 @@ use Cubex\Mapper\Database\I18n\TextContainer;
 
 class Translatable extends TextContainer
 {
+  protected function _configure()
+  {
+    $this->_dbServiceName = "defero_db";
+  }
 }

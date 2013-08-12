@@ -20,6 +20,8 @@ class Message extends I18nRecordMapper
 
   protected function _configure()
   {
+    $this->_dbServiceName = "defero_db";
+
     $this->_addTranslationAttribute("subject");
     $this->_addTranslationAttribute("plainText");
     $this->_addTranslationAttribute("htmlContent");

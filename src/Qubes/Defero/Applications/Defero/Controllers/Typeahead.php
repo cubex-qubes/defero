@@ -6,6 +6,7 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Core\Controllers\BaseController;
+use Cubex\Facade\DB;
 use Cubex\Sprintf\ParseQuery;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
@@ -45,46 +46,55 @@ class Typeahead extends BaseController
 
   private function _getCampaigns($query)
   {
+    $campaignsSelect = $this->_getDisplayResultPattern("C", "name");
+
     return Campaign::collection()->whereLike("name", $query)
-      ->setColumns(["CONCAT(`name`, ' (C', `id`, ')') as `key`"])
+      ->setColumns([$campaignsSelect, "name"])
       ->orderByKeys(["key"])
+      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
       ->getFieldValues('key');
   }
 
   private function _getContacts($query)
   {
+    $contactSelect   = $this->_getDisplayResultPattern("c", "name");
+
     return Contact::collection()->whereLike("name", $query)
-      ->setColumns(["CONCAT(`name`, ' (c', `id`, ')') as `key`"])
-      ->orderByKeys(["key"])
+      ->setColumns([$contactSelect, "name"])
+      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
       ->getFieldValues('key');
   }
 
   private function _getAll($query)
   {
-    $results = Campaign::conn()->getRows(
-      ParseQuery::parse(
-        Campaign::conn(),
-        "SELECT %C FROM (
-        (SELECT CONCAT(%C, ' (c', %C, ')') as %C FROM %T WHERE %C LIKE %~)
+    $contactSelect   = $this->_getDisplayResultPattern("c", "name");
+    $campaignsSelect = $this->_getDisplayResultPattern("C", "name");
+
+    $orderQueryData = $this->_getOrderByPattern($query, "name", true);
+    $orderQuery     = array_shift($orderQueryData);
+
+    $queryData = [
+      "SELECT %C FROM (
+        (SELECT {$contactSelect}, %C FROM %T WHERE %C LIKE %~)
         UNION ALL
-        (SELECT CONCAT(%C, ' (C', %C, ')') as %C FROM %T WHERE %C LIKE %~)
-        ) %T ORDER BY %C",
-        "key",
-        "name",
-        "id",
-        "key",
-        Contact::tableName(),
-        "name",
-        $query,
-        "name",
-        "id",
-        "key",
-        Campaign::tableName(),
-        "name",
-        $query,
-        "temp",
-        "key"
-      )
+        (SELECT {$campaignsSelect}, %C FROM %T WHERE %C LIKE %~)
+        ) %T ORDER BY {$orderQuery}",
+      "key",
+      "name",
+      Contact::tableName(),
+      "name",
+      $query,
+      "name",
+      Campaign::tableName(),
+      "name",
+      $query,
+      "temp"
+    ];
+
+    $queryData = array_merge($queryData, $orderQueryData);
+
+    $results = $this->_getDeferoDb()->getRows(
+      ParseQuery::parse($this->_getDeferoDb(), $queryData)
     );
 
     return ppull($results, "key");
@@ -106,6 +116,53 @@ class Typeahead extends BaseController
   private function _sortResults($value, array $list)
   {
     return $list;
+  }
+
+  private function _getDisplayResultPattern(
+    $prefix, $columnFrom, $columnTo = "key", $id = "id"
+  )
+  {
+    return ParseQuery::parse(
+      $this->_getDeferoDb(),
+      "CONCAT('{$prefix}', %C, ' ', %C) as %C",
+      $id,
+      $columnFrom,
+      $columnTo
+    );
+  }
+
+  private function _getOrderByPattern($query, $compare, $unParsed = false)
+  {
+    $queryData = [
+      "CASE
+      WHEN %C LIKE %> THEN 1
+      WHEN %C LIKE %~ THEN 2
+      WHEN %C LIKE %> THEN 3
+      WHEN %C LIKE %~ THEN 4
+      ELSE 5 END,
+      %C",
+      $compare,
+      "{$query} ",
+      $compare,
+      " {$query} ",
+      $compare,
+      $query,
+      $compare,
+      $query,
+      $compare,
+    ];
+
+    if($unParsed)
+    {
+      return $queryData;
+    }
+
+    return ParseQuery::parse($this->_getDeferoDb(), $queryData);
+  }
+
+  private function _getDeferoDb()
+  {
+    return DB::getAccessor("defero_db");
   }
 
   public function getRoutes()

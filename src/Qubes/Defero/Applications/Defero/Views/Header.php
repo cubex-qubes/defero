@@ -10,6 +10,7 @@ use Cubex\View\ViewModel;
 use Qubes\Bootstrap\Dropdown;
 use Qubes\Bootstrap\Nav;
 use Qubes\Bootstrap\NavItem;
+use Qubes\Defero\Applications\Defero\Enums\TypeaheadEnum;
 
 class Header extends ViewModel
 {
@@ -57,20 +58,7 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
-    $searchForm = (new HtmlElement(
-      "form",
-      ["class" => "navbar-search pull-right"]
-    ))->nestElement(
-        "input",
-        [
-          "id"           => "nav-search",
-          "type"         => "text",
-          "class"        => "search-query",
-          "placeholder"  => "Search...",
-          "autocomplete" => "off",
-          "data-provide" => "typeahead",
-        ]
-      );
+    $searchForm = new TypeaheadSearchFormView(TypeaheadEnum::ALL());
 
     return (new HtmlElement("span", ["class" => "brand"], "Defero")) .
       $nav . $searchForm;

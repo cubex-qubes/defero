@@ -23,6 +23,11 @@ class CampaignContact extends RecordMapper
   public $language;
   public $contactId;
 
+  protected function _configure()
+  {
+    $this->_dbServiceName = "defero_db";
+  }
+
   /**
    * @return Campaign
    */

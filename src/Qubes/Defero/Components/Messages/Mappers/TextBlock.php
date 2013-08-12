@@ -13,6 +13,11 @@ class TextBlock extends I18nRecordMapper
   public $text;
   public $messageId;
 
+  protected function _configure()
+  {
+    $this->_dbServiceName = "defero_db";
+  }
+
   /**
    * @return TextContainer
    */
