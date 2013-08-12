@@ -12,10 +12,23 @@ use Qubes\Defero\Applications\Defero\Enums\TypeaheadEnum;
 class TypeaheadSearchFormView extends ViewModel
 {
   private $_typeaheadEnum;
+  private $_placeholder;
+  private $_navbarSearch = false;
 
-  public function __construct(TypeaheadEnum $typeaheadEnum = null)
+  public function __construct(
+    TypeaheadEnum $typeaheadEnum = null,
+    $placeholder = "Search..."
+  )
   {
     $this->_typeaheadEnum = $typeaheadEnum ? : TypeaheadEnum::ALL();
+    $this->_placeholder   = $placeholder;
+  }
+
+  public function setNavbarSearch($navbarSearch = true)
+  {
+    $this->_navbarSearch = (bool)$navbarSearch;
+
+    return $this;
   }
 
   public function render()
@@ -36,21 +49,22 @@ class TypeaheadSearchFormView extends ViewModel
         break;
     }
 
+    $searchFromClass = $this->_navbarSearch ? "navbar-search" : "form-search";
+
     $searchForm = (new HtmlElement(
       "form",
       [
-        "class"  => "navbar-search pull-right",
+        "class"  => $searchFromClass,
         "action" => "/search",
         "method" => "post",
       ]
     ))->nestElement(
         "input",
         [
-          "id"           => "nav-search",
           "type"         => "text",
           "name"         => "q",
           "class"        => "search-query {$jsTriggerClass}",
-          "placeholder"  => "Search...",
+          "placeholder"  => $this->_placeholder,
           "autocomplete" => "off",
         ]
       );

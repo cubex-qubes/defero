@@ -13,10 +13,13 @@ use Cubex\Facade\Session;
     <?= Session::getFlash('msg')->message ?>
   </div>
   <?php endif; ?>
-  <div class="text-right">
-    <a href="/campaigns/new" class="btn btn-primary btn-small">
-      New Campaign
-    </a>
+  <div>
+    <div class="pull-right">
+      <a href="/campaigns/new" class="btn btn-primary btn-small">
+        New Campaign
+      </a>
+    </div>
+    <?= $this->campaignsSearch ?>
   </div>
   <div>
     <table class="table table-striped table-bordered">

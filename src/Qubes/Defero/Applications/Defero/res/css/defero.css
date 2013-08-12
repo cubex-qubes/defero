@@ -3,3 +3,7 @@
   text-indent: 40px;
   width: 206px;
 }
+
+.navbar-search {
+  float: right;
+}

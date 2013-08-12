@@ -58,7 +58,8 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
-    $searchForm = new TypeaheadSearchFormView(TypeaheadEnum::ALL());
+    $searchForm = (new TypeaheadSearchFormView(TypeaheadEnum::ALL()))
+      ->setNavbarSearch();
 
     return (new HtmlElement("span", ["class" => "brand"], "Defero")) .
       $nav . $searchForm;
