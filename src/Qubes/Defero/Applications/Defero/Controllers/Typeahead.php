@@ -59,7 +59,7 @@ class Typeahead extends BaseController
     return Campaign::collection()->whereLike("name", $query)
       ->setColumns([$campaignsSelect, "name"])
       ->orderByKeys(["key"])
-      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
+      ->setOrderByQuery("name")
       ->getFieldValues('key');
   }
 
@@ -70,7 +70,7 @@ class Typeahead extends BaseController
     return MessageProcessor::collection()->whereLike("name", $query)
       ->setColumns([$processorsSelect, "name"])
       ->orderByKeys(["key"])
-      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
+      ->setOrderByQuery("name")
       ->getFieldValues('key');
   }
 
@@ -80,7 +80,7 @@ class Typeahead extends BaseController
 
     return Contact::collection()->whereLike("name", $query)
       ->setColumns([$contactSelect, "name"])
-      ->setOrderByQuery($this->_getOrderByPattern($query, "name"))
+      ->setOrderByQuery("name")
       ->getFieldValues('key');
   }
 
@@ -90,9 +90,6 @@ class Typeahead extends BaseController
     $campaignsSelect  = $this->_getDisplayResultPattern("C", "name");
     $processorsSelect = $this->_getDisplayResultPattern("P", "name");
 
-    $orderQueryData = $this->_getOrderByPattern($query, "name", true);
-    $orderQuery     = array_shift($orderQueryData);
-
     $queryData = [
       "SELECT %C FROM (
         (SELECT {$contactSelect}, %C FROM %T WHERE %C LIKE %~)
@@ -100,7 +97,7 @@ class Typeahead extends BaseController
         (SELECT {$campaignsSelect}, %C FROM %T WHERE %C LIKE %~)
         UNION ALL
         (SELECT {$processorsSelect}, %C FROM %T WHERE %C LIKE %~)
-        ) %T ORDER BY {$orderQuery}",
+        ) %T ORDER BY %C",
       "key",
       "name",
       Contact::tableName(),
@@ -114,10 +111,9 @@ class Typeahead extends BaseController
       MessageProcessor::tableName(),
       "name",
       $query,
-      "temp"
+      "temp",
+      "name"
     ];
-
-    $queryData = array_merge($queryData, $orderQueryData);
 
     $results = $this->_getDeferoDb()->getRows(
       ParseQuery::parse($this->_getDeferoDb(), $queryData)
@@ -150,40 +146,11 @@ class Typeahead extends BaseController
   {
     return ParseQuery::parse(
       $this->_getDeferoDb(),
-      "CONCAT('{$prefix}', %C, ' ', %C) as %C",
-      $id,
+      "CONCAT(%C, ': ', '{$prefix}', %C) as %C",
       $columnFrom,
+      $id,
       $columnTo
     );
-  }
-
-  private function _getOrderByPattern($query, $compare, $unParsed = false)
-  {
-    $queryData = [
-      "CASE
-      WHEN %C LIKE %> THEN 1
-      WHEN %C LIKE %~ THEN 2
-      WHEN %C LIKE %> THEN 3
-      WHEN %C LIKE %~ THEN 4
-      ELSE 5 END,
-      %C",
-      $compare,
-      "{$query} ",
-      $compare,
-      " {$query} ",
-      $compare,
-      $query,
-      $compare,
-      $query,
-      $compare,
-    ];
-
-    if($unParsed)
-    {
-      return $queryData;
-    }
-
-    return ParseQuery::parse($this->_getDeferoDb(), $queryData);
   }
 
   private function _getDeferoDb()
