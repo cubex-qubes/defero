@@ -6,6 +6,8 @@ jQuery(document).ready(function() {
   (function($) {
 
     // All js triggers should be added here.
+
+    // Defero Triggers
     $(".js-defero-typeahead-all").typeahead({source: Defero.Typeahead.all});
     $(".js-defero-typeahead-contacts").typeahead(
       {source: Defero.Typeahead.contacts}
@@ -17,6 +19,18 @@ jQuery(document).ready(function() {
       {source: Defero.Typeahead.processors}
     );
 
+    /**
+     * HREF helper. Allow redirecting without an anchor tag.
+     *
+     * @handle js-href
+     * @data-href
+     */
+    $(document).on("click", ".js-href", function() {
+      var href = $(this).data("href");
+      if(href !== undefined) {
+        window.location = href;
+      }
+    });
+
   })(jQuery);
 });
-

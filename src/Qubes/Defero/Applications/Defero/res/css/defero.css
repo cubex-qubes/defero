@@ -20,3 +20,7 @@
 .navbar .navbar-search .search-query:focus {
   width: 206px;
 }
+
+.table-hover.table-href tbody tr:hover {
+  cursor: pointer;
+}

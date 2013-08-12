@@ -22,7 +22,7 @@ use Cubex\Facade\Session;
     <?= $this->processorsSearch ?>
   </div>
   <div>
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered table-hover table-href">
       <caption><?= $this->pagerInfo ?></caption>
       <thead>
         <tr>
@@ -33,7 +33,9 @@ use Cubex\Facade\Session;
       </thead>
       <tbody>
         <?php foreach($this->processors as $processor): ?>
-        <tr>
+        <tr data-href="/processors/<?= $processor->id() ?>"
+            class="js-href"
+            title="View <?= $processor->name ?>">
           <td>
             <a href="/processors/<?= $processor->id() ?>"
                title="View <?= $processor->name ?>">

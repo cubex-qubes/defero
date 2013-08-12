@@ -22,7 +22,7 @@ use Cubex\Facade\Session;
     <?= $this->contactsSearch ?>
   </div>
   <div>
-    <table class="table table-striped table-bordered">
+    <table class="table table-striped table-bordered table-hover table-href">
       <caption><?= $this->pagerInfo ?></caption>
       <thead>
         <tr>
@@ -36,7 +36,9 @@ use Cubex\Facade\Session;
       </thead>
       <tbody>
         <?php foreach($this->contacts as $contact): ?>
-        <tr>
+        <tr data-href="/contacts/<?= $contact->id() ?>"
+            class="js-href"
+            title="View <?= $contact->name ?>">
           <td>
             <a href="/contacts/<?= $contact->id() ?>"
                title="View <?= $contact->name ?>">

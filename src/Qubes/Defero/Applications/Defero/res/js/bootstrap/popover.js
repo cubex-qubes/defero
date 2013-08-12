@@ -41,6 +41,7 @@ jQuery(document).ready(function() {
     $(document).on('click', '.js-popover', function(e) {
       bsUtilPreventDefault(e, $(this));
       $(this).popover('show');
+      e.stopPropagation();
     });
 
     /**
@@ -51,6 +52,7 @@ jQuery(document).ready(function() {
     $(document).on('click', '.js-popover-hide', function(e) {
       bsUtilPreventDefault(e, $(this));
       $('.js-popover').popover('hide');
+      e.stopPropagation();
     });
   })(jQuery);
 });
