@@ -23,7 +23,7 @@ class CampaignView extends DeferoView
    */
   public $contacts;
 
-  public $contactsView;
+  private $_contactsPagination;
 
   public function __construct(
     Campaign $campaign, RecordCollection $contacts, $page
@@ -34,14 +34,12 @@ class CampaignView extends DeferoView
 
     $pagination = new RecordCollectionPagination($contacts, $page);
     $pagination->setUri(sprintf("/campaigns/%d/page", $campaign->id()));
-
-    $this->contactsView = new ContactsView($contacts, $pagination, true);
+    $this->_contactsPagination = $pagination;
   }
 
-  public function render()
+  public function getContactsView()
   {
-    $this->contactsView->setHostController($this->getHostController());
-
-    return parent::render();
+    return (new ContactsView($this->contacts, $this->_contactsPagination, true))
+      ->setHostController($this->getHostController());
   }
 }
