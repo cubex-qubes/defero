@@ -13,6 +13,13 @@ use Qubes\Bootstrap\NavItem;
 
 class Header extends ViewModel
 {
+  public function __construct()
+  {
+    $this->requireJs('defero');
+    $this->requireJsPackage('typeahead');
+    parent::__construct();
+  }
+
   public function render()
   {
     // Drop down links
@@ -50,8 +57,6 @@ class Header extends ViewModel
       )
     )->addItem($dropDownNavItem);
 
-    $this->requireJs('typeahead/typeahead');
-    $this->requireJs('defero');
     $searchForm = (new HtmlElement(
       "form",
       ["class" => "navbar-search pull-right"]

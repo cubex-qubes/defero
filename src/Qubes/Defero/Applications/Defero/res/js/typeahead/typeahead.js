@@ -2,15 +2,15 @@
 
   "use strict";
 
-  $.Typeahead = function(action, query) {
+  $.DeferoTypeahead = function(action, query) {
     this._action = action;
     this._query = query;
     this._run();
   };
 
-  $.Typeahead.Cache = {};
+  $.DeferoTypeahead.Cache = {};
 
-  $.Typeahead.prototype = {
+  $.DeferoTypeahead.prototype = {
 
     _action: null,
     _query: null,
@@ -44,11 +44,11 @@
     },
 
     _getFromCache: function() {
-      return $.Typeahead.Cache[this._action + this._query];
+      return $.DeferoTypeahead.Cache[this._action + this._query];
     },
 
     _storeInCache: function(results) {
-      $.Typeahead.Cache[this._action + this._query] = results;
+      $.DeferoTypeahead.Cache[this._action + this._query] = results;
     },
 
     getResults: function() {
