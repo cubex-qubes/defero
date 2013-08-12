@@ -39,13 +39,16 @@ class TypeaheadSearchFormView extends ViewModel
     {
       case TypeaheadEnum::CONTACTS:
         $jsTriggerClass .= "contacts";
+        $searchType = "contacts";
         break;
       case TypeaheadEnum::CAMPAIGNS:
         $jsTriggerClass .= "campaigns";
+        $searchType = "campaigns";
         break;
       case TypeaheadEnum::ALL:
       default:
         $jsTriggerClass .= "all";
+        $searchType = "all";
         break;
     }
 
@@ -67,6 +70,9 @@ class TypeaheadSearchFormView extends ViewModel
           "placeholder"  => $this->_placeholder,
           "autocomplete" => "off",
         ]
+      )->nestElement(
+        "input",
+        ["type"  => "hidden", "name"  => "type", "value" => $searchType, ]
       );
 
     return $searchForm;
