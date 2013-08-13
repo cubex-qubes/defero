@@ -39,8 +39,7 @@ jQuery(document).ready(function() {
      * @data-prevent-default bool
      */
     $(document).on('click', '.js-popover', function(e) {
-      bsUtilPreventDefault(e, $(this));
-      $(this).popover('show');
+      $(this).bsUtilPreventDefault(e).popover('show');
       e.stopPropagation();
     });
 
@@ -50,8 +49,7 @@ jQuery(document).ready(function() {
      * @data-prevent-default bool
      */
     $(document).on('click', '.js-popover-hide', function(e) {
-      bsUtilPreventDefault(e, $(this));
-      $('.js-popover').popover('hide');
+      $('.js-popover').bsUtilPreventDefault(e).popover('hide');
       e.stopPropagation();
     });
   })(jQuery);

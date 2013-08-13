@@ -20,8 +20,7 @@ jQuery(document).ready(function() {
      * @data-prevent-default bool
      */
     $(document).on('click', '.js-btn-loading', function(e) {
-      bsUtilPreventDefault(e, $(this));
-      $(this).button('loading');
+      $(this).bsUtilPreventDefault(e).button('loading');
     });
 
     /**
