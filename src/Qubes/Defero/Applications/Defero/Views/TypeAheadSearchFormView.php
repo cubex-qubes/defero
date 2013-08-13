@@ -7,20 +7,20 @@ namespace Qubes\Defero\Applications\Defero\Views;
 
 use Cubex\View\HtmlElement;
 use Cubex\View\ViewModel;
-use Qubes\Defero\Applications\Defero\Enums\TypeaheadEnum;
+use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
 
-class TypeaheadSearchFormView extends ViewModel
+class TypeAheadSearchFormView extends ViewModel
 {
-  private $_typeaheadEnum;
+  private $_typeAheadEnum;
   private $_placeholder;
   private $_navbarSearch = false;
 
   public function __construct(
-    TypeaheadEnum $typeaheadEnum = null,
+    TypeAheadEnum $typeAheadEnum = null,
     $placeholder = "Search..."
   )
   {
-    $this->_typeaheadEnum = $typeaheadEnum ? : TypeaheadEnum::ALL();
+    $this->_typeAheadEnum = $typeAheadEnum ? : TypeAheadEnum::ALL();
     $this->_placeholder   = $placeholder;
   }
 
@@ -35,21 +35,21 @@ class TypeaheadSearchFormView extends ViewModel
   {
     $jsTriggerClass = "js-defero-typeahead-";
 
-    switch((string)$this->_typeaheadEnum)
+    switch((string)$this->_typeAheadEnum)
     {
-      case TypeaheadEnum::CONTACTS:
+      case TypeAheadEnum::CONTACTS:
         $jsTriggerClass .= "contacts";
         $searchType = "contacts";
         break;
-      case TypeaheadEnum::CAMPAIGNS:
+      case TypeAheadEnum::CAMPAIGNS:
         $jsTriggerClass .= "campaigns";
         $searchType = "campaigns";
         break;
-      case TypeaheadEnum::PROCESSORS:
+      case TypeAheadEnum::PROCESSORS:
         $jsTriggerClass .= "processors";
         $searchType = "processors";
         break;
-      case TypeaheadEnum::ALL:
+      case TypeAheadEnum::ALL:
       default:
         $jsTriggerClass .= "all";
         $searchType = "all";

@@ -7,7 +7,7 @@ namespace Qubes\Defero\Applications\Defero\Views;
 
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\View\HtmlElement;
-use Qubes\Defero\Applications\Defero\Enums\TypeaheadEnum;
+use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
@@ -33,8 +33,8 @@ class CampaignsView extends DeferoView
     $this->pagerInfo = $pagination->getInfo();
     $this->campaigns = $pagination->getPaginatedResults();
 
-    $this->campaignsSearch = new TypeaheadSearchFormView(
-      TypeaheadEnum::CAMPAIGNS(), "Search Campaigns..."
+    $this->campaignsSearch = new TypeAheadSearchFormView(
+      TypeAheadEnum::CAMPAIGNS(), "Search Campaigns..."
     );
   }
 }

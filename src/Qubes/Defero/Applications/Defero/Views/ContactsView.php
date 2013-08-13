@@ -6,7 +6,7 @@
 namespace Qubes\Defero\Applications\Defero\Views;
 
 use Cubex\Mapper\Database\RecordCollection;
-use Qubes\Defero\Applications\Defero\Enums\TypeaheadEnum;
+use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 
@@ -35,8 +35,8 @@ class ContactsView extends DeferoView
     $this->pagerInfo = $pagination->getInfo();
     $this->contacts  = $pagination->getPaginatedResults();
 
-    $this->contactsSearch = new TypeaheadSearchFormView(
-      TypeaheadEnum::CONTACTS(), "Search Contacts..."
+    $this->contactsSearch = new TypeAheadSearchFormView(
+      TypeAheadEnum::CONTACTS(), "Search Contacts..."
     );
 
     $this->_tableOnly = (bool)$tableOnly;

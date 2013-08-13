@@ -8,7 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Enums;
 use Cubex\Type\Enum;
 
 /**
- * Class TypeaheadEnum
+ * Class TypeAheadEnum
  * @package Qubes\Defero\Applications\Defero\Enums
  *
  * @method static ALL
@@ -16,7 +16,7 @@ use Cubex\Type\Enum;
  * @method static CAMPAIGNS
  * @method static PROCESSORS
  */
-class TypeaheadEnum extends Enum
+class TypeAheadEnum extends Enum
 {
   const __default  = self::ALL;
   const ALL        = "all";
