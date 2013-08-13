@@ -17,6 +17,10 @@ jQuery(document).ready(function() {
     $(".js-defero-typeahead-processors").typeahead(
       {source: Defero.TypeAhead.processors, updater: Defero.TypeAhead.update});
 
+    $(document).on("blur", ".navbar-search .search-query", function() {
+      $(this).val("");
+    });
+
     /**
      * HREF helper. Allow redirecting without an anchor tag.
      *

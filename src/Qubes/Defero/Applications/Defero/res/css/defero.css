@@ -10,15 +10,23 @@
 
 .navbar .navbar-search .search-query {
   width: 52px;
-  -webkit-transition: width 750ms, background-color 750ms;
-  -moz-transition: width 750ms, background-color 750ms;
-  -ms-transition: width 750ms, background-color 750ms;
-  -o-transition: width 750ms, background-color 750ms;
-  transition: width 750ms, background-color 750ms;
+  background-color: transparent;
+  border: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  cursor: pointer;
+  padding: 0;
+  -webkit-transition: all 750ms;
+  -moz-transition: all 750ms;
+  -ms-transition: all 750ms;
+  -o-transition: all 750ms;
+  transition: all 750ms;
 }
 
 .navbar .navbar-search .search-query:focus {
   width: 206px;
+  cursor: text;
 }
 
 .table-hover.table-href tbody tr:hover {
