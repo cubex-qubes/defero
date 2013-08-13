@@ -63,7 +63,7 @@ class TypeAheadSearchFormView extends ViewModel
       [
         "class"  => $searchFromClass,
         "action" => "/search",
-        "method" => "post",
+        "method" => "get",
       ]
     ))->nestElement(
         "input",

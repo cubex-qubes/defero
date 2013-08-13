@@ -23,5 +23,10 @@ Defero.TypeAhead = {
   },
   _deferoTypeAhead: function(type, query) {
     return (new jQuery.DeferoTypeAhead(type, query)).getResults();
+  },
+  update: function(item) {
+    this.$element[0].value = item;
+    this.$element[0].form.submit();
+    return item;
   }
 };

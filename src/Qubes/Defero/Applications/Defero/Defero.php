@@ -38,7 +38,8 @@ class Defero extends Application
       "/processors/(.*)"                 => "Processors",
       "/processors/rules/(.*)"           => "Rules",
       "/processors/processes/(.*)"       => "Processes",
-      "/typeahead/(.*)"                  => "Typeahead",
+      "/typeahead/(.*)"                  => "TypeAhead",
+      "/search/(.*)"                     => "Search",
     ];
   }
 }

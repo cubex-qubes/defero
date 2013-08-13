@@ -9,13 +9,13 @@ jQuery(document).ready(function() {
 
     // Defero Triggers
     $(".js-defero-typeahead-all").typeahead(
-      {source: Defero.TypeAhead.all});
+      {source: Defero.TypeAhead.all, updater: Defero.TypeAhead.update});
     $(".js-defero-typeahead-contacts").typeahead(
-      {source: Defero.TypeAhead.contacts});
+      {source: Defero.TypeAhead.contacts, updater: Defero.TypeAhead.update});
     $(".js-defero-typeahead-campaigns").typeahead(
-      {source: Defero.TypeAhead.campaigns});
+      {source: Defero.TypeAhead.campaigns, updater: Defero.TypeAhead.update});
     $(".js-defero-typeahead-processors").typeahead(
-      {source: Defero.TypeAhead.processors});
+      {source: Defero.TypeAhead.processors, updater: Defero.TypeAhead.update});
 
     /**
      * HREF helper. Allow redirecting without an anchor tag.
