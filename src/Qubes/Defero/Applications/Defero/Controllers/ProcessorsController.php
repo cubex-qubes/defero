@@ -138,9 +138,8 @@ class ProcessorsController extends BaseDeferoController
       $msg = "Processor '{$form->name}'";
       $msg .= $id ? " Updated" : " Created";
 
-      Redirect::to("/processors/{$form->getMapper()->id()}")
-        ->with("msg", new TransportMessage("info", $msg))
-        ->now();
+      return Redirect::to("/processors/{$form->getMapper()->id()}")
+        ->with("msg", new TransportMessage("info", $msg));
     }
 
     return $this->renderEdit($id, $form);

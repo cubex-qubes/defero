@@ -16,8 +16,8 @@ class Header extends ViewModel
 {
   public function __construct()
   {
-    $this->requireJs('defero');
     $this->requireJsPackage('typeahead');
+
     parent::__construct();
   }
 
@@ -60,7 +60,7 @@ class Header extends ViewModel
 
     // Global typeahead search
     $searchForm = (new TypeAheadSearchFormView(TypeAheadEnum::ALL()))
-      ->setNavbarSearch();
+      ->setNavBarSearch();
 
     return (new HtmlElement("span", ["class" => "brand"], "Defero")) .
       $nav . $searchForm;

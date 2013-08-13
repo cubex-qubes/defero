@@ -12,9 +12,9 @@
 
   $.DeferoTypeAhead.prototype = {
 
-    _action: null,
-    _query: null,
-    _results: [],
+    _action:   null,
+    _query:    null,
+    _results:  [],
     _callback: null,
 
     _run: function() {
@@ -27,16 +27,16 @@
     },
 
     _call: function() {
-      var result = [];
+      var results = [];
 
       $.ajax(
         "/typeahead/" + this._action + "/?q=" + this._query,
         {"async": false, "dataType": "json"}
       ).done(function(data) {
-        result = data;
+        results = data;
       });
 
-      return result;
+      return results;
     },
 
     _inCache: function() {
@@ -51,6 +51,7 @@
       $.DeferoTypeAhead.Cache[this._action + this._query] = results;
     },
 
+    // Public methods
     getResults: function() {
       return this._results;
     },

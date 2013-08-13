@@ -3,21 +3,19 @@
 var Defero = {};
 
 jQuery(document).ready(function() {
-  (function($) {
+  (function($, window, undefined) {
 
     // All js triggers should be added here.
 
     // Defero Triggers
-    $(".js-defero-typeahead-all").typeahead({source: Defero.TypeAhead.all});
+    $(".js-defero-typeahead-all").typeahead(
+      {source: Defero.TypeAhead.all});
     $(".js-defero-typeahead-contacts").typeahead(
-      {source: Defero.TypeAhead.contacts}
-    );
+      {source: Defero.TypeAhead.contacts});
     $(".js-defero-typeahead-campaigns").typeahead(
-      {source: Defero.TypeAhead.campaigns}
-    );
+      {source: Defero.TypeAhead.campaigns});
     $(".js-defero-typeahead-processors").typeahead(
-      {source: Defero.TypeAhead.processors}
-    );
+      {source: Defero.TypeAhead.processors});
 
     /**
      * HREF helper. Allow redirecting without an anchor tag.
@@ -32,5 +30,5 @@ jQuery(document).ready(function() {
       }
     });
 
-  })(jQuery);
+  })(jQuery, window);
 });

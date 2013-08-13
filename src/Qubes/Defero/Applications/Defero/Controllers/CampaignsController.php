@@ -142,9 +142,8 @@ class CampaignsController extends BaseDeferoController
       $msg = "Campaign '{$form->name}'";
       $msg .= $id ? " Updated" : " Created";
 
-      Redirect::to("/campaigns/{$form->getMapper()->id()}")
-        ->with("msg", new TransportMessage("info", $msg))
-        ->now();
+      return Redirect::to("/campaigns/{$form->getMapper()->id()}")
+        ->with("msg", new TransportMessage("info", $msg));
     }
 
     return $this->renderEdit($id, $form);

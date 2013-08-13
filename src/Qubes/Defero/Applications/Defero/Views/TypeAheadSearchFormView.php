@@ -13,7 +13,7 @@ class TypeAheadSearchFormView extends ViewModel
 {
   private $_typeAheadEnum;
   private $_placeholder;
-  private $_navbarSearch = false;
+  private $_navBarSearch = false;
 
   public function __construct(
     TypeAheadEnum $typeAheadEnum = null,
@@ -24,9 +24,9 @@ class TypeAheadSearchFormView extends ViewModel
     $this->_placeholder   = $placeholder;
   }
 
-  public function setNavbarSearch($navbarSearch = true)
+  public function setNavBarSearch($navBarSearch = true)
   {
-    $this->_navbarSearch = (bool)$navbarSearch;
+    $this->_navBarSearch = (bool)$navBarSearch;
 
     return $this;
   }
@@ -56,7 +56,7 @@ class TypeAheadSearchFormView extends ViewModel
         break;
     }
 
-    $searchFromClass = $this->_navbarSearch ? "navbar-search" : "form-search";
+    $searchFromClass = $this->_navBarSearch ? "navbar-search" : "form-search";
 
     $searchForm = (new HtmlElement(
       "form",
@@ -76,7 +76,7 @@ class TypeAheadSearchFormView extends ViewModel
         ]
       )->nestElement(
         "input",
-        ["type"  => "hidden", "name"  => "type", "value" => $searchType, ]
+        ["type"  => "hidden", "name"  => "type", "value" => $searchType,]
       );
 
     return $searchForm;

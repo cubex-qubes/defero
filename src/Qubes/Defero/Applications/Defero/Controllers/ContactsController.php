@@ -135,9 +135,8 @@ class ContactsController extends BaseDeferoController
       $msg = "Contact '{$form->name}'";
       $msg .= $id ? " Updated" : " Created";
 
-      Redirect::to("/contacts/{$form->getMapper()->id()}")
-        ->with("msg", new TransportMessage("info", $msg))
-        ->now();
+      return Redirect::to("/contacts/{$form->getMapper()->id()}")
+        ->with("msg", new TransportMessage("info", $msg));
     }
 
     return $this->renderEdit($id, $form);

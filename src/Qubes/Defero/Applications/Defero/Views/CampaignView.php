@@ -26,7 +26,9 @@ class CampaignView extends DeferoView
   private $_contactsPagination;
 
   public function __construct(
-    Campaign $campaign, RecordCollection $contacts, $page
+    Campaign $campaign,
+    RecordCollection $contacts,
+    $page
   )
   {
     $this->campaign = $campaign;
@@ -40,12 +42,15 @@ class CampaignView extends DeferoView
   public function getContactsView()
   {
     $contactsView = new ContactsView(
-      $this->contacts, $this->_contactsPagination, true
+      $this->contacts,
+      $this->_contactsPagination,
+      true
     );
     $controller = clone $this->getHostController();
     $controller->setBaseUri(
       sprintf("/campaigns/%d/contacts", $this->campaign->id())
     );
+
     return $contactsView->setHostController($controller);
   }
 }

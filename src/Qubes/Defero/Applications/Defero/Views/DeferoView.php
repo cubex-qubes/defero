@@ -20,6 +20,7 @@ class DeferoView extends TemplatedViewModel
   public function setResultsPerPage($perPage)
   {
     $this->_resultsPerPage = (int)$perPage;
+
     return $this;
   }
 

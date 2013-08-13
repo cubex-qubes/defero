@@ -35,6 +35,7 @@ class ContactsView extends DeferoView
     $this->pagerInfo = $pagination->getInfo();
     $this->contacts  = $pagination->getPaginatedResults();
 
+    $this->requireJsPackage("typeahead");
     $this->contactsSearch = new TypeAheadSearchFormView(
       TypeAheadEnum::CONTACTS(), "Search Contacts..."
     );

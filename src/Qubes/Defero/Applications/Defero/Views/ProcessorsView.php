@@ -14,7 +14,9 @@ use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 class ProcessorsView extends DeferoView
 {
   public $pager;
+
   public $pagerInfo;
+
   /**
    * @var MessageProcessor[]
    */
@@ -33,6 +35,7 @@ class ProcessorsView extends DeferoView
     $this->pagerInfo  = $pagination->getInfo();
     $this->processors = $pagination->getPaginatedResults();
 
+    $this->requireJsPackage("typeahead");
     $this->processorsSearch = new TypeAheadSearchFormView(
       TypeAheadEnum::PROCESSORS(), "Search Processors..."
     );

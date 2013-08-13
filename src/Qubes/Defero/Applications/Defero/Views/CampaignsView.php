@@ -14,7 +14,9 @@ use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 class CampaignsView extends DeferoView
 {
   public $pager;
+
   public $pagerInfo;
+
   /**
    * @var Campaign[]
    */
@@ -33,6 +35,7 @@ class CampaignsView extends DeferoView
     $this->pagerInfo = $pagination->getInfo();
     $this->campaigns = $pagination->getPaginatedResults();
 
+    $this->requireJsPackage("typeahead");
     $this->campaignsSearch = new TypeAheadSearchFormView(
       TypeAheadEnum::CAMPAIGNS(), "Search Campaigns..."
     );
