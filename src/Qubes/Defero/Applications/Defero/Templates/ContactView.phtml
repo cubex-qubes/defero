@@ -7,12 +7,6 @@
 use Cubex\Facade\Session;
 ?>
 <div class="wrappedContent">
-  <?php if(Session::getFlash('msg')): ?>
-    <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-      <?= Session::getFlash('msg')->message ?>
-    </div>
-  <?php endif; ?>
   <div class="pull-right btn-group">
     <a href="/contacts/<?= $this->contact->id() ?>/edit"
        title="Edit <?= $this->contact->name ?>"

@@ -4,15 +4,8 @@
  *
  * @var $this \Qubes\Defero\Applications\Defero\Views\ProcessorsView
  */
-use Cubex\Facade\Session;
 ?>
 <div class="wrappedContent">
-  <?php if(Session::getFlash('msg')): ?>
-  <div class="alert alert-<?= Session::getFlash('msg')->type ?>">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <?= Session::getFlash('msg')->message ?>
-  </div>
-  <?php endif; ?>
   <div>
     <div class="pull-right">
       <a href="/processors/new" class="btn btn-primary btn-small">
