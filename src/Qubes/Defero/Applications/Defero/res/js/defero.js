@@ -8,15 +8,15 @@ jQuery(document).ready(function() {
     // All js triggers should be added here.
 
     // Defero Triggers
-    $(".js-defero-typeahead-all").typeahead({source: Defero.Typeahead.all});
+    $(".js-defero-typeahead-all").typeahead({source: Defero.TypeAhead.all});
     $(".js-defero-typeahead-contacts").typeahead(
-      {source: Defero.Typeahead.contacts}
+      {source: Defero.TypeAhead.contacts}
     );
     $(".js-defero-typeahead-campaigns").typeahead(
-      {source: Defero.Typeahead.campaigns}
+      {source: Defero.TypeAhead.campaigns}
     );
     $(".js-defero-typeahead-processors").typeahead(
-      {source: Defero.Typeahead.processors}
+      {source: Defero.TypeAhead.processors}
     );
 
     /**

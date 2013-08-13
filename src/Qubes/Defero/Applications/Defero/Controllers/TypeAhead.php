@@ -12,7 +12,7 @@ use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 
-class Typeahead extends BaseController
+class TypeAhead extends BaseController
 {
   public function canProcess()
   {
