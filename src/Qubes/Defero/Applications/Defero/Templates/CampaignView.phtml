@@ -36,7 +36,7 @@
       <dt>Active</dt>
       <dd><?= $this->campaign->active ? "Yes" : "No" ?></dd>
       <dt>Description</dt>
-      <dd><?= $this->campaign->description ?></dd>
+      <dd><?= $this->campaign->description ? : "<em>Not Set</em>" ?></dd>
       <dt>Default Contact</dt>
       <dd><?= $this->contacts[$this->campaign->contactId]->name ?></dd>
     </dl>
