@@ -62,8 +62,12 @@ class Header extends ViewModel
     $searchForm = (new TypeAheadSearchFormView(TypeAheadEnum::ALL()))
       ->setNavBarSearch();
 
-    return (new HtmlElement("span", ["class" => "brand"], "Defero")) .
-      $nav . $searchForm;
+    // Logo or brand
+    $brand = new HtmlElement(
+      "a", ["class" => "brand", "href" => "/"], "Defero"
+    );
+
+    return $brand . $nav . $searchForm;
   }
 
   protected function _getNavItemState($startsWith)
