@@ -12,7 +12,7 @@ use Qubes\Bootstrap\Nav;
 use Qubes\Bootstrap\NavItem;
 use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
 
-class Header extends ViewModel
+class HeaderView extends ViewModel
 {
   public function __construct()
   {
@@ -47,6 +47,13 @@ class Header extends ViewModel
     // Main nav
     $nav = new Nav(Nav::NAV_DEFAULT);
     $nav->addItem(
+      new NavItem(
+        new HtmlElement(
+          "a", ["href" => "/wizard"], "<strong>**Wizard**</strong>"
+        ),
+        $this->_getNavItemState("/wizard")
+      )
+    )->addItem(
       new NavItem(
         new HtmlElement("a", ["href" => "/campaigns"], "Campaigns"),
         $this->_getNavItemState("/campaigns")

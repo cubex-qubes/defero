@@ -11,7 +11,7 @@ use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 
-class Search extends BaseDeferoController
+class SearchController extends BaseDeferoController
 {
   public function canProcess()
   {

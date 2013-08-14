@@ -9,7 +9,7 @@ use Cubex\Facade\Session;
 use Cubex\View\HtmlElement;
 use Cubex\View\ViewModel;
 
-class PageFlash extends ViewModel
+class PageFlashView extends ViewModel
 {
   public function render()
   {
