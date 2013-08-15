@@ -40,6 +40,7 @@ class Defero extends Application
       "/processors/processes/(.*)"       => "Processes",
       "/typeahead/(.*)"                  => "TypeAhead",
       "/search/(.*)"                     => "Search",
+      "/wizard/(.*)"                     => "Wizard",
     ];
   }
 }
