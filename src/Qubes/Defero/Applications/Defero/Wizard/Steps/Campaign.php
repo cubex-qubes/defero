@@ -17,6 +17,16 @@ use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
 class Campaign implements IWizardStep
 {
+  public function getName()
+  {
+    return "Campaign Step";
+  }
+
+  public function getDescription()
+  {
+    return "Add a new or select an existsing campaign to configure.";
+  }
+
   /**
    * @return array
    */

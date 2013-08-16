@@ -13,6 +13,16 @@ use Cubex\Foundation\IRenderable;
 interface IWizardStep
 {
   /**
+   * @return string
+   */
+  public function getName();
+
+  /**
+   * @return string
+   */
+  public function getDescription();
+
+  /**
    * These are all the routes that should be associated with this step. If there
    * are conflicts with other steps it's first come first server.
    *

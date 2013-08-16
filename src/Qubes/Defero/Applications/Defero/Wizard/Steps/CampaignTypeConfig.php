@@ -15,6 +15,16 @@ use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
 class CampaignTypeConfig implements IWizardStep
 {
+  public function getName()
+  {
+    return "Campaign Type Configuration Step";
+  }
+
+  public function getDescription()
+  {
+    return "Select the correct configuration type for the current campaign.";
+  }
+
   /**
    * @return array
    */

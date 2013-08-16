@@ -5,7 +5,10 @@
 
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
+use Cubex\Core\Http\Redirect;
 use Cubex\Routing\StdRoute;
+use Cubex\View\RenderGroup;
+use Qubes\Defero\Applications\Defero\Views\Wizard\StepsInfo;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
 use Qubes\Defero\Applications\Defero\Wizard\WizardStepIterator;
 
@@ -52,12 +55,19 @@ class WizardController extends BaseDeferoController
 
   public function actionRun(IWizardStep $step)
   {
-    return $step->process(
+    $return = $step->process(
       $this->_request,
       $this->_response,
       $this->_wizardIterator,
       $this
     );
+
+    if(! $return instanceof Redirect)
+    {
+      $return = new RenderGroup(new StepsInfo($this->_wizardIterator), $return);
+    }
+
+    return $return;
   }
 
   public function renderIndex()

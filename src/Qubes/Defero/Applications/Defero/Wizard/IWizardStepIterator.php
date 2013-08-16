@@ -21,4 +21,9 @@ interface IWizardStepIterator extends \Iterator
    * @return IWizardStep|null
    */
   public function getNextStep();
+
+  /**
+   * @return IWizardStep|null
+   */
+  public function getCurrentStep();
 }

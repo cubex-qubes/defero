@@ -29,6 +29,15 @@ class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
   {
     $this->next();
 
+    return $this->getCurrentStep();
+  }
+
+  /**
+   * @return null|IWizardStep
+   */
+  public function getCurrentStep()
+  {
+
     if($this->valid() && $this->current() instanceof IWizardStep)
     {
       return $this->current();
