@@ -12,6 +12,7 @@ use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Facade\Redirect;
 use Cubex\Foundation\IRenderable;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
+use Qubes\Defero\Applications\Defero\Helpers\WizardHelper;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign as CampaignMapper;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
@@ -83,7 +84,7 @@ class Campaign implements IWizardStep
     IController $controller
   )
   {
-    $form = $this->_buildCampaignForm($controller->baseUri());
+    $form = $this->_buildCampaignForm($controller->baseUri(), $request);
     $form->hydrate($request->postVariables());
 
     if($form->isValid() && $form->csrfCheck(true))
@@ -94,10 +95,11 @@ class Campaign implements IWizardStep
       $id  = $form->getMapper()->id();
 
       $uri = sprintf(
-        "%s%s?campaign_id=%d",
+        "%s%s?campaign_id=%d&%s",
         $controller->baseUri(),
         $steps->getNextStep()->getBaseUri(),
-        $id
+        $id,
+        WizardHelper::getGetRequestString($request, ["campaign_id"])
       );
 
       return Redirect::to($uri)->with(
@@ -124,19 +126,25 @@ class Campaign implements IWizardStep
   )
   {
     return new CampaignFormView(
-      $this->_buildCampaignForm($controller->baseUri())
+      $this->_buildCampaignForm($controller->baseUri(), $request)
     );
   }
 
   /**
-   * @param $baseUri
+   * @param string  $baseUri
+   * @param Request $request
    *
    * @return CampaignForm
    */
-  private function _buildCampaignForm($baseUri)
+  private function _buildCampaignForm($baseUri, Request $request)
   {
     return CampaignMapper::buildCampaignForm(
-      sprintf("%s%s", $baseUri, $this->getBaseUri())
+      sprintf(
+        "%s%s?%s",
+        $baseUri,
+        $this->getBaseUri(),
+        WizardHelper::getGetRequestString($request)
+      )
     );
   }
 }
