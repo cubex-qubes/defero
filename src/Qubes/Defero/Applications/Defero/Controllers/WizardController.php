@@ -55,6 +55,14 @@ class WizardController extends BaseDeferoController
 
   public function actionRun(IWizardStep $step)
   {
+    foreach($this->_wizardIterator as $wizardStep)
+    {
+      if($wizardStep === $step)
+      {
+        break;
+      }
+    }
+
     $return = $step->process(
       $this->_request,
       $this->_response,
