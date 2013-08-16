@@ -10,36 +10,23 @@ use Cubex\Core\Http\Request;
 use Cubex\Core\Http\Response;
 use Cubex\Foundation\IRenderable;
 use Cubex\View\Impart;
-use Qubes\Defero\Applications\Defero\Wizard\IWizardObserver;
-use Qubes\Defero\Applications\Defero\Wizard\IWizardSubject;
-use SplSubject;
+use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
+use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
-class CampaignTypeConfig implements IWizardObserver
+class CampaignTypeConfig implements IWizardStep
 {
   /**
-   * @param SplSubject $subject
-   *
-   * @return void
+   * @return array
    */
-  public function update(SplSubject $subject)
+  public function getRoutePatterns()
   {
-    if($subject instanceof IWizardSubject)
-    {
-    }
+    return ["/campaign-type-config/(.*)",];
   }
 
   /**
    * @return string
    */
-  public function getRoute()
-  {
-    return "/campaign-type-config/(.*)";
-  }
-
-  /**
-   * @return string
-   */
-  public function getBaseRoute()
+  public function getBaseRoutePattern()
   {
     return "/campaign-type-config";
   }
@@ -47,7 +34,7 @@ class CampaignTypeConfig implements IWizardObserver
   /**
    * @param Request        $request
    * @param Response       $response
-   * @param IWizardSubject $subject
+   * @param IWizardStepIterator $subject
    * @param IController    $controller
    *
    * @return IRenderable
@@ -55,7 +42,7 @@ class CampaignTypeConfig implements IWizardObserver
   public function process(
     Request $request,
     Response $response,
-    IWizardSubject $subject,
+    IWizardStepIterator $subject,
     IController $controller
   )
   {

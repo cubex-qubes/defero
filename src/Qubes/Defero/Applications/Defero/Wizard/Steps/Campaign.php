@@ -11,36 +11,23 @@ use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Facade\Redirect;
 use Cubex\Foundation\IRenderable;
-use Qubes\Defero\Applications\Defero\Wizard\IWizardObserver;
-use Qubes\Defero\Applications\Defero\Wizard\IWizardSubject;
-use SplSubject;
+use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
+use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
-class Campaign implements IWizardObserver
+class Campaign implements IWizardStep
 {
   /**
-   * @param SplSubject $subject
-   *
-   * @return void
+   * @return array
    */
-  public function update(SplSubject $subject)
+  public function getRoutePatterns()
   {
-    if($subject instanceof IWizardSubject)
-    {
-    }
+    return ["/campaign/(.*)",];
   }
 
   /**
    * @return string
    */
-  public function getRoute()
-  {
-    return "/campaign/(.*)";
-  }
-
-  /**
-   * @return string
-   */
-  public function getBaseRoute()
+  public function getBaseRoutePattern()
   {
     return "/campaign";
   }
@@ -48,7 +35,7 @@ class Campaign implements IWizardObserver
   /**
    * @param Request        $request
    * @param Response       $response
-   * @param IWizardSubject $subject
+   * @param IWizardStepIterator $subject
    * @param IController    $controller
    *
    * @return IRenderable
@@ -56,16 +43,16 @@ class Campaign implements IWizardObserver
   public function process(
     Request $request,
     Response $response,
-    IWizardSubject $subject,
+    IWizardStepIterator $subject,
     IController $controller
   )
   {
     $nextStep  = $subject->getNextStep($this);
     $nextRoute = $controller->baseUri();
 
-    if($nextStep instanceof IWizardObserver)
+    if($nextStep instanceof IWizardStep)
     {
-      $nextRoute .= $nextStep->getBaseRoute();
+      $nextRoute .= $nextStep->getBaseRoutePattern();
     }
 
     return Redirect::to($nextRoute)->with(

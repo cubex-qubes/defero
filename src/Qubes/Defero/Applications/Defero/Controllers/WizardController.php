@@ -6,17 +6,17 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Routing\StdRoute;
-use Qubes\Defero\Applications\Defero\Wizard\IWizardObserver;
-use Qubes\Defero\Applications\Defero\Wizard\WizardSubject;
+use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
+use Qubes\Defero\Applications\Defero\Wizard\WizardStepIterator;
 
 class WizardController extends BaseDeferoController
 {
-  private $_wizardSubject;
-  private $_routes;
+  private $_wizardIterator;
+  private $_routes = [];
 
   public function preProcess()
   {
-    $this->_wizardSubject = new WizardSubject();
+    $this->_wizardIterator = new WizardStepIterator();
 
     $wizardConfig = $this->getConfig()->get("wizard");
     if($wizardConfig === null)
@@ -37,22 +37,25 @@ class WizardController extends BaseDeferoController
     foreach($steps as $step)
     {
       $stepObject = new $step;
-      if($stepObject instanceof IWizardObserver)
+      if($stepObject instanceof IWizardStep)
       {
-        $this->_wizardSubject->attach($stepObject);
-        $this->_routes[] = (new StdRoute(
-          $stepObject->getRoute(), "run"
-        ))->addRouteData("step", $stepObject);
+        $this->_wizardIterator->addStep($stepObject);
+
+        foreach($stepObject->getRoutePatterns() as $routePattern)
+        {
+          $this->_routes[] = (new StdRoute($routePattern, "run"))
+            ->addRouteData("step", $stepObject);
+        }
       }
     }
   }
 
-  public function actionRun(IWizardObserver $step)
+  public function actionRun(IWizardStep $step)
   {
     return $step->process(
       $this->_request,
       $this->_response,
-      $this->_wizardSubject,
+      $this->_wizardIterator,
       $this
     );
   }
