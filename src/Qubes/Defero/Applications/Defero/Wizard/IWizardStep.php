@@ -23,6 +23,18 @@ interface IWizardStep
   public function getDescription();
 
   /**
+   * If the process has request data dependencies use this method to ensure
+   * they're available. If they're not, return false.
+   *
+   * @param array $get
+   * @param array $post
+   * @param array $routedData
+   *
+   * @return bool
+   */
+  public function canProcess(array $get, array $post, array $routedData);
+
+  /**
    * These are all the routes that should be associated with this step. If there
    * are conflicts with other steps it's first come first server.
    *

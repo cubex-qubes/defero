@@ -15,6 +15,26 @@ use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
 class CampaignTypeConfig implements IWizardStep
 {
+  /**
+   * If the process has request data dependencies use this method to ensure
+   * they're available. If they're not, return false.
+   *
+   * @param array $get
+   * @param array $post
+   * @param array $routedData
+   *
+   * @return bool
+   */
+  public function canProcess(array $get, array $post, array $routedData)
+  {
+    if(!array_key_exists("campaign_id", $get))
+    {
+      return false;
+    }
+
+    return true;
+  }
+
   public function getName()
   {
     return "Configure Campaign Type";

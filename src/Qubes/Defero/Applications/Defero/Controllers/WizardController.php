@@ -8,6 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Core\Http\Redirect;
 use Cubex\Routing\StdRoute;
 use Cubex\View\RenderGroup;
+use Cubex\View\Templates\Errors\Error404;
 use Qubes\Defero\Applications\Defero\Views\Wizard\StepsInfo;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
 use Qubes\Defero\Applications\Defero\Wizard\WizardStepIterator;
@@ -55,6 +56,17 @@ class WizardController extends BaseDeferoController
 
   public function actionRun(IWizardStep $step)
   {
+    $canProcess = $step->canProcess(
+      $this->_request->getVariables(),
+      $this->_request->postVariables(),
+      $this->_request->getData()
+    );
+
+    if(! $canProcess)
+    {
+      return new Error404();
+    }
+
     foreach($this->_wizardIterator as $wizardStep)
     {
       if($wizardStep === $step)
