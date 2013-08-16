@@ -32,17 +32,17 @@ class CampaignTypeConfig implements IWizardStep
   }
 
   /**
-   * @param Request        $request
-   * @param Response       $response
-   * @param IWizardStepIterator $subject
-   * @param IController    $controller
+   * @param Request             $request
+   * @param Response            $response
+   * @param IWizardStepIterator $steps
+   * @param IController         $controller
    *
    * @return IRenderable
    */
   public function process(
     Request $request,
     Response $response,
-    IWizardStepIterator $subject,
+    IWizardStepIterator $steps,
     IController $controller
   )
   {

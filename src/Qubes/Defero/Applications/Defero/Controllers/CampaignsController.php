@@ -161,8 +161,7 @@ class CampaignsController extends BaseDeferoController
   {
     $action = $id ? "/campaigns/{$id}" : "/campaigns";
 
-    return (new CampaignForm("campaign", $action))
-      ->bindMapper(new Campaign($id));
+    return Campaign::buildCampaignForm($action, $id);
   }
 
   public function getRoutes()

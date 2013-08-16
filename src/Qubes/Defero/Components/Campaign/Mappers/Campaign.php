@@ -10,6 +10,7 @@ use Cubex\Data\Validator\Validator;
 use Cubex\Helpers\Strings;
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Mapper\Database\RecordMapper;
+use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
@@ -141,5 +142,21 @@ class Campaign extends RecordMapper
     return Strings::titleize(
       $this->sendTypes()->constFromValue((string)$this->sendType)
     );
+  }
+
+
+  /**
+   * Instantiates the form and binds the mapper. Also sets up the action based
+   * on an id existing or not.
+   *
+   * @param string   $action
+   * @param null|int $id
+   *
+   * @return CampaignForm
+   */
+  public static function buildCampaignForm($action, $id = null)
+  {
+    return (new CampaignForm("campaign", $action))
+      ->bindMapper(new Campaign($id));
   }
 }
