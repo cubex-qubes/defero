@@ -81,7 +81,12 @@ class Campaign implements IWizardStep
     IController $controller
   )
   {
-    return Redirect::to($steps->getNextStep()->getBaseRoutePattern())->with(
+    $uri = sprintf(
+      "%s%s",
+      $controller->baseUri(), $steps->getNextStep()->getBaseRoutePattern()
+    );
+
+    return Redirect::to($uri)->with(
       "msg",
       new TransportMessage("info", "You got redirect after sending some post!")
     );
