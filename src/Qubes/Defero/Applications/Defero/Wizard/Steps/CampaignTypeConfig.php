@@ -17,7 +17,7 @@ class CampaignTypeConfig implements IWizardStep
 {
   public function getName()
   {
-    return "Campaign Type Configuration Step";
+    return "Configure Campaign Type";
   }
 
   public function getDescription()

@@ -19,7 +19,7 @@ class Campaign implements IWizardStep
 {
   public function getName()
   {
-    return "Campaign Step";
+    return "Add Campaign";
   }
 
   public function getDescription()
