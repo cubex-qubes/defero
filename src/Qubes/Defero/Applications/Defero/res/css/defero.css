@@ -32,3 +32,21 @@
 .table-hover.table-href tbody tr:hover {
   cursor: pointer;
 }
+
+.breadcrumb {
+  background-color: #f5f5f5;
+  width: auto;
+}
+
+.breadcrumb > li {
+  color: #777;
+}
+
+.breadcrumb > li.active {
+  color: #4F5C51;
+  font-weight: 600;
+}
+
+.breadcrumb > li.active > span.divider {
+  font-weight: 100;
+}
