@@ -31,7 +31,7 @@ interface IWizardStep
   public function getRoutePatterns();
 
   /**
-   * The base route is usually the simplest route defined in your
+   * The base uri is usually the simplest route defined in your
    * `getRoutePatterns()` method. This should have no matching parts, just a
    * URI, e.g;
    *
@@ -44,15 +44,17 @@ interface IWizardStep
    * );
    * ```
    *
-   * Then getBaseRoutePattern would return;
+   * Then getBaseUri would return;
    *
    * ```
    * return "/campaign";
    * ```
    *
+   * NOTE: the script redirects directly to this URI
+   *
    * @return string
    */
-  public function getBaseRoutePattern();
+  public function getBaseUri();
 
   /**
    * @param Request             $request

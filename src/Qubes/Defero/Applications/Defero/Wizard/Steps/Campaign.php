@@ -38,7 +38,7 @@ class Campaign implements IWizardStep
   /**
    * @return string
    */
-  public function getBaseRoutePattern()
+  public function getBaseUri()
   {
     return "/campaign";
   }
@@ -83,7 +83,7 @@ class Campaign implements IWizardStep
   {
     $uri = sprintf(
       "%s%s",
-      $controller->baseUri(), $steps->getNextStep()->getBaseRoutePattern()
+      $controller->baseUri(), $steps->getNextStep()->getBaseUri()
     );
 
     return Redirect::to($uri)->with(
@@ -109,7 +109,7 @@ class Campaign implements IWizardStep
   {
     return new CampaignFormView(
       \Qubes\Defero\Components\Campaign\Mappers\Campaign::buildCampaignForm(
-        sprintf("%s%s", $controller->baseUri(), $this->getBaseRoutePattern())
+        sprintf("%s%s", $controller->baseUri(), $this->getBaseUri())
       )
     );
   }

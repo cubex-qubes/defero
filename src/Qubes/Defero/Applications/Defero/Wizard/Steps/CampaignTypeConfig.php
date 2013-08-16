@@ -36,7 +36,7 @@ class CampaignTypeConfig implements IWizardStep
   /**
    * @return string
    */
-  public function getBaseRoutePattern()
+  public function getBaseUri()
   {
     return "/campaign-type-config";
   }

@@ -34,7 +34,7 @@ class StepsInfo extends ViewModel
     foreach($this->_steps->getArrayCopy() as $stepKey => $step)
     {
       $active = $stepKey === $this->_steps->key() ? "active" : "";
-      
+
       /**
        * @var IWizardStep $step
        */
