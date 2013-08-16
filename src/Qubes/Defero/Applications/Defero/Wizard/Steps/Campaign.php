@@ -11,7 +11,9 @@ use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Facade\Redirect;
 use Cubex\Foundation\IRenderable;
+use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
+use Qubes\Defero\Components\Campaign\Mappers\Campaign as CampaignMapper;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
@@ -81,15 +83,29 @@ class Campaign implements IWizardStep
     IController $controller
   )
   {
-    $uri = sprintf(
-      "%s%s",
-      $controller->baseUri(), $steps->getNextStep()->getBaseUri()
-    );
+    $form = $this->_buildCampaignForm($controller->baseUri());
+    $form->hydrate($request->postVariables());
 
-    return Redirect::to($uri)->with(
-      "msg",
-      new TransportMessage("info", "You got redirect after sending some post!")
-    );
+    if($form->isValid() && $form->csrfCheck(true))
+    {
+      $form->saveChanges();
+
+      $msg = sprintf("Campaign '%s' Created", $form->name);
+      $id  = $form->getMapper()->id();
+
+      $uri = sprintf(
+        "%s%s?campaign_id=%d",
+        $controller->baseUri(),
+        $steps->getNextStep()->getBaseUri(),
+        $id
+      );
+
+      return Redirect::to($uri)->with(
+        "msg", new TransportMessage("info", $msg)
+      );
+    }
+
+    return new CampaignFormView($form);
   }
 
   /**
@@ -108,9 +124,19 @@ class Campaign implements IWizardStep
   )
   {
     return new CampaignFormView(
-      \Qubes\Defero\Components\Campaign\Mappers\Campaign::buildCampaignForm(
-        sprintf("%s%s", $controller->baseUri(), $this->getBaseUri())
-      )
+      $this->_buildCampaignForm($controller->baseUri())
+    );
+  }
+
+  /**
+   * @param $baseUri
+   *
+   * @return CampaignForm
+   */
+  private function _buildCampaignForm($baseUri)
+  {
+    return CampaignMapper::buildCampaignForm(
+      sprintf("%s%s", $baseUri, $this->getBaseUri())
     );
   }
 }
