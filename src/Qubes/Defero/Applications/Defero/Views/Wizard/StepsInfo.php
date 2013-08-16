@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Views\Wizard;
 
+use Cubex\Foundation\IRenderable;
 use Cubex\View\HtmlElement;
 use Cubex\View\RenderGroup;
 use Cubex\View\ViewModel;
@@ -24,6 +25,21 @@ class StepsInfo extends ViewModel
   }
 
   public function render()
+  {
+
+    return new RenderGroup(
+      $this->_buildBreadcrumb(),
+      new HtmlElement("h3", [], $this->_steps->getCurrentStep()->getName()),
+      new HtmlElement(
+        "p", [], $this->_steps->getCurrentStep()->getDescription()
+      )
+    );
+  }
+
+  /**
+   * @return IRenderable
+   */
+  private function _buildBreadcrumb()
   {
     $breadcrumb = new HtmlElement("ul", ["class" => "breadcrumb"]);
 
@@ -45,12 +61,6 @@ class StepsInfo extends ViewModel
       );
     }
 
-    return new RenderGroup(
-      $breadcrumb,
-      new HtmlElement("h3", [], $this->_steps->getCurrentStep()->getName()),
-      new HtmlElement(
-        "p", [], $this->_steps->getCurrentStep()->getDescription()
-      )
-    );
+    return $breadcrumb;
   }
 }
