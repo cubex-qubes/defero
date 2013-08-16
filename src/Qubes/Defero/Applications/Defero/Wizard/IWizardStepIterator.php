@@ -5,7 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Wizard;
 
-interface IWizardStepIterator extends \Iterator
+interface IWizardStepIterator
 {
   /**
    * @param IWizardStep $step

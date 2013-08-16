@@ -5,9 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Wizard;
 
-use Qubes\Defero\Pattern\Iterator\AbstractIterator;
-
-class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
+class WizardStepIterator extends \ArrayIterator implements IWizardStepIterator
 {
   /**
    * @param IWizardStep $step
@@ -16,7 +14,7 @@ class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
    */
   public function addStep(IWizardStep $step)
   {
-    $this->_array[] = $step;
+    $this->append($step);
   }
 
   /**
@@ -29,9 +27,9 @@ class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
   {
     $nextKey = $this->key() + 1;
 
-    if(isset($this->_array[$nextKey]))
+    if($this->offsetExists($nextKey))
     {
-      return $this->_array[$nextKey];
+      return $this->offsetGet($nextKey);
     }
 
     return null;
