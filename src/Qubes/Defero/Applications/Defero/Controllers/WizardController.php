@@ -15,7 +15,14 @@ use Qubes\Defero\Applications\Defero\Wizard\WizardStepIterator;
 
 class WizardController extends BaseDeferoController
 {
+  /**
+   * @var WizardStepIterator $_wizardIterator
+   */
   private $_wizardIterator;
+
+  /**
+   * @var IWizardStep[]
+   */
   private $_routes = [];
 
   public function preProcess()
@@ -64,7 +71,15 @@ class WizardController extends BaseDeferoController
 
     if(! $canProcess)
     {
-      return new Error404();
+      $this->_wizardIterator->rewind();
+
+      return \Cubex\Facade\Redirect::to(
+        sprintf(
+          "%s%s",
+          $this->baseUri(),
+          $this->_wizardIterator->getCurrentStep()->getBaseUri()
+        )
+      );
     }
 
     foreach($this->_wizardIterator as $wizardStep)
