@@ -6,8 +6,8 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Core\Controllers\WebpageController;
-use Qubes\Defero\Applications\Defero\Views\HeaderView;
-use Qubes\Defero\Applications\Defero\Views\PageFlashView;
+use Qubes\Defero\Applications\Defero\Views\Base\HeaderView;
+use Qubes\Defero\Applications\Defero\Views\Base\PageFlashView;
 
 abstract class BaseDeferoController extends WebpageController
 {

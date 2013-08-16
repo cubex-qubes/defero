@@ -3,7 +3,7 @@
  * @author gareth.evans
  */
 
-namespace Qubes\Defero\Applications\Defero\Views;
+namespace Qubes\Defero\Applications\Defero\Views\Base;
 
 use Cubex\View\HtmlElement;
 use Cubex\View\ViewModel;
@@ -11,6 +11,7 @@ use Qubes\Bootstrap\Dropdown;
 use Qubes\Bootstrap\Nav;
 use Qubes\Bootstrap\NavItem;
 use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
+use Qubes\Defero\Applications\Defero\Views\Base\TypeAheadSearchFormView;
 
 class HeaderView extends ViewModel
 {

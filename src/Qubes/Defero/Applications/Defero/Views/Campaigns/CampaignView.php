@@ -3,11 +3,13 @@
  * @author gareth.evans
  */
 
-namespace Qubes\Defero\Applications\Defero\Views;
+namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\View\HtmlElement;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
+use Qubes\Defero\Applications\Defero\Views\Contacts\ContactsView;
+use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 

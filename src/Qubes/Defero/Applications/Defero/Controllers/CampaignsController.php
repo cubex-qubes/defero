@@ -13,9 +13,9 @@ use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
-use Qubes\Defero\Applications\Defero\Views\CampaignsView;
-use Qubes\Defero\Applications\Defero\Views\CampaignFormView;
-use Qubes\Defero\Applications\Defero\Views\CampaignView;
+use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView;
+use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
+use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsController extends BaseDeferoController
@@ -36,7 +36,7 @@ class CampaignsController extends BaseDeferoController
    * @param int          $id
    * @param CampaignForm $campaignForm
    *
-   * @return CampaignFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
    */
   public function renderEdit($id, CampaignForm $campaignForm = null)
   {
@@ -50,7 +50,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return CampaignFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
    */
   public function actionUpdate($id)
   {
@@ -83,7 +83,7 @@ class CampaignsController extends BaseDeferoController
    * @param int $id
    * @param int $page
    *
-   * @return CampaignView
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
    */
   public function renderShow($id, $page = 1)
   {
@@ -95,7 +95,7 @@ class CampaignsController extends BaseDeferoController
   /**
    * Create a new campaign
    *
-   * @return CampaignFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
    */
   public function postCreate()
   {
@@ -107,7 +107,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @param int $page
    *
-   * @return CampaignsView
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView
    */
   public function renderIndex($page = 1)
   {

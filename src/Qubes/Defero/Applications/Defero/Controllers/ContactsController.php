@@ -11,9 +11,9 @@ use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Qubes\Defero\Applications\Defero\Forms\ContactForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
-use Qubes\Defero\Applications\Defero\Views\ContactFormView;
-use Qubes\Defero\Applications\Defero\Views\ContactsView;
-use Qubes\Defero\Applications\Defero\Views\ContactView;
+use Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView;
+use Qubes\Defero\Applications\Defero\Views\Contacts\ContactsView;
+use Qubes\Defero\Applications\Defero\Views\Contacts\ContactView;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 
 class ContactsController extends BaseDeferoController
@@ -21,7 +21,7 @@ class ContactsController extends BaseDeferoController
   /**
    * Show a blank contact form
    *
-   * @return ContactFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView
    */
   public function renderNew()
   {
@@ -34,7 +34,7 @@ class ContactsController extends BaseDeferoController
    * @param int          $id
    * @param ContactForm $contactForm
    *
-   * @return ContactFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView
    */
   public function renderEdit($id, ContactForm $contactForm = null)
   {
@@ -48,7 +48,7 @@ class ContactsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return ContactFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView
    */
   public function actionUpdate($id)
   {
@@ -90,7 +90,7 @@ class ContactsController extends BaseDeferoController
   /**
    * Create a new contact
    *
-   * @return ContactFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView
    */
   public function postCreate()
   {
@@ -102,7 +102,7 @@ class ContactsController extends BaseDeferoController
    *
    * @param int $page
    *
-   * @return ContactsView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactsView
    */
   public function renderIndex($page = 1)
   {
@@ -121,7 +121,7 @@ class ContactsController extends BaseDeferoController
    *
    * @param null|int $id
    *
-   * @return ContactFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Contacts\ContactFormView
    */
   private function _updateContact($id = null)
   {

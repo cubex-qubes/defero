@@ -3,12 +3,14 @@
  * @author gareth.evans
  */
 
-namespace Qubes\Defero\Applications\Defero\Views;
+namespace Qubes\Defero\Applications\Defero\Views\Processors;
 
 use Cubex\Mapper\Database\RecordCollection;
 use Cubex\View\HtmlElement;
 use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
+use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
+use Qubes\Defero\Applications\Defero\Views\Base\TypeAheadSearchFormView;
 use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 
 class ProcessorsView extends DeferoView

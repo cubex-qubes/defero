@@ -11,9 +11,9 @@ use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Qubes\Defero\Applications\Defero\Forms\ProcessorForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
-use Qubes\Defero\Applications\Defero\Views\ProcessorFormView;
-use Qubes\Defero\Applications\Defero\Views\ProcessorsView;
-use Qubes\Defero\Applications\Defero\Views\ProcessorView;
+use Qubes\Defero\Applications\Defero\Views\Processors\ProcessorFormView;
+use Qubes\Defero\Applications\Defero\Views\Processors\ProcessorsView;
+use Qubes\Defero\Applications\Defero\Views\Processors\ProcessorView;
 use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
 
 class ProcessorsController extends BaseDeferoController
@@ -21,7 +21,7 @@ class ProcessorsController extends BaseDeferoController
   /**
    * Show a blank processor form
    *
-   * @return ProcessorFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Processors\ProcessorFormView
    */
   public function renderNew()
   {
@@ -48,7 +48,7 @@ class ProcessorsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return ProcessorFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Processors\ProcessorFormView
    */
   public function actionUpdate($id)
   {
@@ -80,7 +80,7 @@ class ProcessorsController extends BaseDeferoController
    *
    * @param int $id
    *
-   * @return ProcessorView
+   * @return \Qubes\Defero\Applications\Defero\Views\Processors\ProcessorView
    */
   public function renderShow($id)
   {
@@ -90,7 +90,7 @@ class ProcessorsController extends BaseDeferoController
   /**
    * Create a new processor
    *
-   * @return ProcessorFormView
+   * @return \Qubes\Defero\Applications\Defero\Views\Processors\ProcessorFormView
    */
   public function postCreate()
   {
@@ -102,7 +102,7 @@ class ProcessorsController extends BaseDeferoController
    *
    * @param int $page
    *
-   * @return ProcessorsView
+   * @return \Qubes\Defero\Applications\Defero\Views\Processors\ProcessorsView
    */
   public function renderIndex($page = 1)
   {

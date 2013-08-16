@@ -3,7 +3,7 @@
  * @author gareth.evans
  */
 
-namespace Qubes\Defero\Applications\Defero\Views;
+namespace Qubes\Defero\Applications\Defero\Views\Base;
 
 use Cubex\Facade\Session;
 use Cubex\View\HtmlElement;

@@ -11,7 +11,7 @@ use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Facade\Redirect;
 use Cubex\Foundation\IRenderable;
-use Qubes\Defero\Applications\Defero\Views\CampaignFormView;
+use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
