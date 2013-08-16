@@ -15,12 +15,20 @@ interface IWizardStepIterator extends \Iterator
   public function addStep(IWizardStep $step);
 
   /**
+   * Checks that the next key exists and returns the step. If the key does not
+   * exist we return null.
+   *
+   * @return IWizardStep|null
+   */
+  public function getNextStep();
+
+  /**
    * Moves the pointer forward, checks that the key exists and returns the step.
    * If the key does not exist we return null.
    *
    * @return IWizardStep|null
    */
-  public function getNextStep();
+  public function getNextStepAndMovePointer();
 
   /**
    * @return IWizardStep|null

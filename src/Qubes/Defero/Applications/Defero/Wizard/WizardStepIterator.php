@@ -20,12 +20,30 @@ class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
   }
 
   /**
+   * Checks that the next key exists and returns the step. If the key does not
+   * exist we return null.
+   *
+   * @return IWizardStep|null
+   */
+  public function getNextStep()
+  {
+    $nextKey = $this->key() + 1;
+
+    if(isset($this->_array[$nextKey]))
+    {
+      return $this->_array[$nextKey];
+    }
+
+    return null;
+  }
+
+  /**
    * Moves the pointer forward, checks that the key exists and returns the step.
    * If the key does not exist we return null.
    *
    * @return IWizardStep|null
    */
-  public function getNextStep()
+  public function getNextStepAndMovePointer()
   {
     $this->next();
 
@@ -38,7 +56,7 @@ class WizardStepIterator extends AbstractIterator implements IWizardStepIterator
   public function getCurrentStep()
   {
 
-    if($this->valid() && $this->current() instanceof IWizardStep)
+    if($this->valid())
     {
       return $this->current();
     }
