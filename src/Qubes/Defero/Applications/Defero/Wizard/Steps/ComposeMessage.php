@@ -13,7 +13,7 @@ use Cubex\View\Impart;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStep;
 use Qubes\Defero\Applications\Defero\Wizard\IWizardStepIterator;
 
-class CampaignTypeConfig implements IWizardStep
+class ComposeMessage implements IWizardStep
 {
   /**
    * If the process has request data dependencies use this method to ensure
@@ -27,22 +27,17 @@ class CampaignTypeConfig implements IWizardStep
    */
   public function canProcess(array $get, array $post, array $routedData)
   {
-    if(!array_key_exists("campaign_id", $get))
-    {
-      return false;
-    }
-
     return true;
   }
 
   public function getName()
   {
-    return "Configure Campaign Type";
+    return "Compose Message";
   }
 
   public function getDescription()
   {
-    return "Select the correct configuration type for the current campaign.";
+    return "Compose Message";
   }
 
   /**
@@ -50,7 +45,7 @@ class CampaignTypeConfig implements IWizardStep
    */
   public function getRoutePatterns()
   {
-    return ["/campaign-type-config/(.*)",];
+    return ["/compose-message/(.*)",];
   }
 
   /**
@@ -58,7 +53,7 @@ class CampaignTypeConfig implements IWizardStep
    */
   public function getBaseUri()
   {
-    return "/campaign-type-config";
+    return "/compose-message";
   }
 
   /**
