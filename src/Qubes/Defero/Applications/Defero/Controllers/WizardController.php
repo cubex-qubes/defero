@@ -104,14 +104,25 @@ class WizardController extends BaseDeferoController
     return $return;
   }
 
-  public function renderIndex()
+  /**
+   * If we go directly to the wizard page we redirect to the first step.
+   *
+   * @return Redirect
+   */
+  public function actionGoToFirstStep()
   {
-    echo "index";
+    $uri = sprintf(
+      "%s%s",
+      $this->baseUri(),
+      $this->_wizardIterator->offsetGet(0)->getBaseUri()
+    );
+
+    return \Cubex\Facade\Redirect::to($uri);
   }
 
   public function defaultAction()
   {
-    return "index";
+    return "GoToFirstStep";
   }
 
   public function getRoutes()
