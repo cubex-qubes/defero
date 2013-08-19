@@ -44,7 +44,7 @@ class StepsInfo extends ViewModel
     $breadcrumb = new HtmlElement("ul", ["class" => "breadcrumb"]);
 
     $breadcrumb
-      ->nestElement("li", [], "Wizard")
+      ->nestElement("li", [], "Steps")
       ->nestElement(
         "li", [], new HtmlElement("span", ["class" => "divider"], "&raquo;")
       );
@@ -56,11 +56,15 @@ class StepsInfo extends ViewModel
       /**
        * @var IWizardStep $step
        */
-      $breadcrumb->nestElement(
-        "li",
-        ["class" => $active],
-        $step->getName() . new HtmlElement("span", ["class" => "divider"], "/")
+
+      $content = sprintf(
+        "%d: %s%s",
+        $stepKey + 1,
+        $step->getName(),
+        new HtmlElement("span", ["class" => "divider"], "")
       );
+
+      $breadcrumb->nestElement("li", ["class" => $active], $content);
     }
 
     return $breadcrumb;
