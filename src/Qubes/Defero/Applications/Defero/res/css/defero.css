@@ -42,7 +42,10 @@
   color: #777;
 }
 
+.breadcrumb > li:first-child {
+  font-weight: 600;
+}
+
 .breadcrumb > li.active {
-  color: #4F5C51;
-  text-shadow: 1px 1px #A4B1A6;
+  color: #0088cc;
 }

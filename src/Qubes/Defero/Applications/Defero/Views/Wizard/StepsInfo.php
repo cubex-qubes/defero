@@ -43,9 +43,11 @@ class StepsInfo extends ViewModel
   {
     $breadcrumb = new HtmlElement("ul", ["class" => "breadcrumb"]);
 
-    $breadcrumb->nestElement(
-      "li", [], new HtmlElement("span", ["class" => "divider"], "/")
-    );
+    $breadcrumb
+      ->nestElement("li", [], "Wizard")
+      ->nestElement(
+        "li", [], new HtmlElement("span", ["class" => "divider"], "&raquo;")
+      );
 
     foreach($this->_steps->getArrayCopy() as $stepKey => $step)
     {
