@@ -70,15 +70,7 @@ class WizardController extends BaseDeferoController
 
     if(! $canProcess)
     {
-      $this->_wizardIterator->rewind();
-
-      return \Cubex\Facade\Redirect::to(
-        sprintf(
-          "%s%s",
-          $this->baseUri(),
-          $this->_wizardIterator->getCurrentStep()->getBaseUri()
-        )
-      );
+      return $this->actionGoToFirstStep();
     }
 
     foreach($this->_wizardIterator as $wizardStep)
