@@ -44,11 +44,11 @@ class CampaignConsumer implements IBatchQueueConsumer
     if(!$message->isComplete())
     {
       \Queue::getAccessor($message->currentProcess()->getQueueService())
-      ->push(
-        new StdQueue($message->currentProcess()->getQueueName()),
-        serialize($message),
-        $this->_queueDelays[$taskId]
-      );
+        ->push(
+          new StdQueue($message->currentProcess()->getQueueName()),
+          serialize($message),
+          $this->_queueDelays[$taskId]
+        );
     }
   }
 
@@ -100,7 +100,11 @@ class CampaignConsumer implements IBatchQueueConsumer
     if(class_exists($class))
     {
       $ruleClass = 'Qubes\Defero\Transport\IMessageProcessor';
-      if(in_array($ruleClass, class_implements($class)))
+      /*
+       * replaced below with faster implementation:
+       * if(in_array($ruleClass, class_implements($class))))
+       */
+      if(is_subclass_of($class, $ruleClass))
       {
         $proc = new $class($message);
       }
@@ -147,6 +151,16 @@ class CampaignConsumer implements IBatchQueueConsumer
   public function waitTime($waits = 0)
   {
     return false;
+  }
+
+  /**
+   * Time in seconds to treat queue locks as stale, false to never unlock
+   *
+   * @return bool|int
+   */
+  public function lockReleaseTime()
+  {
+    return 3600;
   }
 
   public function shutdown()

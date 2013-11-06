@@ -9,9 +9,13 @@ use Qubes\Defero\Transport\StdRule;
 
 class TimeRangeDeliveryRule extends StdRule implements IDeliveryRule
 {
+  public $timeRangeMin = 0;
+  public $timeRangeMax = 3600;
+
   public function getOffsetRange()
   {
-    return [0, 3600];
+    return [$this->config("process")->getInt('timeRangeMin', $this->timeRangeMin),
+            $this->config("process")->getInt('timeRangeMax', $this->timeRangeMax)];
   }
 
   public function getSendDelay()

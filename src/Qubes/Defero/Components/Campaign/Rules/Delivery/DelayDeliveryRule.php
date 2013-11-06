@@ -9,9 +9,14 @@ use Qubes\Defero\Transport\StdRule;
 
 class DelayDeliveryRule extends StdRule implements IDeliveryRule
 {
+  /**
+   * delay in seconds
+   */
+  public $delay = 0;
+
   public function getSendDelay()
   {
-    return $this->config("process")->getInt("delay", 0);
+    return $this->config("process")->getInt("delay", $this->delay);
   }
 
   /**

@@ -32,15 +32,15 @@ class Defero extends Application
   public function getRoutes()
   {
     return [
-      "/campaigns/:id@num/contacts/(.*)" => "CampaignContacts",
-      "/campaigns/(.*)"                  => "Campaigns",
-      "/contacts/(.*)"                   => "Contacts",
-      "/processors/(.*)"                 => "Processors",
-      "/processors/rules/(.*)"           => "Rules",
-      "/processors/processes/(.*)"       => "Processes",
-      "/typeahead/(.*)"                  => "TypeAhead",
-      "/search/(.*)"                     => "Search",
-      "/wizard/(.*)"                     => "Wizard",
+      "/campaigns/:id@num/message/(.*)"     => "CampaignMessage",
+      "/campaigns/:id@num/source/(.*)"      => "CampaignSource",
+      "/campaigns/:cid@num/processors/(.*)" => "CampaignProcessors",
+      "/campaigns/:id@num/contacts/(.*)"    => "CampaignContacts",
+      "/campaigns/(.*)"                     => "Campaigns",
+      "/contacts/(.*)"                      => "Contacts",
+      "/typeahead/(.*)"                     => "TypeAhead",
+      "/search/(.*)"                        => "Search",
+      "/wizard/(.*)"                        => "Wizard",
     ];
   }
 }

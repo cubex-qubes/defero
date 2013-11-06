@@ -29,6 +29,7 @@ class DeferoFormElementRender extends FormElementRender
 
   public function getTemplate()
   {
+    if ($this->_template) return $this->_template;
     switch($this->_element->type())
     {
       case FormElement::SUBMIT:

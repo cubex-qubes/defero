@@ -6,14 +6,17 @@
 
 namespace Qubes\Defero\Components\Campaign\Mappers;
 
+use Cubex\Data\Attribute\Attribute;
 use Cubex\Data\Validator\Validator;
+use Cubex\Helpers\DateTimeHelper;
 use Cubex\Helpers\Strings;
-use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Mapper\Database\RecordMapper;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
+use Qubes\Defero\Components\Cron\CronParser;
+use Qubes\Defero\Components\DataSource\IDataSource;
 use Qubes\Defero\Components\Messages\Mappers\Message;
 
 class Campaign extends RecordMapper
@@ -26,20 +29,31 @@ class Campaign extends RecordMapper
   public $reference;
   public $name;
   public $description;
+
   /**
-   * @enumclass \Qubes\Defero\Components\Campaign\Enums\CampaignType
+   * @type \Qubes\Defero\Components\DataSource\DataSourceCollection
    */
-  public $type;
+  public $dataSource;
+
   /**
    * @enumclass \Qubes\Defero\Components\Campaign\Enums\SendType
    */
   public $sendType;
   public $contactId;
+
+  public $sendAt;
+  public $lastSent;
+
   /**
    * @datatype tinyint
    * @default  0
    */
-  public $active = false;
+  public $active;
+
+  /**
+   * @datatype TEXT
+   */
+  public $processors;
 
   protected function _configure()
   {
@@ -53,9 +67,8 @@ class Campaign extends RecordMapper
       ->addValidator(Validator::VALIDATE_SCALAR)
       ->setRequired(true);
 
-    $this->_attribute('type')
-      ->addValidator(Validator::VALIDATE_ENUM, [new CampaignType])
-      ->setRequired(true);
+    $this->_attribute('dataSource')
+      ->setSerializer(Attribute::SERIALIZATION_JSON);
 
     $this->_attribute('sendType')
       ->addValidator(Validator::VALIDATE_ENUM, [new SendType()])
@@ -66,6 +79,9 @@ class Campaign extends RecordMapper
       ->setRequired(true);
 
     $this->_attribute('active')->addValidator(Validator::VALIDATE_BOOL);
+
+    $this->_attribute('processors')
+      ->setSerializer(Attribute::SERIALIZATION_JSON);
   }
 
   /**
@@ -74,8 +90,23 @@ class Campaign extends RecordMapper
   public function message()
   {
     $this->newInstanceOnFailedRelation(true);
-
     return $this->hasOne(new Message());
+  }
+
+  /**
+   * @return bool|IDataSource
+   */
+  public function dataSource()
+  {
+    if(!$this->dataSource || !$this->dataSource->sourceClass)
+    {
+      return false;
+    }
+    $dataSource = $this->getData('dataSource');
+    $ds         = 'Qubes\\Defero\\Components\\DataSource\\' . $dataSource->sourceClass;
+    $ds         = new $ds();
+    $ds->setConditionValues($dataSource->conditions);
+    return $ds;
   }
 
   public function types()
@@ -98,43 +129,18 @@ class Campaign extends RecordMapper
    *
    * @return Contact
    */
-  public function getContact($language)
+  public function getContact($language = null)
   {
-    $contact = CampaignContact::collection()->loadOneWhere(
-      [
-        "language"    => $language,
-        "campaign_id" => $this->id()
-      ]
-    );
+    $contactId = $this->contactId;
 
-    if(!$contact)
+    $msg = $this->message();
+    $msg->setLanguage($language);
+    $msg->reload();
+    if($msg->contactId)
     {
-      $contact = new Contact($this->contactId);
+      $contactId = $msg->contactId;
     }
-
-    return $contact;
-  }
-
-  /**
-   * @return RecordCollection
-   */
-  public function getContacts()
-  {
-    $contactIds = CampaignContact::collection(['campaign_id' => $this->id()])
-      ->getKeyPair("contact_id", "contact_id");
-
-    $contactIds[$this->contactId] = $this->contactId;
-
-    $contacts = Contact::collection()->loadIds($contactIds);
-
-    return $contacts;
-  }
-
-  public function getTitledType()
-  {
-    return Strings::titleize(
-      $this->types()->constFromValue((string)$this->type)
-    );
+    return new Contact($contactId);
   }
 
   public function getTitledSendType()
@@ -143,7 +149,6 @@ class Campaign extends RecordMapper
       $this->sendTypes()->constFromValue((string)$this->sendType)
     );
   }
-
 
   /**
    * Instantiates the form and binds the mapper. Also sets up the action based
@@ -158,5 +163,36 @@ class Campaign extends RecordMapper
   {
     return (new CampaignForm("campaign", $action))
       ->bindMapper(new Campaign($id));
+  }
+
+  public function isDue()
+  {
+    $time = time();
+    $time -= $time % 60;
+    $check = $this->nextRun()->getTimestamp();
+    $check -= $check % 60;
+    return ($check === $time);
+  }
+
+  public function nextRun()
+  {
+    if(!$this->sendAt)
+    {
+      return null;
+    }
+
+    if(!CronParser::isValid($this->sendAt))
+    {
+      return DateTimeHelper::dateTimeFromAnything($this->sendAt);
+    }
+
+    $nr = CronParser::nextRun($this->sendAt, null, true);
+    return $nr ? : null;
+  }
+
+  public function process($time)
+  {
+    $ds = $this->dataSource();
+    $ds->process($this->id(), $time);
   }
 }

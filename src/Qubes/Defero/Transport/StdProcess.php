@@ -13,7 +13,7 @@ abstract class StdProcess implements IProcess
 
   protected $_message;
 
-  public function __construct(IProcessMessage $message)
+  public function __construct(IProcessMessage $message = null)
   {
     $this->_message = $message;
   }

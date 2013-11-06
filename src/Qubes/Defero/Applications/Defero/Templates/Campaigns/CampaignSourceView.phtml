@@ -1,0 +1,32 @@
+<?php
+/**
+ * @author tom.kay
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignSourceView
+ */
+?>
+<style>
+  .controls.control-group label { display: inline-block; margin-right: 10px; white-space: nowrap; }
+  .controls.control-group label input { margin: 0 5px 0 0; }
+</style>
+<div class="wrappedContent">
+  <div>
+    <h2 class="text-center">
+      Data Source for <?= $this->campaign->name ?>
+    </h2>
+  </div>
+  <form method="post" class="form-horizontal"><h4>Source</h4>
+    <?= $this->sourceElement ?>
+    <h4>Conditions</h4>
+    <?php
+    foreach($this->elements as $group)
+    {
+      echo '<div class="controls control-group">' .
+        implode(' :: ', $group) .
+        '</div>';
+    }
+    echo '<div class="control-group">' . $this->newCondition . '</div>';
+    ?>
+    <input type="submit">
+  </form>
+</div>

@@ -8,7 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Forms;
 use Cubex\Form\Form;
 use Cubex\Form\FormElement;
 
-abstract class DeferoForm extends Form
+class DeferoForm extends Form
 {
   protected function _configure()
   {

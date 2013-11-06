@@ -1,0 +1,47 @@
+<?php
+/**
+ * @author tom.kay
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignMessageView
+ */
+?>
+<div class="wrappedContent">
+  <div class="pull-right btn-toolbar">
+    <div class="btn-group">
+      <?php
+      if($this->currentLanguage !== null)
+      {
+        $url = '/campaigns/' . $this->campaign->id() .
+          '/message/' . $this->currentLanguage .
+          '/translate';
+        echo '<a href="' . $url. '" class="btn btn-primary js-popover"
+           title="Translate Message"
+           data-content="This will overwrite the current message.&lt;br&gt;'.$this->getConfirmPopover($url).'"
+           data-container="body"
+           data-placement="bottom" data-html="true"
+           data-prevent-default="true">Translate</a>';
+      }
+      ?>
+    </div>
+    <div class="btn-group">
+      <?php
+      foreach($this->languages as $code)
+      {
+        ?>
+        <a href="/campaigns/<?=
+        $this->campaign->id(
+        ) ?>/message<?= $code == $this->defaultLanguage ? '' : '/' . $code ?>"
+           title="Edit <?= $this->campaign->name . ' ' . $code ?>"
+           class="btn btn-<?= $code == $this->currentLanguage || ($this->currentLanguage == null && $code == $this->defaultLanguage) ? 'success' : 'info'; ?>"><?= $code ?></a>
+      <?
+      }
+      ?>
+    </div>
+  </div>
+  <div>
+    <h2 class="text-center">
+      Compose <?= $this->campaign->name ?>
+    </h2>
+  </div>
+  <?= $this->form ?>
+</div>

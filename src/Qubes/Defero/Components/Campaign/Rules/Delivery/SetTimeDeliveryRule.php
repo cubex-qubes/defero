@@ -9,23 +9,23 @@ use Qubes\Defero\Transport\StdRule;
 
 class SetTimeDeliveryRule extends StdRule implements IDeliveryRule
 {
-  protected $_sendTime;
+  public $sendTime;
 
   public function setSendTime($timestamp)
   {
-    $this->_sendTime = (int)$timestamp;
+    $this->sendTime = (int)$timestamp;
     return $this;
   }
 
   public function getSendDelay()
   {
-    if((int)$this->_sendTime < time())
+    if((int)$this->config("process")->getInt('sendTime') < time())
     {
       return 0;
     }
     else
     {
-      return (int)$this->_sendTime - time();
+      return (int)$this->config("process")->getInt('sendTime') - time();
     }
   }
 

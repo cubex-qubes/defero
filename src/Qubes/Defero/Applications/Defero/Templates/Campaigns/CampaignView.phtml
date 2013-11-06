@@ -4,47 +4,89 @@
  *
  * @var $this \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
  */
+
+use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
+
 ?>
 <div class="wrappedContent">
-  <div class="pull-right btn-group">
-    <a href="/campaigns/<?= $this->campaign->id() ?>/edit"
-       title="Edit <?= $this->campaign->name ?>"
-       class="btn btn-info">Edit</a>
-    <a href="/campaigns/<?= $this->campaign->id() ?>/delete"
-       title="Delete <?= $this->campaign->name ?>"
-       class="js-popover btn btn-danger"
-       data-content="<?= $this->getDeletePopover($this->campaign->id()) ?>"
-       data-placement="bottom"
-       data-html="true"
-       data-prevent-default="true">Delete</a>
-    <a href="/campaigns/new" class="btn btn-primary">
-      New</a>
+  <div class="pull-right btn-toolbar">
+    <div class="btn-group">
+      <a href="/campaigns/<?= $this->campaign->id() ?>/edit"
+         title="Edit <?= $this->campaign->name ?>"
+         class="btn btn-info">Edit</a>
+      <a href="/campaigns/<?= $this->campaign->id() ?>/message"
+         title="Compose <?= $this->campaign->name ?>"
+         class="btn btn-info">Compose</a>
+      <a href="/campaigns/<?= $this->campaign->id() ?>/source"
+         title="Edit Data Source"
+         class="btn btn-info">Data Source</a>
+    </div>
+    <div class="btn-group">
+      <a href="/campaigns/<?= $this->campaign->id() ?>/delete"
+         title="Delete <?= $this->campaign->name ?>"
+         class="js-popover btn btn-danger"
+         data-content="<?= $this->getDeletePopover($this->campaign->id()) ?>"
+         data-placement="bottom"
+         data-html="true" data-container="body"
+         data-prevent-default="true">Delete</a>
+      <a href="/campaigns/new" class="btn btn-primary">New</a>
+    </div>
+    <div class="btn-group">
+      <a href="/campaigns/<?= $this->campaign->id() ?>/send"
+         title="Send <?= $this->campaign->name ?>"
+         class="btn btn-success">Send Test</a>
+    </div>
   </div>
   <div>
     <h3><?= $this->campaign->name ?></h3>
-  </div>
-  <div>
     <dl class="dl-horizontal">
       <dt>Name</dt>
       <dd><?= $this->campaign->name ?></dd>
       <dt>Reference</dt>
       <dd><?= $this->campaign->reference ?></dd>
-      <dt>Type</dt>
-      <dd><?= $this->campaign->getTitledType() ?></dd>
+      <dt>Data Source</dt>
+      <dd><?php
+        $ds = $this->campaign->dataSource();
+        if($ds)
+        {
+          echo $ds->getName();
+        }
+        ?></dd>
       <dt>Send Type</dt>
       <dd><?= $this->campaign->getTitledSendType() ?></dd>
       <dt>Active</dt>
       <dd><?= $this->campaign->active ? "Yes" : "No" ?></dd>
       <dt>Description</dt>
       <dd><?= $this->campaign->description ? : "<em>Not Set</em>" ?></dd>
-      <dt>Default Contact</dt>
-      <dd><?= $this->contacts[$this->campaign->contactId]->name ?></dd>
+      <dt>Contact</dt>
+      <dd><a href="/contacts/<?= $this->campaign->contactId ?>"
+             title="View <?= $this->campaign->getContact()->name ?>">
+          <?= $this->campaign->getContact()->name ?>
+        </a></dd>
+      <dt>Last Run</dt>
+      <dd><?=
+        $this->campaign->lastSent ?
+          \Cubex\Helpers\DateTimeHelper::formattedDateFromAnything(
+                                       $this->campaign->lastSent,
+                                       DATE_RFC2822
+          )
+          : 'Never'; ?></dd>
+      <dt>Next Run</dt>
+      <dd><?=
+        ($nr = $this->campaign->nextRun()) ? $nr->format(
+                                                DATE_RFC2822
+        ) : 'Never'; ?></dd>
     </dl>
   </div>
   <div>
-    <h4>Contacts</h4>
-  </div>
-  <div>
-    <?= $this->getContactsView() ?>
+    <?php
+    $cpv = new CampaignProcessorsView($this->campaign);
+
+    $controller = clone $this->getHostController();
+    $controller->setBaseUri(
+               sprintf("/campaigns/%d/processors", $this->campaign->id())
+    );
+    echo $cpv->setHostController($controller)
+    ?>
   </div>
 </div>

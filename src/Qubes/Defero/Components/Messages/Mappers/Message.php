@@ -5,34 +5,32 @@
 
 namespace Qubes\Defero\Components\Messages\Mappers;
 
+use Cubex\Data\Validator\Validator;
 use Cubex\Mapper\Database\I18n\I18nRecordMapper;
-use Cubex\Mapper\Database\I18n\TextContainer;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
-use Qubes\Defero\Components\Messages\Mappers\Translatable;
 
 class Message extends I18nRecordMapper
 {
   public $campaignId;
+
   public $subject;
+  /**
+   * @datatype TEXT
+   */
   public $plainText;
+  /**
+   * @datatype TEXT
+   */
   public $htmlContent;
-  public $messageType;
+  public $contactId;
+
+  protected $_dbServiceName = "defero_db";
 
   protected function _configure()
   {
-    $this->_dbServiceName = "defero_db";
-
-    $this->_addTranslationAttribute("subject");
-    $this->_addTranslationAttribute("plainText");
-    $this->_addTranslationAttribute("htmlContent");
-  }
-
-  /**
-   * @return TextContainer
-   */
-  public function getTextContainer()
-  {
-    return new Translatable();
+    $this->_addTranslationAttribute(
+      ["subject", "plainText", "htmlContent", "contactId"]
+    );
   }
 
   /**

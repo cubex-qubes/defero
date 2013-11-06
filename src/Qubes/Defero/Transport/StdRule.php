@@ -5,17 +5,16 @@
 
 namespace Qubes\Defero\Transport;
 
+use Cubex\Data\Handler\HandlerTrait;
 use Cubex\Foundation\Config\ConfigTrait;
-use Qubes\Defero\Transport\IProcessMessage;
-use Qubes\Defero\Transport\IRule;
 
 abstract class StdRule implements IRule
 {
-  use ConfigTrait;
+  use ConfigTrait, HandlerTrait;
 
   protected $_message;
 
-  public function __construct(IProcessMessage $message)
+  public function __construct(IProcessMessage $message = null)
   {
     $this->_message = $message;
   }

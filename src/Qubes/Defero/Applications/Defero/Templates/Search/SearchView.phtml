@@ -1,0 +1,14 @@
+<?php
+/**
+ * @author tom.kay
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\Search\SearchView
+ */
+?>
+
+<?php
+foreach($this->data as $d)
+{
+  echo '<a href="'.$d['url'].'">'.$d['text'].'</a>';
+}
+?>

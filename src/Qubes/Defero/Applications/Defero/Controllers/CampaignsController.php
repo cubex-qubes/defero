@@ -6,8 +6,10 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Data\Transportable\TransportMessage;
-use Cubex\Form\Form;
+use Cubex\Foundation\Config\Config;
+use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Mapper\Database\RecordCollection;
+use Cubex\Queue\StdQueue;
 use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
@@ -16,7 +18,11 @@ use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
+use Qubes\Defero\Components\Campaign\Consumers\CampaignConsumer;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\MessageProcessor\MessageProcessorCollection;
+use Qubes\Defero\Transport\ProcessDefinition;
+use Qubes\Defero\Transport\ProcessMessage;
 
 class CampaignsController extends BaseDeferoController
 {
@@ -57,6 +63,60 @@ class CampaignsController extends BaseDeferoController
     return $this->_updateCampaign($id);
   }
 
+  public function renderSend($id)
+  {
+    $message = new ProcessMessage();
+    $message->setData("firstName", 'tom');
+    $message->setData("lastName", 'kay');
+    $message->setData("name", 'tom kay');
+    $message->setData("email", 'tom.kay@justdevelop.it');
+
+    $campaign        = new Campaign($id);
+    $campaignMessage = $campaign->message();
+    $campaignMessage->reload();
+
+    //$message->setConditionValues($campaignMessage);
+    $message->setData('subject', $campaignMessage->subject);
+    $message->setData('plainText', $campaignMessage->plainText);
+    $message->setData('htmlContent', $campaignMessage->htmlContent);
+
+    foreach($campaign->processors as $processorData)
+    {
+      $config = new Config();
+      $config->hydrate($processorData);
+
+      $configGroup = new ConfigGroup();
+      $configGroup->addConfig("process", $config);
+      $process = new ProcessDefinition();
+      $process->setProcessClass(
+        get_class(
+          MessageProcessorCollection::getMessageProcessor(
+            $processorData->processorType
+          )
+        )
+      );
+      $process->setQueueName("defero");
+      $process->setQueueService("queue");
+      $process->configure($configGroup);
+      $message->addProcess($process);
+    }
+
+    // Final process is used to send the message
+    $process = new ProcessDefinition();
+    $process->setQueueName("defero");
+    $process->setQueueService("queue");
+    $process->setProcessClass(
+      'Qubes\Defero\Components\Campaign\Process\EmailService\Smtp'
+    );
+    $message->addProcess($process);
+
+    $consumer = new CampaignConsumer();
+    $consumer->process(new StdQueue('defero'), $message);
+    $consumer->runBatch();
+
+    echo 'Test sent to ' . $message->getStr('email');
+  }
+
   /**
    * Delete a campaign
    *
@@ -70,11 +130,10 @@ class CampaignsController extends BaseDeferoController
     $campaign->forceLoad();
     $campaign->delete();
 
-    return Redirect::to('/campaigns')
-      ->with(
-        'msg',
-        new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
-      );
+    return Redirect::to('/campaigns')->with(
+      'msg',
+      new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
+    );
   }
 
   /**
@@ -89,7 +148,7 @@ class CampaignsController extends BaseDeferoController
   {
     $campaign = new Campaign($id);
 
-    return new CampaignView($campaign, $campaign->getContacts(), $page);
+    return new CampaignView($campaign, $page);
   }
 
   /**
@@ -167,6 +226,7 @@ class CampaignsController extends BaseDeferoController
   public function getRoutes()
   {
     $routes = ResourceTemplate::getRoutes();
+    array_unshift($routes, new StdRoute('/:id/send', 'send'));
     $routes[] = (new StdRoute('/:id/page/:pnumber', 'show', ['ANY']))
       ->excludeVerb('POST')
       ->excludeVerb('DELETE')

@@ -8,6 +8,7 @@ namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 use Cubex\Facade\Email;
 use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Container;
+use Cubex\Log\Debug;
 use Cubex\Log\Log;
 use Cubex\ServiceManager\ServiceConfig;
 use Qubes\Defero\Transport\StdProcess;
@@ -29,22 +30,28 @@ class Smtp extends StdProcess implements IEmailService
 
     $config = new Config(
       [
-        "smtp.host"     => $smtpConfig->getStr("smtp.host"),
-        "smtp.port"     => $smtpConfig->getInt("smtp.port"),
-        "smtp.security" => $smtpConfig->getStr("smtp.security"),
-        "smtp.username" => $smtpConfig->getStr("smtp.username"),
-        "smtp.password" => $smtpConfig->getStr("smtp.password"),
-        "transport"     => "smtp",
+      "smtp.host"     => $smtpConfig->getStr("smtp.host"),
+      "smtp.port"     => $smtpConfig->getInt("smtp.port"),
+      "smtp.security" => $smtpConfig->getStr("smtp.security"),
+      "smtp.username" => $smtpConfig->getStr("smtp.username"),
+      "smtp.password" => $smtpConfig->getStr("smtp.password"),
+      "transport"     => "smtp",
       ]
     );
 
     $mailer->configure((new ServiceConfig())->fromConfig($config));
 
     $mailer->addRecipient($email, $name);
-    $mailer->setSubject("Test");
-    $mailer->setBody("Test");
-    $mailer->setFrom($email, $name);
-    $mailer->setSender($email, $name);
+    $mailer->setSubject($this->_message->getStr('subject'));
+    $mailer->setBody($this->_message->getStr('plainText'));
+    $mailer->setFrom(
+      $this->_message->getStr('senderEmail'),
+      $this->_message->getStr('senderName')
+    );
+    $mailer->setSender(
+      $this->_message->getStr('senderEmail'),
+      $this->_message->getStr('senderName')
+    );
 
     return $mailer->send();
   }

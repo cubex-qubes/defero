@@ -6,11 +6,7 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Core\Controllers\BaseController;
-use Cubex\Facade\DB;
-use Cubex\Sprintf\ParseQuery;
-use Qubes\Defero\Components\Campaign\Mappers\Campaign;
-use Qubes\Defero\Components\Contact\Mappers\Contact;
-use Qubes\Defero\Components\MessageProcessor\Mappers\MessageProcessor;
+use Qubes\Defero\Lib\SearchLibrary;
 
 class TypeAheadController extends BaseController
 {
@@ -24,107 +20,25 @@ class TypeAheadController extends BaseController
     return true;
   }
 
-  public function actionAll()
+  public function actionSearchAll()
   {
     $query = $this->_getQuery();
-
-    return $this->_sortResults($query, $this->_getAll($query));
+    $list  = SearchLibrary::getAll($query);
+    return $this->_sortResults($query, $list);
   }
 
-  public function actionContacts()
+  public function actionSearchContacts()
   {
     $query = $this->_getQuery();
-
-    return $this->_sortResults($query, $this->_getContacts($query));
+    $list  = SearchLibrary::getContacts($query);
+    return $this->_sortResults($query, $list);
   }
 
-  public function actionCampaigns()
+  public function actionSearchCampaigns()
   {
     $query = $this->_getQuery();
-
-    return $this->_sortResults($query, $this->_getCampaigns($query));
-  }
-
-  public function actionProcessors()
-  {
-    $query = $this->_getQuery();
-
-    return $this->_sortResults($query, $this->_getProcessors($query));
-  }
-
-  private function _getCampaigns($query)
-  {
-    $campaignsSelect = $this->_getDisplayResultPattern("C", "name");
-
-    return Campaign::collection()->whereLike("name", $query)
-      ->setColumns([$campaignsSelect, "name"])
-      ->orderByKeys(["key"])
-      ->setOrderByQuery("name")
-      ->getFieldValues('key');
-  }
-
-  private function _getProcessors($query)
-  {
-    $processorsSelect = $this->_getDisplayResultPattern("P", "name");
-
-    return MessageProcessor::collection()->whereLike("name", $query)
-      ->setColumns([$processorsSelect, "name"])
-      ->orderByKeys(["key"])
-      ->setOrderByQuery("name")
-      ->getFieldValues('key');
-  }
-
-  private function _getContacts($query)
-  {
-    $contactSelect   = $this->_getDisplayResultPattern("c", "name");
-
-    return Contact::collection()->whereLike("name", $query)
-      ->setColumns([$contactSelect, "name"])
-      ->setOrderByQuery("name")
-      ->getFieldValues('key');
-  }
-
-  private function _getAll($query)
-  {
-    $contactSelect    = $this->_getDisplayResultPattern("c", "name");
-    $campaignsSelect  = $this->_getDisplayResultPattern("C", "name");
-    $processorsSelect = $this->_getDisplayResultPattern("P", "name");
-
-    $queryData = [
-      "SELECT %C FROM (
-        (SELECT {$contactSelect}, %C FROM %T WHERE %C LIKE %~)
-        UNION ALL
-        (SELECT {$campaignsSelect}, %C FROM %T WHERE %C LIKE %~)
-        UNION ALL
-        (SELECT {$processorsSelect}, %C FROM %T WHERE %C LIKE %~)
-        ) %T ORDER BY %C",
-      "key",
-      "name",
-      Contact::tableName(),
-      "name",
-      $query,
-      "name",
-      Campaign::tableName(),
-      "name",
-      $query,
-      "name",
-      MessageProcessor::tableName(),
-      "name",
-      $query,
-      "temp",
-      "name"
-    ];
-
-    $results = $this->_getDeferoDb()->getRows(
-      ParseQuery::parse($this->_getDeferoDb(), $queryData)
-    );
-
-    return ppull($results, "key");
-  }
-
-  private function _getQuery()
-  {
-    return urldecode($this->_request->getVariables("q"));
+    $list  = SearchLibrary::getCampaigns($query);
+    return $this->_sortResults($query, $list);
   }
 
   /**
@@ -140,31 +54,22 @@ class TypeAheadController extends BaseController
     return $list;
   }
 
-  private function _getDisplayResultPattern(
-    $prefix, $columnFrom, $columnTo = "key", $id = "id"
-  )
+  private function _getQuery()
   {
-    return ParseQuery::parse(
-      $this->_getDeferoDb(),
-      "CONCAT(%C, ': ', '{$prefix}', %C) as %C",
-      $columnFrom,
-      $id,
-      $columnTo
-    );
+    return urldecode($this->getVariables("q"));
   }
 
-  private function _getDeferoDb()
+  private function _getType()
   {
-    return DB::getAccessor("defero_db");
+    return urldecode($this->getVariables("type"));
   }
 
   public function getRoutes()
   {
     return [
-      "/all"        => "all",
-      "/contacts"   => "contacts",
-      "/campaigns"  => "campaigns",
-      "/processors" => "processors",
+      "/all"       => "searchall",
+      "/contacts"  => "searchcontacts",
+      "/campaigns" => "searchcampaigns",
     ];
   }
 }

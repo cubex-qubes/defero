@@ -7,6 +7,7 @@ namespace Qubes\Defero\Applications\Defero\Forms;
 
 use Cubex\Data\Validator\Validator;
 use Cubex\Form\Form;
+use Cubex\Form\FormElement;
 
 class ContactForm extends DeferoForm
 {
@@ -16,6 +17,8 @@ class ContactForm extends DeferoForm
     {
       $this->getElement("reference")->addAttribute("disabled", "disabled");
     }
+
+    $this->getElement("signature")->setType(FormElement::TEXTAREA);
 
     $return = parent::_postBind();
 

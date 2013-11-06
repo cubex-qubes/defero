@@ -1,0 +1,80 @@
+<?php
+/**
+ * @author tom.kay
+ *
+ * @var $this \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView
+ */
+?>
+<div class="wrappedContent">
+  <div>
+    <div class="pull-right">
+      <a href="/campaigns/<?= $this->campaign->id() ?>/processors/new"
+         class="btn btn-primary btn-small">
+        New Processor
+      </a>
+    </div>
+    <? //= $this->campaignsSearch ?>
+  </div>
+  <div>
+    <h3><?= $this->campaign->name ?> Processors</h3>
+    <table class="table table-striped table-bordered table-hover table-href"
+           id="campaign-processors">
+      <caption><? //= $this->pagerInfo ?></caption>
+      <thead>
+      <tr>
+        <th></th>
+        <th>Type</th>
+        <th>Options</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      <?php
+      if($this->campaign->processors)
+      {
+        foreach($this->campaign->processors as $pid => $processor)
+        {
+          ?>
+          <tr data-href="/campaigns/<?= $this->campaign->id() ?>/processors/<?= $pid ?>/edit"
+              class="js-href" data-pid="<?= $pid ?>"
+              title="View <?= $processor->processorType ?>">
+            <td>
+              <a href="/campaigns/<?= $this->campaign->id() ?>/processors/<?= $pid ?>/edit"
+                 title="View <?= $processor->processorType ?>">
+                #<?= $pid ?>
+              </a>
+            </td>
+            <td><?= \Cubex\Helpers\Strings::titleize($processor->processorType); ?>
+            </td>
+            <td><?php
+              foreach($processor as $k => $v)
+              {
+                if($k !== 'processorType')
+                {
+                  echo \Cubex\Helpers\Strings::titleize($k) . ": $v<br>";
+                }
+              }
+              ?></td>
+            <td>
+              <a href="/campaigns/<?= $this->campaign->id() ?>/processors/<?= $pid ?>/edit"
+                 title="Edit <?= $processor->processorType ?>">
+                <i class="icon-edit"></i></a>
+              <a href="/campaigns/<?= $this->campaign->id() ?>/processors/<?= $pid ?>/delete"
+                 title="Delete <?= $processor->processorType ?>"
+                 class="js-popover"
+                 data-content="<?= $this->getDeletePopover($pid) ?>"
+                 data-html="true"
+                 data-prevent-default="true"
+                 data-placement="left">
+                <i class="icon-trash"></i></a>
+            </td>
+          </tr>
+        <?php
+        }
+      }
+      ?>
+      </tbody>
+    </table>
+  </div>
+  <div><? //= $this->pager ?></div>
+</div>

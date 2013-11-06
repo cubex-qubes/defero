@@ -24,27 +24,6 @@ class HeaderView extends ViewModel
 
   public function render()
   {
-    // Drop down links
-    $rules     = new NavItem(
-      new HtmlElement("a", ["href" => "/processors/rules"], "Rules"),
-      $this->_getNavItemState("/processors/rules")
-    );
-    $processes = new NavItem(
-      new HtmlElement("a", ["href" => "/processors/processes"], "Processes"),
-      $this->_getNavItemState("/processors/processes")
-    );
-
-    // Drop down nav and nav item
-    $dropDownNav = new Nav();
-    $dropDownNav->addItem($rules)->addItem($processes);
-    $dropDownNavItem = new NavItem();
-    $dropDownNavItem->setDropdown(
-      new Dropdown("Message Processors", $dropDownNav)
-    );
-    $dropDownNavItem->addAttributes(
-      ["class" => $this->_getNavItemState("/processors")]
-    );
-
     // Main nav
     $nav = new Nav(Nav::NAV_DEFAULT);
     $nav->addItem(
@@ -64,7 +43,7 @@ class HeaderView extends ViewModel
         new HtmlElement("a", ["href" => "/contacts"], "Contacts"),
         $this->_getNavItemState("/contacts")
       )
-    )->addItem($dropDownNavItem);
+    );
 
     // Global typeahead search
     $searchForm = (new TypeAheadSearchFormView(TypeAheadEnum::ALL()))
