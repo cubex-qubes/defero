@@ -30,6 +30,10 @@ class CampaignMessageView extends DeferoView
 
   public function __construct($campaignId, $language = null)
   {
+    $this->requireJs(
+      'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
+    );
+
     $config          = $this->config('i18n');
     $this->languages = $config->getArr('languages');
 
