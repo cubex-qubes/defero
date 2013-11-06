@@ -18,7 +18,7 @@ class CampaignMessageController extends DeferoController
 {
   public function renderIndex()
   {
-    $this->requireJs('ckeditor/ckeditor.js');
+    $this->requireJs('http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js');
     return new CampaignMessageView($this->getInt('id'), $this->getStr('hl'));
   }
 
