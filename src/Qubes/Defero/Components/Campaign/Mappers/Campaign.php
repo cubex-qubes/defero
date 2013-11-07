@@ -189,10 +189,4 @@ class Campaign extends RecordMapper
     $nr = CronParser::nextRun($this->sendAt, null, true);
     return $nr ? : null;
   }
-
-  public function process($time)
-  {
-    $ds = $this->dataSource();
-    $ds->process($this->id(), $time);
-  }
 }

@@ -49,7 +49,8 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
       $cid      = $message->getInt('campaign_id');
       $started  = $message->getInt('started_at');
       $campaign = new Campaign($cid);
-      $campaign->process($started);
+      $ds = $campaign->dataSource();
+      $ds->process($cid, $started);
 
       $results[$taskId] = true;
     }
