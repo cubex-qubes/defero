@@ -2,3 +2,7 @@
 /local
 composer.phar
 composer.lock
+.DS_Store
+.idea
+conf/*
+!conf/defaults.ini
