@@ -8,6 +8,7 @@ namespace Qubes\Defero\Components\Campaign\Mappers;
 
 use Cubex\Data\Attribute\Attribute;
 use Cubex\Data\Validator\Validator;
+use Cubex\Foundation\Config\ConfigTrait;
 use Cubex\Helpers\DateTimeHelper;
 use Cubex\Helpers\Strings;
 use Cubex\Mapper\Database\RecordMapper;
@@ -21,6 +22,8 @@ use Qubes\Defero\Components\Messages\Mappers\Message;
 
 class Campaign extends RecordMapper
 {
+  use ConfigTrait;
+
   /**
    * Internal reference for triggers e.g user-joined
    *
@@ -103,8 +106,12 @@ class Campaign extends RecordMapper
       return false;
     }
     $dataSource = $this->getData('dataSource');
-    $ds         = 'Qubes\\Defero\\Components\\DataSource\\' . $dataSource->sourceClass;
-    $ds         = new $ds();
+
+    $ds = $this->config('project')->getStr(
+        'namespace'
+      ) . '\\Components\\DataSource\\' . $dataSource->sourceClass;
+
+    $ds = new $ds();
     $ds->setConditionValues($dataSource->conditions);
     return $ds;
   }
