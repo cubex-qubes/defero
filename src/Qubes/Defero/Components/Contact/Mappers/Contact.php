@@ -52,6 +52,6 @@ class Contact extends RecordMapper
       ->addValidator(Validator::VALIDATE_LENGTH, [2, 2])
       ->setRequired(true);
 
-    $this->_attribute('signature')->addFilter('nl2br');
+    $this->_attribute('signature');
   }
 }

@@ -36,7 +36,7 @@
       <dt>Language</dt>
       <dd><?= $this->contact->language ?></dd>
       <dt>Signature</dt>
-      <dd><?= $this->contact->signature ?></dd>
+      <dd><?= nl2br($this->contact->signature) ?></dd>
       <dt>Description</dt>
       <dd><?= $this->contact->description ? : "<em>Not Set</em>" ?></dd>
     </dl>
