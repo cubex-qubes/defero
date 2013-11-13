@@ -10,6 +10,9 @@ namespace Qubes\Defero\Components\DataSource;
 
 final class DataSourceCollection
 {
+  /**
+   * @var IDataSource[]
+   */
   private static $_dataSources = [];
 
   public static function setDataSources(array $sources)
