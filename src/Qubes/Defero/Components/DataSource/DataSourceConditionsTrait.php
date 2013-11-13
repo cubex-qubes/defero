@@ -26,9 +26,14 @@ trait DataSourceConditionsTrait
     return $this->_conditions;
   }
 
-  public function getCondition($condition)
+  /**
+   * @param $id
+   *
+   * @return DataSourceCondition
+   */
+  public function getCondition($id)
   {
-    return $this->_conditions[$condition];
+    return $this->_conditions[$id];
   }
 
   public function addCondition(
@@ -37,7 +42,8 @@ trait DataSourceConditionsTrait
   )
   {
     $this->_conditions[$fieldName] = new DataSourceCondition(
-      $name, $callback, $comparisons, $input, $values);
+      $name, $callback, $comparisons, $input, $values
+    );
   }
 
   public function getFixedConditions()
