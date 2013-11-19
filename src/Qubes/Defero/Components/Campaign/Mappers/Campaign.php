@@ -174,16 +174,20 @@ class Campaign extends RecordMapper
 
   public function isDue()
   {
-    $time = time();
-    $time -= $time % 60;
-    $check = $this->nextRun()->getTimestamp();
-    $check -= $check % 60;
-    return ($check === $time);
+    if($this->active)
+    {
+      $time = time();
+      $time -= $time % 60;
+      $check = $this->nextRun()->getTimestamp();
+      $check -= $check % 60;
+      return ($check === $time);
+    }
+    return false;
   }
 
   public function nextRun()
   {
-    if(!$this->sendAt)
+    if(!$this->sendAt || !$this->active)
     {
       return null;
     }
