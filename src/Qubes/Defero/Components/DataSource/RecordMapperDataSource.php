@@ -9,7 +9,7 @@
 namespace Qubes\Defero\Components\DataSource;
 
 use Cubex\Mapper\Database\RecordCollection;
-use Qubes\Defero\Components\Campaign\Queue\MessageQueue;
+use Qubes\Defero\Applications\Defero\Defero;
 
 abstract class RecordMapperDataSource implements IDataSource
 {
@@ -95,7 +95,7 @@ abstract class RecordMapperDataSource implements IDataSource
     $this->resetPointer();
     while(($data = $this->getBatch()))
     {
-      MessageQueue::InsertBatch($campaign_id, $data);
+      Defero::pushBatch($campaign_id, $data);
       if(count($data) < $this->_batchSize)
       {
         // don't search for more if the last batch was not full
