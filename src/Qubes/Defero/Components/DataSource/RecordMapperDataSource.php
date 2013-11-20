@@ -30,14 +30,14 @@ abstract class RecordMapperDataSource implements IDataSource
     );
   }
 
-  function compareEquals($field, $compare, $value)
+  public function compareEquals($field, $compare, $value)
   {
     $this->getCollection()->loadWhereAppend(
       '%C ' . $compare . ' %s', $field, $value
     );
   }
 
-  function compareIn($field, $compare, $value)
+  public function compareIn($field, $compare, $value)
   {
     $this->getCollection()->loadWhereAppend(
       '%C ' . $compare . ' (%Ls)', $field, $value
