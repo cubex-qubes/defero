@@ -42,8 +42,8 @@
           <td><?= $campaign->name ?></td>
           <td><?= $campaign->reference ?></td>
           <td><?=
-            $campaign->dataSource() ?
-            $campaign->dataSource()->getName() : ''; ?></td>
+            $campaign->getDataSource() ?
+            $campaign->getDataSource()->getName() : ''; ?></td>
           <td><?= $campaign->getTitledSendType() ?></td>
           <td><?= $campaign->active ? "Yes" : "No" ?></td>
           <td>

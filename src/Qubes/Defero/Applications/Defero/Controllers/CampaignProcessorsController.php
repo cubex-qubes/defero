@@ -43,6 +43,7 @@ class CampaignProcessorsController extends DeferoController
       MessageProcessorCollection::getMessageProcessors()
     );
     $form->addSubmitElement();
+    $form->get('processorType')->setRequired(true);
 
     $form->hydrate($this->request()->postVariables());
     if($form->isValid() && $form->csrfCheck())

@@ -8,8 +8,10 @@
 
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
+use Cubex\Data\Validator\Validator;
 use Cubex\Form\FormElement;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
+use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\DataSource\DataSourceCondition;
 use Qubes\Defero\Components\DataSource\IDataSource;
 
@@ -28,12 +30,12 @@ class CampaignSourceView extends DeferoView
     return ($this->_currentKey++);
   }
 
-  public function __construct($campaign)
+  public function __construct(Campaign $campaign)
   {
     $this->campaign      = $campaign;
     $this->sourceElement = $this->getSourceElement();
 
-    if($source = $this->campaign->dataSource())
+    if($source = $this->campaign->getDataSource())
     {
       foreach($source->getConditionValues() as $c)
       {
@@ -66,29 +68,40 @@ class CampaignSourceView extends DeferoView
         ->setRenderTemplate('{{input}}');
       $valueEle   = $o->getValueElement($key, $data->value)
         ->setRenderTemplate('{{input}}');
-    }
-    $group = [$fieldEle, $compareEle, $valueEle];
-    if($data->disabled)
-    {
-      foreach($group as $ele)
-      {
-        $ele->addAttribute('disabled');
-      }
-    }
 
-    $this->elements[] = $group;
+      $group = [$fieldEle, $compareEle, $valueEle];
+      if(isset($data->disabled))
+      {
+        foreach($group as $ele)
+        {
+          /**
+           * @var $ele FormElement
+           */
+          $ele->addAttribute('disabled');
+        }
+      }
+
+      $this->elements[] = $group;
+    }
   }
 
   public function getSourceElement()
   {
     $post = $this->request()->postVariables();
 
+    $sc = null;
+    if(isset($this->campaign->dataSource->sourceClass))
+    {
+      $sc = $this->campaign->dataSource->sourceClass;
+    }
+
     $ele = (new FormElement('sourceClass'))
       ->setType(FormElement::TEXT)
-      ->setData($this->campaign->dataSource->sourceClass)
-      ->addValidator([$this, 'class_exists'], [$this->_namespace])
+      ->setData($sc)
+      ->addValidator(Validator::VALIDATE_NOTEMPTY)
+      ->addValidator([$this, 'classExists'], [$this->_namespace])
       ->addValidator(
-        [$this, 'is_subclass'],
+        [$this, 'isSubclass'],
         [$this->_namespace . '\\IDataSource', $this->_namespace]
       );
     if($post && $ele->isValid($post['sourceClass']))
@@ -98,10 +111,11 @@ class CampaignSourceView extends DeferoView
       $this->campaign->getAttribute('dataSource')->setModified();
       $this->campaign->saveChanges();
     }
+
     return $ele;
   }
 
-  public static function class_exists($input, $namespaces = [])
+  public static function classExists($input, $namespaces = [])
   {
     if(class_exists('\\' . $input))
     {
@@ -119,7 +133,7 @@ class CampaignSourceView extends DeferoView
     throw new \Exception('Invalid class ' . $input);
   }
 
-  public static function is_subclass($input, $class, $namespace = '')
+  public static function isSubclass($input, $class, $namespace = '')
   {
     if(is_subclass_of($namespace . '\\' . $input, $class))
     {

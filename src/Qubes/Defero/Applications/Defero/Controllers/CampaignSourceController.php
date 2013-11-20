@@ -19,16 +19,24 @@ class CampaignSourceController extends DeferoController
     $campaign = new Campaign($this->getInt('id'));
     if($post = $this->request()->postVariables())
     {
-      $campaign->dataSource->conditions = [];
-      foreach($post['compareField'] as $k => $f)
+      if(!$campaign->dataSource)
       {
-        if($f)
+        $campaign->dataSource = new \stdClass();
+      }
+      $campaign->dataSource->conditions = [];
+      if(isset($post['compareField']))
+      {
+        foreach($post['compareField'] as $k => $f)
         {
-          $s                                        = new \stdClass();
-          $s->field                                 = $f;
-          $s->compare                               = $post['conditionCompare'][$k];
-          $s->value                                 = $post['conditionValue'][$k];
-          $campaign->dataSource->conditions[] = $s;
+          if($f)
+          {
+            $s          = new \stdClass();
+            $s->field   = $f;
+            $s->compare = $post['conditionCompare'][$k];
+            $s->value   = $post['conditionValue'][$k];
+
+            $campaign->dataSource->conditions[] = $s;
+          }
         }
       }
     }

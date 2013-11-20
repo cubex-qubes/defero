@@ -46,7 +46,7 @@ use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
       <dd><?= $this->campaign->reference ?></dd>
       <dt>Data Source</dt>
       <dd><?php
-        $ds = $this->campaign->dataSource();
+        $ds = $this->campaign->getDataSource();
         if($ds)
         {
           echo $ds->getName();

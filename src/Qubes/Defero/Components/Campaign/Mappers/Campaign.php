@@ -34,7 +34,7 @@ class Campaign extends RecordMapper
   public $description;
 
   /**
-   * @type \Qubes\Defero\Components\DataSource\DataSourceCollection
+   * @type \stdClass
    */
   public $dataSource;
 
@@ -97,23 +97,26 @@ class Campaign extends RecordMapper
   }
 
   /**
-   * @return bool|IDataSource
+   * @return null|IDataSource
    */
-  public function dataSource()
+  public function getDataSource()
   {
-    if(!$this->dataSource || !$this->dataSource->sourceClass)
+    if(isset($this->dataSource->sourceClass))
     {
-      return false;
+      $dataSource = $this->getData('dataSource');
+
+      $ds = $dataSource->sourceClass;
+      if(!class_exists($ds))
+      {
+        $ds = $this->config('project')->getStr('namespace')
+          . '\\Components\\DataSource\\' . $ds;
+      }
+
+      $ds = new $ds();
+      $ds->setConditionValues($dataSource->conditions);
+      return $ds;
     }
-    $dataSource = $this->getData('dataSource');
-
-    $ds = $this->config('project')->getStr(
-        'namespace'
-      ) . '\\Components\\DataSource\\' . $dataSource->sourceClass;
-
-    $ds = new $ds();
-    $ds->setConditionValues($dataSource->conditions);
-    return $ds;
+    return null;
   }
 
   public function types()
