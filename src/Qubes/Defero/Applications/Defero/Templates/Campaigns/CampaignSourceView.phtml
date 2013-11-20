@@ -17,15 +17,18 @@
   </div>
   <form method="post" class="form-horizontal"><h4>Source</h4>
     <?= $this->sourceElement ?>
-    <h4>Conditions</h4>
     <?php
-    foreach($this->elements as $group)
+    if($this->elements)
     {
-      echo '<div class="controls control-group">' .
-        implode(' :: ', $group) .
-        '</div>';
+      echo '<h4>Conditions</h4>';
+      foreach($this->elements as $group)
+      {
+        echo '<div class="controls control-group">' .
+          implode(' :: ', $group) .
+          '</div>';
+      }
+      echo '<div class="control-group">' . $this->newCondition . '</div>';
     }
-    echo '<div class="control-group">' . $this->newCondition . '</div>';
     ?>
     <input type="submit">
   </form>
