@@ -50,7 +50,8 @@ class DataSourceCondition
     $ele = new FormElement('conditionCompare[' . $key . ']');
     $ele->setLabel($this->_name . ' Compare Type');
     $ele->setType(FormElement::SELECT);
-    $ele->setOptions(array_values($this->_comparisons));
+    $opts = array_merge([''], array_values($this->_comparisons));
+    $ele->setOptions($opts);
     $ele->setData($comparison);
     return $ele;
   }
