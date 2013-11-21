@@ -10,6 +10,7 @@ namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
 use Cubex\Data\Validator\Validator;
 use Cubex\Form\FormElement;
+use Cubex\Foundation\Config\ConfigTrait;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\DataSource\DataSourceCondition;
@@ -17,6 +18,8 @@ use Qubes\Defero\Components\DataSource\IDataSource;
 
 class CampaignSourceView extends DeferoView
 {
+  use ConfigTrait;
+
   public $campaign;
   public $elements = [];
   public $sourceElement;
@@ -96,14 +99,13 @@ class CampaignSourceView extends DeferoView
     }
 
     $ele = (new FormElement('sourceClass'))
-      ->setType(FormElement::TEXT)
+      ->setType(FormElement::SELECT)
       ->setData($sc)
-      ->addValidator(Validator::VALIDATE_NOTEMPTY)
-      ->addValidator([$this, 'classExists'], [$this->_namespace])
-      ->addValidator(
-        [$this, 'isSubclass'],
-        [$this->_namespace . '\\IDataSource', $this->_namespace]
-      );
+      ->setOptions(
+        ['' => ''] + array_fuse($this->config('datasources')->availableKeys())
+      )
+      ->addValidator(Validator::VALIDATE_NOTEMPTY);
+
     if($post && $ele->isValid($post['sourceClass']))
     {
       $ele->setData($post['sourceClass']);
@@ -113,32 +115,5 @@ class CampaignSourceView extends DeferoView
     }
 
     return $ele;
-  }
-
-  public static function classExists($input, $namespaces = [])
-  {
-    if(class_exists('\\' . $input))
-    {
-      return true;
-    }
-    $namespaces = (array)$namespaces;
-    $namespaces = array_filter(array_unique($namespaces));
-    foreach($namespaces as $namespace)
-    {
-      if(class_exists($namespace . '\\' . $input))
-      {
-        return true;
-      }
-    }
-    throw new \Exception('Invalid class ' . $input);
-  }
-
-  public static function isSubclass($input, $class, $namespace = '')
-  {
-    if(is_subclass_of($namespace . '\\' . $input, $class))
-    {
-      return true;
-    }
-    throw new \Exception($input . ' not an instance of ' . $class);
   }
 }

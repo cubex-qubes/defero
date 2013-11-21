@@ -13,16 +13,13 @@ use Cubex\Queue\StdQueue;
 use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
+use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
-use Qubes\Defero\Components\Campaign\Consumers\CampaignConsumer;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
-use Qubes\Defero\Components\MessageProcessor\MessageProcessorCollection;
-use Qubes\Defero\Transport\ProcessDefinition;
-use Qubes\Defero\Transport\ProcessMessage;
 
 class CampaignsController extends BaseDeferoController
 {
@@ -65,56 +62,16 @@ class CampaignsController extends BaseDeferoController
 
   public function renderSend($id)
   {
-    $message = new ProcessMessage();
-    $message->setData("firstName", 'tom');
-    $message->setData("lastName", 'kay');
-    $message->setData("name", 'tom kay');
-    $message->setData("email", 'tom.kay@justdevelop.it');
+    $message = [
+      'firstName' => 'tom',
+      'lastName'  => 'kay',
+      'name'      => 'tom kay',
+      'email'     => 'tom.kay@justdevelop.it'
+    ];
 
-    $campaign        = new Campaign($id);
-    $campaignMessage = $campaign->message();
-    $campaignMessage->reload();
+    Defero::push($id, $message);
 
-    //$message->setConditionValues($campaignMessage);
-    $message->setData('subject', $campaignMessage->subject);
-    $message->setData('plainText', $campaignMessage->plainText);
-    $message->setData('htmlContent', $campaignMessage->htmlContent);
-
-    foreach($campaign->processors as $processorData)
-    {
-      $config = new Config();
-      $config->hydrate($processorData);
-
-      $configGroup = new ConfigGroup();
-      $configGroup->addConfig("process", $config);
-      $process = new ProcessDefinition();
-      $process->setProcessClass(
-        get_class(
-          MessageProcessorCollection::getMessageProcessor(
-            $processorData->processorType
-          )
-        )
-      );
-      $process->setQueueName("defero");
-      $process->setQueueService("queue");
-      $process->configure($configGroup);
-      $message->addProcess($process);
-    }
-
-    // Final process is used to send the message
-    $process = new ProcessDefinition();
-    $process->setQueueName("defero");
-    $process->setQueueService("queue");
-    $process->setProcessClass(
-      'Qubes\Defero\Components\Campaign\Process\EmailService\Smtp'
-    );
-    $message->addProcess($process);
-
-    $consumer = new CampaignConsumer();
-    $consumer->process(new StdQueue('defero'), $message);
-    $consumer->runBatch();
-
-    echo 'Test sent to ' . $message->getStr('email');
+    echo 'Test sent to tom.kay@justdevelop.it';
   }
 
   /**

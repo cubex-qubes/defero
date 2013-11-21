@@ -8,10 +8,10 @@ use Cubex\Core\Application\Application;
 use Cubex\Data\Ephemeral\EphemeralCache;
 use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Config\ConfigGroup;
+use Cubex\Foundation\Container;
 use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
-use Qubes\Defero\Components\MessageProcessor\MessageProcessorCollection;
 use Qubes\Defero\Transport\ProcessDefinition;
 use Qubes\Defero\Transport\ProcessMessage;
 use Themed\Sidekick\SidekickTheme;
@@ -77,7 +77,8 @@ class Defero extends Application
     );
     if($processors === null)
     {
-      $processors = [];
+      $processors       = [];
+      $processorsConfig = Container::get(Container::CONFIG)->get('processors');
       foreach($campaign->processors as $processorData)
       {
         $config = new Config();
@@ -87,11 +88,7 @@ class Defero extends Application
         $configGroup->addConfig("process", $config);
         $process = new ProcessDefinition();
         $process->setProcessClass(
-          get_class(
-            MessageProcessorCollection::getMessageProcessor(
-              $processorData->processorType
-            )
-          )
+          $processorsConfig->getStr($processorData->processorType)
         );
         $process->setQueueName("defero");
         $process->setQueueService("queue");

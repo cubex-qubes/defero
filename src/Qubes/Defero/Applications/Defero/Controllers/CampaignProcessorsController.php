@@ -18,7 +18,6 @@ use Cubex\View\Templates\Errors\Error404;
 use Qubes\Defero\Applications\Defero\Forms\DeferoForm;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
-use Qubes\Defero\Components\MessageProcessor\MessageProcessorCollection;
 
 class CampaignProcessorsController extends DeferoController
 {
@@ -37,10 +36,12 @@ class CampaignProcessorsController extends DeferoController
 
   public function renderNew()
   {
+    $definedProcessors = $this->config('processors')->jsonSerialize();
+
     $form = new DeferoForm('edit_processor');
     $form->addSelectElement(
       'processorType',
-      MessageProcessorCollection::getMessageProcessors()
+      array_map('basename', $definedProcessors)
     );
     $form->addSubmitElement();
     $form->get('processorType')->setRequired(true);
@@ -80,7 +81,8 @@ class CampaignProcessorsController extends DeferoController
 
   public function renderEdit($pid)
   {
-    $processors = $this->_campaign->processors;
+    $processors        = $this->_campaign->processors;
+    $definedProcessors = $this->config('processors')->jsonSerialize();
     if(!isset($processors[$pid]))
     {
       return $this->renderNew();
@@ -90,13 +92,12 @@ class CampaignProcessorsController extends DeferoController
     $form = new DeferoForm('edit_processor');
     $form->addSelectElement(
       'processorType',
-      MessageProcessorCollection::getMessageProcessors()
+      array_map('basename', $definedProcessors)
     );
     $form->getElement('processorType')->addAttribute('disabled');
 
-    $processor = MessageProcessorCollection::getMessageProcessor(
-      $pData->processorType
-    );
+    $processor = $this->config('processors')->getStr($pData->processorType);
+    $processor = new $processor;
 
     // populate types
     $class = new \ReflectionClass($processor);
