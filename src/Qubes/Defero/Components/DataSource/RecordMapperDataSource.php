@@ -82,7 +82,7 @@ abstract class RecordMapperDataSource implements IDataSource
     return $collection->get()->jsonSerialize();
   }
 
-  public function process($campaign_id, $time)
+  public function process($campaign_id, $startTime, $lastSent)
   {
     foreach($this->getConditionValues() as $condition)
     {

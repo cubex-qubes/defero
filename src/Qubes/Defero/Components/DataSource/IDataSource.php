@@ -24,7 +24,7 @@ interface IDataSource
 
   public function resetPointer();
 */
-  public function process($campaign_id, $time);
+  public function process($campaign_id, $startTime, $lastSent);
 }
 /*
 class CassandraDataSource implements IDataSource
