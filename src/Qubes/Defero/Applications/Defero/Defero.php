@@ -41,15 +41,15 @@ class Defero extends Application
   public function getRoutes()
   {
     return [
-      "/campaigns/:id@num/message/(.*)"     => "CampaignMessage",
-      "/campaigns/:id@num/source/(.*)"      => "CampaignSource",
-      "/campaigns/:cid@num/processors/(.*)" => "CampaignProcessors",
-      "/campaigns/:id@num/contacts/(.*)"    => "CampaignContacts",
-      "/campaigns/(.*)"                     => "Campaigns",
-      "/contacts/(.*)"                      => "Contacts",
-      "/typeahead/(.*)"                     => "TypeAhead",
-      "/search/(.*)"                        => "Search",
-      "/wizard/(.*)"                        => "Wizard",
+      "/campaigns/:id@num/message/(.*)"     => '\Qubes\Defero\Applications\Defero\Controllers\CampaignMessageController',
+      "/campaigns/:id@num/source/(.*)"      => '\Qubes\Defero\Applications\Defero\Controllers\CampaignSourceController',
+      "/campaigns/:cid@num/processors/(.*)" => '\Qubes\Defero\Applications\Defero\Controllers\CampaignProcessorsController',
+      "/campaigns/:id@num/contacts/(.*)"    => '\Qubes\Defero\Applications\Defero\Controllers\CampaignContactsController',
+      "/campaigns/(.*)"                     => '\Qubes\Defero\Applications\Defero\Controllers\CampaignsController',
+      "/contacts/(.*)"                      => '\Qubes\Defero\Applications\Defero\Controllers\ContactsController',
+      "/typeahead/(.*)"                     => '\Qubes\Defero\Applications\Defero\Controllers\TypeAheadController',
+      "/search/(.*)"                        => '\Qubes\Defero\Applications\Defero\Controllers\SearchController',
+      "/wizard/(.*)"                        => '\Qubes\Defero\Applications\Defero\Controllers\WizardController',
     ];
   }
 
