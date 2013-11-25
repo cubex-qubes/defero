@@ -1,0 +1,20 @@
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         strict="true"
+         verbose="true">
+  <php>
+    <env name="CUBEX_ENV" value="development"/>
+    <env name="CUBEX_UNITTEST" value="true"/>
+    <ini name="display_errors" value="-1"/>
+  </php>
+
+  <testsuites>
+    <testsuite name="Defero Test Suite">
+      <directory>./src/Qubes/Defero/Tests</directory>
+      <directory>./src/Qubes/Defero/*/Tests</directory>
+      <directory>./src/Qubes/Defero/*/*/Tests</directory>
+    </testsuite>
+  </testsuites>
+
+</phpunit>
+
