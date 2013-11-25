@@ -13,7 +13,7 @@ class DeferoFormElementRender extends FormElementRender
 {
   public function render()
   {
-    $search = [
+    $search  = [
       '{{labelcontent}}',
       '{{labelfor}}',
       '{{errorclass}}',
@@ -29,7 +29,10 @@ class DeferoFormElementRender extends FormElementRender
 
   public function getTemplate()
   {
-    if ($this->_template) return $this->_template;
+    if($this->_template)
+    {
+      return $this->_template;
+    }
     switch($this->_element->type())
     {
       case FormElement::SUBMIT:
@@ -45,7 +48,9 @@ class DeferoFormElementRender extends FormElementRender
     return (new HtmlElement(
       "div", ["class" => "control-group form-inline"]
     ))->nestElement(
-      "div", ["class" => "controls clearfix"], "{{input}}"
+      "div",
+      ["class" => "controls clearfix"],
+      "{{input}}"
     )->render();
   }
 

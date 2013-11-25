@@ -12,20 +12,9 @@ interface IDataSource
 {
   public function getName();
 
-  /* *
-   * @return int
-   */
-
-  /*public function getCount();
-  /* *
-   * @return \Qubes\Defero\Transport\ProcessMessage[]
-   * /
-  public function getBatch();
-
-  public function resetPointer();
-*/
   public function process($campaign_id, $startTime, $lastSent);
 }
+
 /*
 class CassandraDataSource implements IDataSource
 {

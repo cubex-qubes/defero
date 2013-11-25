@@ -12,5 +12,7 @@ class CampaignSourceForm extends DeferoForm
 {
   public $dataSource;
 
-  public function createFields() { }
+  public function createFields()
+  {
+  }
 }

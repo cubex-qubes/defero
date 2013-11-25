@@ -69,23 +69,23 @@ class Campaigns extends MapperCliCommand
 
     echo (new TextTable())->setColumnHeaders(
       [
-        "Id",
-        "Ref",
-        "Name",
-        "Type",
-        "Send Type",
+      "Id",
+      "Ref",
+      "Name",
+      "Type",
+      "Send Type",
       ]
     )->appendRows(
-        [
-          [
-            $campaign->id(),
-            $campaign->reference,
-            $campaign->name,
-            $campaign->type,
-            $campaign->sendType,
-          ],
-        ]
-      );
+      [
+      [
+        $campaign->id(),
+        $campaign->reference,
+        $campaign->name,
+        $campaign->type,
+        $campaign->sendType,
+      ],
+      ]
+    );
   }
 
   public function add()

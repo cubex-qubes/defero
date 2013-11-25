@@ -61,23 +61,23 @@ class TypeAheadSearchFormView extends ViewModel
     $searchForm = (new HtmlElement(
       "form",
       [
-        "class"  => $searchFromClass,
-        "action" => "/search",
-        "method" => "get",
+      "class"  => $searchFromClass,
+      "action" => "/search",
+      "method" => "get",
       ]
     ))->nestElement(
-        "input",
-        [
-          "type"         => "text",
-          "name"         => "q",
-          "class"        => "search-query {$jsTriggerClass}",
-          "placeholder"  => $this->_placeholder,
-          "autocomplete" => "off",
-        ]
-      )->nestElement(
-        "input",
-        ["type"  => "hidden", "name"  => "type", "value" => $searchType,]
-      );
+      "input",
+      [
+      "type"         => "text",
+      "name"         => "q",
+      "class"        => "search-query {$jsTriggerClass}",
+      "placeholder"  => $this->_placeholder,
+      "autocomplete" => "off",
+      ]
+    )->nestElement(
+      "input",
+      ["type" => "hidden", "name" => "type", "value" => $searchType,]
+    );
 
     return $searchForm;
   }

@@ -20,11 +20,11 @@ class SearchLibrary
   )
   {
     return ParseQuery::parse(
-                     DB::getAccessor("defero_db"),
-                     "CONCAT(%C, ': ', '{$prefix}', %C) as %C",
-                     $columnFrom,
-                     $id,
-                     $columnTo
+      DB::getAccessor("defero_db"),
+      "CONCAT(%C, ': ', '{$prefix}', %C) as %C",
+      $columnFrom,
+      $id,
+      $columnTo
     );
   }
 
@@ -33,10 +33,10 @@ class SearchLibrary
     $campaignsSelect = self::_getDisplayResultPattern("C", "name");
 
     return Campaign::collection()->whereLike("name", $query)
-                   ->setColumns([$campaignsSelect, "name"])
-                   ->orderByKeys(["key"])
-                   ->setOrderByQuery("name")
-                   ->getFieldValues('key');
+    ->setColumns([$campaignsSelect, "name"])
+    ->orderByKeys(["key"])
+    ->setOrderByQuery("name")
+    ->getFieldValues('key');
   }
 
   public static function getContacts($query)
@@ -44,15 +44,15 @@ class SearchLibrary
     $contactSelect = self::_getDisplayResultPattern("c", "name");
 
     return Contact::collection()->whereLike("name", $query)
-                  ->setColumns([$contactSelect, "name"])
-                  ->setOrderByQuery("name")
-                  ->getFieldValues('key');
+    ->setColumns([$contactSelect, "name"])
+    ->setOrderByQuery("name")
+    ->getFieldValues('key');
   }
 
   public static function getAll($query)
   {
-    $contactSelect    = self::_getDisplayResultPattern("c", "name");
-    $campaignsSelect  = self::_getDisplayResultPattern("C", "name");
+    $contactSelect   = self::_getDisplayResultPattern("c", "name");
+    $campaignsSelect = self::_getDisplayResultPattern("C", "name");
 
     $queryData = [
       "SELECT %C FROM (
@@ -74,7 +74,7 @@ class SearchLibrary
     ];
 
     $results = DB::getAccessor("defero_db")->getRows(
-                 ParseQuery::parse(DB::getAccessor("defero_db"), $queryData)
+      ParseQuery::parse(DB::getAccessor("defero_db"), $queryData)
     );
 
     return ppull($results, "key");

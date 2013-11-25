@@ -40,16 +40,19 @@ class Defero extends Application
 
   public function getRoutes()
   {
+    $base = '\Qubes\Defero\Applications\Defero\Controllers\\';
     return [
-      "/campaigns/:id@num/message/(.*)"     => '\Qubes\Defero\Applications\Defero\Controllers\CampaignMessageController',
-      "/campaigns/:id@num/source/(.*)"      => '\Qubes\Defero\Applications\Defero\Controllers\CampaignSourceController',
-      "/campaigns/:cid@num/processors/(.*)" => '\Qubes\Defero\Applications\Defero\Controllers\CampaignProcessorsController',
-      "/campaigns/:id@num/contacts/(.*)"    => '\Qubes\Defero\Applications\Defero\Controllers\CampaignContactsController',
-      "/campaigns/(.*)"                     => '\Qubes\Defero\Applications\Defero\Controllers\CampaignsController',
-      "/contacts/(.*)"                      => '\Qubes\Defero\Applications\Defero\Controllers\ContactsController',
-      "/typeahead/(.*)"                     => '\Qubes\Defero\Applications\Defero\Controllers\TypeAheadController',
-      "/search/(.*)"                        => '\Qubes\Defero\Applications\Defero\Controllers\SearchController',
-      "/wizard/(.*)"                        => '\Qubes\Defero\Applications\Defero\Controllers\WizardController',
+      "/campaigns/"     => [
+        ":id@num/message/(.*)"     => $base . 'CampaignMessageController',
+        ":id@num/source/(.*)"      => $base . 'CampaignSourceController',
+        ":cid@num/processors/(.*)" => $base . 'CampaignProcessorsController',
+        ":id@num/contacts/(.*)"    => $base . 'CampaignContactsController',
+        "(.*)"                     => $base . 'CampaignsController',
+      ],
+      "/contacts/(.*)"  => $base . 'ContactsController',
+      "/typeahead/(.*)" => $base . 'TypeAheadController',
+      "/search/(.*)"    => $base . 'SearchController',
+      "/wizard/(.*)"    => $base . 'WizardController',
     ];
   }
 
@@ -73,7 +76,8 @@ class Defero extends Application
 
     $processorsCacheId = $cacheId . ':processors';
     $processors        = EphemeralCache::getCache(
-      $processorsCacheId, __CLASS__
+      $processorsCacheId,
+      __CLASS__
     );
     if($processors === null)
     {
@@ -129,10 +133,12 @@ class Defero extends Application
 
       $message->setData('subject', self::replaceData($msg['subject'], $data));
       $message->setData(
-        'plainText', self::replaceData($msg['plainText'], $data)
+        'plainText',
+        self::replaceData($msg['plainText'], $data)
       );
       $message->setData(
-        'htmlContent', self::replaceData($msg['htmlContent'], $data)
+        'htmlContent',
+        self::replaceData($msg['htmlContent'], $data)
       );
 
       $contactId      = $msg['contactId'] ? : $campaign->contactId;
@@ -148,10 +154,12 @@ class Defero extends Application
         EphemeralCache::storeCache($contactCacheId, $contact, __CLASS__);
       }
       $message->setData(
-        'senderName', self::replaceData($contact['name'], $data)
+        'senderName',
+        self::replaceData($contact['name'], $data)
       );
       $message->setData(
-        'senderEmail', self::replaceData($contact['email'], $data)
+        'senderEmail',
+        self::replaceData($contact['email'], $data)
       );
 
       foreach($processors as $process)

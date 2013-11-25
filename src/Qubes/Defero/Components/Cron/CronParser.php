@@ -37,7 +37,6 @@ class CronParser
     self::MINUTE => [self::MINUTE]
   ];
 
-
   protected static function _resetTime(&$time)
   {
     if($time === null)
@@ -138,8 +137,8 @@ class CronParser
           continue;
         }
         if(
-          (isset($part['val']) && ($part['val'] == $check || $part['val'] == '*')) ||
-          (isset($part['min']) && $check >= $part['min'] && $check <= $part['max'])
+        (isset($part['val']) && ($part['val'] == $check || $part['val'] == '*')) ||
+        (isset($part['min']) && $check >= $part['min'] && $check <= $part['max'])
         )
         {
           $offset = isset($part['min']) ? $part['min'] : 0;
@@ -154,7 +153,6 @@ class CronParser
 
     return $minimum;
   }
-
 
   public static function isValid($pattern)
   {
@@ -261,10 +259,10 @@ class CronParser
         for($i = $pos - 1; $i >= 0; $i--)
         {
           $ret->sub(
-              self::_getInterval(
-                  $i,
-                  $ret->format(self::$_formats[$i]) - self::$_min[$i]
-              )
+            self::_getInterval(
+              $i,
+            $ret->format(self::$_formats[$i]) - self::$_min[$i]
+            )
           );
         }
       }
