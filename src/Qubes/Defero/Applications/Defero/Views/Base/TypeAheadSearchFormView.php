@@ -76,7 +76,11 @@ class TypeAheadSearchFormView extends ViewModel
       ]
     )->nestElement(
       "input",
-      ["type" => "hidden", "name" => "type", "value" => $searchType,]
+      [
+      "type"  => "hidden",
+      "name"  => "type",
+      "value" => $searchType,
+      ]
     );
 
     return $searchForm;

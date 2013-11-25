@@ -261,7 +261,7 @@ class CronParser
           $ret->sub(
             self::_getInterval(
               $i,
-            $ret->format(self::$_formats[$i]) - self::$_min[$i]
+              ($ret->format(self::$_formats[$i]) - self::$_min[$i])
             )
           );
         }
