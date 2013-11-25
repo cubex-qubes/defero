@@ -270,7 +270,9 @@ class CronParser
 
     if(!self::isDue($pattern, $ret->getTimestamp()))
     {
-      throw new \Exception("Cron Error: Calculated nextRun is not due. $originalPattern $time");
+      throw new \Exception(
+        "Cron Error: Calculated nextRun is not due. $originalPattern $time"
+      );
     }
 
     return $ret;
