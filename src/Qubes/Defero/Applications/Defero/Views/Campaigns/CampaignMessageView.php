@@ -37,7 +37,6 @@ class CampaignMessageView extends DeferoView
     $config          = $this->config('i18n');
     $this->languages = $config->getArr('languages');
 
-    $this->requireJs("ckeditor/ckeditor");
     $this->campaign = new Campaign($campaignId);
     $this->_message = $this->campaign->message();
 
