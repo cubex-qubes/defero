@@ -44,7 +44,11 @@ class Campaign extends RecordMapper
   public $sendType;
   public $contactId;
 
+  /**
+   * @datatype varchar(50)
+   */
   public $sendAt;
+
   /**
    * @datatype int
    */
