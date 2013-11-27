@@ -5,16 +5,9 @@
 
 namespace Qubes\Defero\Components\Campaign\Consumers;
 
-use Cubex\Foundation\Config\IConfigurable;
-use Cubex\Log\Log;
 use Cubex\Queue\IBatchQueueConsumer;
 use Cubex\Queue\IQueue;
-use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
-use Qubes\Defero\Components\Campaign\Rules\Delivery\IDeliveryRule;
-use Qubes\Defero\Transport\IRule;
-use Qubes\Defero\Transport\IProcess;
-use Qubes\Defero\Transport\IProcessDefinition;
 use Qubes\Defero\Transport\IProcessMessage;
 
 class CampaignQueueConsumer implements IBatchQueueConsumer
@@ -48,7 +41,7 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
     {
       $cid      = $message->getInt('campaign_id');
       $started  = $message->getInt('started_at');
-      $lastSent  = $message->getInt('last_sent') ? : 0;
+      $lastSent = $message->getInt('last_sent') ? : 0;
       $campaign = new Campaign($cid);
       $campaign->getDataSource()->process($cid, $started, $lastSent);
 
