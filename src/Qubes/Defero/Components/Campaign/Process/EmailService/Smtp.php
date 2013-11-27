@@ -11,6 +11,7 @@ use Cubex\Foundation\Container;
 use Cubex\Log\Debug;
 use Cubex\Log\Log;
 use Cubex\ServiceManager\ServiceConfig;
+use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Transport\StdProcess;
 
 class Smtp extends StdProcess implements IEmailService
@@ -43,7 +44,20 @@ class Smtp extends StdProcess implements IEmailService
 
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
-    $mailer->setBody($this->_message->getStr('plainText'));
+
+    switch($this->_message->getStr('sendType'))
+    {
+      case (SendType::PLAIN_TEXT):
+        $mailer->setBody($this->_message->getStr('plainText'));
+        break;
+      case (SendType::HTML_ONLY):
+        $mailer->setBody($this->_message->getStr('htmlContent'));
+        break;
+      case (SendType::HTML_AND_PLAIN):
+        $mailer->setBody($this->_message->getStr('htmlContent'));
+        break;
+    }
+
     $mailer->setFrom(
       $this->_message->getStr('senderEmail'),
       $this->_message->getStr('senderName')
