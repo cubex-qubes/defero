@@ -111,8 +111,7 @@ class Campaign extends RecordMapper
       $ds = $dataSource->sourceClass;
       if(!class_exists($ds))
       {
-        $ds = $this->config('project')->getStr('namespace')
-          . '\\Components\\DataSource\\' . $ds;
+        $ds = $this->config('datasources')->getStr($ds);
       }
 
       $ds = new $ds();
