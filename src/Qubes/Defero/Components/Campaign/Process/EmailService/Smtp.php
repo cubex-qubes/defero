@@ -48,13 +48,14 @@ class Smtp extends StdProcess implements IEmailService
     switch($this->_message->getStr('sendType'))
     {
       case (SendType::PLAIN_TEXT):
-        $mailer->setBody($this->_message->getStr('plainText'));
+        $mailer->setTextBody($this->_message->getStr('plainText'));
         break;
       case (SendType::HTML_ONLY):
-        $mailer->setBody($this->_message->getStr('htmlContent'));
+        $mailer->setHtmlBody($this->_message->getStr('htmlContent'));
         break;
       case (SendType::HTML_AND_PLAIN):
-        $mailer->setBody($this->_message->getStr('htmlContent'));
+        $mailer->setTextBody($this->_message->getStr('plainText'));
+        $mailer->setHtmlBody($this->_message->getStr('htmlContent'));
         break;
     }
 
