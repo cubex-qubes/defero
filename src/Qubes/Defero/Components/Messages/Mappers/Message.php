@@ -6,6 +6,7 @@
 namespace Qubes\Defero\Components\Messages\Mappers;
 
 use Cubex\Data\Validator\Validator;
+use Cubex\Helpers\Inflection;
 use Cubex\Mapper\Database\I18n\I18nRecordMapper;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
@@ -39,5 +40,15 @@ class Message extends I18nRecordMapper
   public function campaign()
   {
     return $this->belongsTo(new Campaign());
+  }
+
+  public function getTableName($plural = true)
+  {
+    $tbl = 'defero_message';
+    if($plural)
+    {
+      return Inflection::pluralise($tbl);
+    }
+    return $tbl;
   }
 }

@@ -37,10 +37,14 @@ class CampaignConsumer implements IBatchQueueConsumer
     return true;
   }
 
-  protected function _passMessage(IProcessMessage $message, $taskId)
+  protected function _incrementStep(IProcessMessage $message)
   {
     //Increment step to change currentProcess return
     $message->setStep($message->getCurrentStep() + 1);
+  }
+
+  protected function _requeueMessage(IProcessMessage $message, $taskId)
+  {
     if(!$message->isComplete())
     {
       \Queue::getAccessor($message->currentProcess()->getQueueService())
@@ -60,13 +64,27 @@ class CampaignConsumer implements IBatchQueueConsumer
      */
     foreach($this->_batch as $taskId => $message)
     {
+      $processAll = true;
+      $pass       = true;
       try
       {
-        $pass = $this->runProcess(
-          $message,
-          $message->currentProcess(),
-          $taskId
-        );
+        while(true)
+        {
+          $pass = $this->runProcess(
+            $message,
+            $message->currentProcess(),
+            $taskId
+          );
+          if($message->isComplete() || $pass == false)
+          {
+            break;
+          }
+          $message->incrementStep();
+          if(!$processAll)
+          {
+            break;
+          }
+        }
       }
       catch(\Exception $e)
       {
@@ -77,7 +95,7 @@ class CampaignConsumer implements IBatchQueueConsumer
       //If the process fails, the message should be dropped
       if($pass)
       {
-        $this->_passMessage($message, $taskId);
+        $this->_requeueMessage($message, $taskId);
       }
 
       $results[$taskId] = true;

@@ -41,7 +41,7 @@ class CampaignProcessorsController extends DeferoController
     $form = new DeferoForm('edit_processor');
     $form->addSelectElement(
       'processorType',
-      array_map('basename', $definedProcessors)
+      array_map('class_shortname', $definedProcessors)
     );
     $form->addSubmitElement();
     $form->get('processorType')->setRequired(true);
@@ -92,7 +92,7 @@ class CampaignProcessorsController extends DeferoController
     $form = new DeferoForm('edit_processor');
     $form->addSelectElement(
       'processorType',
-      array_map('basename', $definedProcessors)
+      array_map('class_shortname', $definedProcessors)
     );
     $form->getElement('processorType')->addAttribute('disabled');
 

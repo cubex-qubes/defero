@@ -18,7 +18,9 @@
   <form method="post" class="form-horizontal"><h4>Source</h4>
     <?= $this->sourceElement ?>
     <?php
-    if(($src = $this->campaign->getDataSource()) && $src->getConditions())
+    if(($src = $this->campaign->getDataSource()) &&
+      method_exists($src, 'getConditionValues') && $src->getConditions()
+    )
     {
       echo '<h4>Conditions</h4>';
       foreach($this->elements as $group)

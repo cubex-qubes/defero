@@ -13,10 +13,11 @@ use Cubex\Helpers\DateTimeHelper;
 use Cubex\Helpers\Strings;
 use Cubex\Mapper\Database\RecordMapper;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
-use Qubes\Defero\Components\Campaign\Enums\CampaignType;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
+use Qubes\Defero\Components\Campaign\Enums\TrackingType;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Components\Cron\CronParser;
+use Qubes\Defero\Components\DataSource\DataSourceConditionsTrait;
 use Qubes\Defero\Components\DataSource\IDataSource;
 use Qubes\Defero\Components\Messages\Mappers\Message;
 
@@ -45,6 +46,11 @@ class Campaign extends RecordMapper
   public $contactId;
 
   /**
+   * @enumclass \Qubes\Defero\Components\Campaign\Enums\TrackingType
+   */
+  public $trackingType;
+
+  /**
    * @datatype varchar(50)
    */
   public $sendAt;
@@ -61,7 +67,7 @@ class Campaign extends RecordMapper
   public $active;
 
   /**
-   * @datatype TEXT
+   * @datatype text
    */
   public $processors;
 
@@ -82,6 +88,10 @@ class Campaign extends RecordMapper
 
     $this->_attribute('sendType')
       ->addValidator(Validator::VALIDATE_ENUM, [new SendType()])
+      ->setRequired(true);
+
+    $this->_attribute('trackingType')
+      ->addValidator(Validator::VALIDATE_ENUM, [new TrackingType()])
       ->setRequired(true);
 
     $this->_attribute('contactId')
@@ -119,20 +129,23 @@ class Campaign extends RecordMapper
       }
 
       $ds = new $ds();
-      $ds->setConditionValues($dataSource->conditions);
+      if(method_exists($ds, 'setConditionValues'))
+      {
+        $ds->setConditionValues($dataSource->conditions);
+      }
       return $ds;
     }
     return null;
   }
 
-  public function types()
-  {
-    return new CampaignType();
-  }
-
   public function sendTypes()
   {
     return new SendType();
+  }
+
+  public function trackingTypes()
+  {
+    return new TrackingType();
   }
 
   public function contacts()

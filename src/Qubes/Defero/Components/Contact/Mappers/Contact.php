@@ -45,7 +45,7 @@ class Contact extends RecordMapper
       ->setRequired(true);
 
     $this->_attribute('email')
-      ->addValidator(Validator::VALIDATE_EMAIL)
+      //->addValidator(Validator::VALIDATE_EMAIL)
       ->setRequired(true);
 
     $this->_attribute('language')

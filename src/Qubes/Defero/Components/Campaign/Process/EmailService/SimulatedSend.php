@@ -10,7 +10,7 @@ namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 
 use Qubes\Defero\Transport\StdProcess;
 
-class SimulatedSend extends StdProcess implements IEmailService
+class SimulatedSend extends StdProcess implements IEmailProcess
 {
   public function process()
   {

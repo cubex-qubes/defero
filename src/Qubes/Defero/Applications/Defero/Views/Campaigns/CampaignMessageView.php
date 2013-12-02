@@ -13,50 +13,23 @@ use Cubex\View\HtmlElement;
 use Qubes\Defero\Applications\Defero\Forms\CampaignMessageForm;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Messages\Mappers\Message;
 
 class CampaignMessageView extends DeferoView
 {
-  use ConfigTrait;
-
-  public $campaign;
-  public $form;
+  public $message;
   public $languages;
-  public $defaultLanguage;
-  public $currentLanguage;
-  /**
-   * @var \Qubes\Defero\Components\Messages\Mappers\Message
-   */
-  protected $_message;
 
-  public function __construct($campaignId, $language = null)
+  public function __construct(Message $message, $languages)
   {
     $this->requireJs(
       'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
     );
 
-    $config          = $this->config('i18n');
-    $this->languages = $config->getArr('languages');
-
-    $this->campaign = new Campaign($campaignId);
-    $this->_message = $this->campaign->message();
-
-    $this->defaultLanguage = $this->_message->language();
-    $this->currentLanguage = $language;
-
-    if($language)
-    {
-      $this->_message->setLanguage($language);
-    }
-    $this->_message->reload();
-
-    $this->form = (new CampaignMessageForm('campaign_message'))
-      ->bindMapper($this->_message);
-
-    $this->form->hydrate($this->request()->postVariables());
-    if($this->form->isValid() && $this->form->csrfCheck(true))
-    {
-      $this->form->saveChanges();
-    }
+    $this->message   = $message;
+    $this->languages = $languages;
+    $this->form      = (new CampaignMessageForm('campaign_message'))
+      ->bindMapper($message);
   }
 
   public function getConfirmPopover($href)

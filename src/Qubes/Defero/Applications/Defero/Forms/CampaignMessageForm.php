@@ -18,22 +18,19 @@ class CampaignMessageForm extends DeferoForm
     parent::_postBind();
 
     $this->getElement('plainText')
-         ->setType(FormElement::TEXTAREA);
+      ->setType(FormElement::TEXTAREA);
 
     $this->getElement('htmlContent')
-         ->setType(FormElement::TEXTAREA)
-         ->addAttribute('class', 'ckeditor');
+      ->setType(FormElement::TEXTAREA)
+      ->addAttribute('class', 'ckeditor');
 
     $this->getElement('campaignId')
-         ->setType(FormElement::NONE);
+      ->setType(FormElement::NONE);
 
-    $contacts = array_merge(
-      ['' => ''],
-      Contact::collection()->getKeyPair('id', 'name')
-    );
+    $contacts = ['' => ''] + Contact::collection()->getKeyPair('id', 'name');
 
     $this->getElement('contactId')
-         ->setType(FormElement::SELECT)
-         ->setOptions($contacts);
+      ->setType(FormElement::SELECT)
+      ->setOptions($contacts);
   }
 }

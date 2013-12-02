@@ -11,14 +11,48 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Facade\Redirect;
 use Cubex\I18n\Translator\Reversulator;
 use Cubex\Routing\StdRoute;
+use Qubes\Defero\Applications\Defero\Forms\CampaignMessageForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignMessageView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignMessageController extends DeferoController
 {
+  protected $_message;
+
   public function renderIndex()
   {
-    return new CampaignMessageView($this->getInt('id'), $this->getStr('hl'));
+    $config    = $this->config('i18n');
+    $languages = $config->getArr('languages');
+    return new CampaignMessageView($this->_getMessage(), $languages);
+  }
+
+  public function postIndex()
+  {
+    $form = new CampaignMessageForm('campaign_message');
+    $form->bindMapper($this->_getMessage());
+    $form->hydrate($this->request()->postVariables());
+    if($form->isValid() && $form->csrfCheck(true))
+    {
+      $form->saveChanges();
+    }
+    return Redirect::to('/campaigns/' . $this->getInt('id'));
+  }
+
+  protected function _getMessage()
+  {
+    if(!$this->_message)
+    {
+      $campaign       = new Campaign($this->getInt('id'));
+      $this->_message = $campaign->message();
+
+      $currentLanguage = $this->getStr('hl');
+      if($currentLanguage)
+      {
+        $this->_message->setLanguage($currentLanguage);
+      }
+      $this->_message->reload();
+    }
+    return $this->_message;
   }
 
   public function renderTranslate()

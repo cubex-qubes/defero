@@ -38,7 +38,9 @@ class CampaignSourceView extends DeferoView
     $this->campaign      = $campaign;
     $this->sourceElement = $this->getSourceElement();
 
-    if($source = $this->campaign->getDataSource())
+    if(($source = $this->campaign->getDataSource()) &&
+      method_exists($source, 'getConditionValues')
+    )
     {
       foreach($source->getConditionValues() as $c)
       {

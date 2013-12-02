@@ -9,14 +9,16 @@
   <div class="pull-right btn-toolbar">
     <div class="btn-group">
       <?php
-      if($this->currentLanguage !== null)
+      if($this->message->language() !== 'en')
       {
-        $url = '/campaigns/' . $this->campaign->id() .
-          '/message/' . $this->currentLanguage .
+        $url = '/campaigns/' . $this->message->campaignId .
+          '/message/' . $this->message->language() .
           '/translate';
-        echo '<a href="' . $url. '" class="btn btn-primary js-popover"
+        echo '<a href="' . $url . '" class="btn btn-primary js-popover"
            title="Translate Message"
-           data-content="This will overwrite the current message.&lt;br&gt;'.$this->getConfirmPopover($url).'"
+           data-content="This will overwrite the current message.&lt;br&gt;'
+          . $this->getConfirmPopover($url)
+          . '"
            data-container="body"
            data-placement="bottom" data-html="true"
            data-prevent-default="true">Translate</a>';
@@ -29,10 +31,11 @@
       {
         ?>
         <a href="/campaigns/<?=
-        $this->campaign->id(
-        ) ?>/message<?= $code == $this->defaultLanguage ? '' : '/' . $code ?>"
-           title="Edit <?= $this->campaign->name . ' ' . $code ?>"
-           class="btn btn-<?= $code == $this->currentLanguage || ($this->currentLanguage == null && $code == $this->defaultLanguage) ? 'success' : 'info'; ?>"><?= $code ?></a>
+        $this->message->campaign()->id() ?>/message/<?= $code ?>"
+           title="Edit <?= $this->message->campaign()->name . ' ' . $code ?>"
+           class="btn btn-<?=
+           $code == $this->message->language()
+             ? 'success' : 'info'; ?>"><?= $code ?></a>
       <?
       }
       ?>
@@ -40,7 +43,7 @@
   </div>
   <div>
     <h2 class="text-center">
-      Compose <?= $this->campaign->name ?>
+      Compose <?= $this->message->campaign()->name ?>
     </h2>
   </div>
   <?= $this->form ?>

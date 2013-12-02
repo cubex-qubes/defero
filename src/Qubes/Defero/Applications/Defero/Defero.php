@@ -87,6 +87,7 @@ class Defero extends Application
     $cacheId = 'DeferoQueueCampaign' . $campaignId;
     /**
      * @var Campaign $campaign
+     * @var Contact  $contact
      */
     $campaign = EphemeralCache::getCache($cacheId, __CLASS__);
     if($campaign === null)
@@ -127,6 +128,7 @@ class Defero extends Application
     foreach($batch as $data)
     {
       $data['campaign_id'] = $campaignId;
+      $data['mailer_tracking'] = $campaign->trackingType;
 
       $message = new ProcessMessage();
       $message->setData('data', $data);
@@ -137,50 +139,40 @@ class Defero extends Application
       $msg             = EphemeralCache::getCache($languageCacheId, __CLASS__);
       if($msg === null)
       {
-        $msgObj = $campaign->message();
-        $msgObj->setLanguage($userLanguage);
-        $msgObj->reload();
-
-        $msg = [
-          'subject'     => $msgObj->subject,
-          'plainText'   => $msgObj->plainText,
-          'htmlContent' => $msgObj->htmlContent,
-          'sendType'    => $campaign->sendType,
-          'contactId'   => $msgObj->contactId
-        ];
+        $msg = $campaign->message();
+        $msg->setLanguage($userLanguage);
+        $msg->reload();
 
         EphemeralCache::storeCache($languageCacheId, $msg, __CLASS__);
       }
 
-      $message->setData('subject', self::replaceData($msg['subject'], $data));
-      $message->setData(
-        'plainText',
-        self::replaceData($msg['plainText'], $data)
-      );
-      $message->setData(
-        'htmlContent',
-        self::replaceData($msg['htmlContent'], $data)
-      );
-
-      $contactId      = $msg['contactId'] ? : $campaign->contactId;
+      $contactId      = $msg->contactId ? : $campaign->contactId;
       $contactCacheId = $cacheId . ':' . $contactId;
       $contact        = EphemeralCache::getCache($contactCacheId, __CLASS__);
       if($contact === null)
       {
-        $contactObj = new Contact($contactId);
-        $contact    = [
-          'name'  => $contactObj->name,
-          'email' => $contactObj->email
-        ];
+        $contact = new Contact($contactId);
         EphemeralCache::storeCache($contactCacheId, $contact, __CLASS__);
       }
+      $data['signature'] = $contact->signature;
+
       $message->setData(
-        'senderName',
-        self::replaceData($contact['name'], $data)
+        'senderName', self::replaceData($contact->name, $data)
       );
       $message->setData(
-        'senderEmail',
-        self::replaceData($contact['email'], $data)
+        'senderEmail', self::replaceData($contact->email, $data)
+      );
+      $message->setData(
+        'sendType', self::replaceData($campaign->sendType, $data)
+      );
+      $message->setData(
+        'subject', self::replaceData($msg->subject, $data)
+      );
+      $message->setData(
+        'plainText', self::replaceData($msg->plainText, $data)
+      );
+      $message->setData(
+        'htmlContent', self::replaceData($msg->htmlContent, $data, true)
       );
 
       foreach($processors as $process)
@@ -192,10 +184,14 @@ class Defero extends Application
     \Queue::pushBatch(new StdQueue("defero_messages"), $messages);
   }
 
-  public static function replaceData($text, $data)
+  public static function replaceData($text, $data, $nl2br = false)
   {
     foreach($data as $k => $v)
     {
+      if($nl2br)
+      {
+        $v = nl2br($v);
+      }
       $text = str_ireplace('{!' . $k . '}', $v, $text);
     }
     return $text;
