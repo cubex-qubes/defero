@@ -30,7 +30,7 @@ class QueueProcess extends CliCommand
    *
    * @valuerequired
    */
-  public $queueName = 'defero';
+  public $queueName = 'defero_messages';
 
   /**
    * @return int

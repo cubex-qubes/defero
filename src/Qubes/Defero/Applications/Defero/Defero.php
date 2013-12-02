@@ -56,21 +56,42 @@ class Defero extends Application
     ];
   }
 
-  public static function push($campaign_id, $data)
+  public static function pushCampaign($campaignId, $startTime = null)
   {
-    self::pushBatch($campaign_id, [$data]);
+    if($startTime === null)
+    {
+      $startTime = time();
+      $startTime -= $startTime % 60;
+    }
+    $campaign = new Campaign($campaignId);
+    $lastTime = $campaign->lastSent;
+
+    $campaign->lastSent = $startTime;
+    $campaign->saveChanges();
+
+    $message = new ProcessMessage();
+    $message->setData('campaign_id', $campaignId);
+    $message->setData('started_at', $startTime);
+    $message->setData('last_sent', $lastTime);
+
+    \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
   }
 
-  public static function pushBatch($campaign_id, $batch)
+  public static function pushMessage($campaignId, $data)
   {
-    $cacheId = 'DeferoQueueCampaign' . $campaign_id;
+    self::pushMessageBatch($campaignId, [$data]);
+  }
+
+  public static function pushMessageBatch($campaignId, $batch)
+  {
+    $cacheId = 'DeferoQueueCampaign' . $campaignId;
     /**
      * @var Campaign $campaign
      */
     $campaign = EphemeralCache::getCache($cacheId, __CLASS__);
     if($campaign === null)
     {
-      $campaign = new Campaign($campaign_id);
+      $campaign = new Campaign($campaignId);
       EphemeralCache::storeCache($cacheId, $campaign, __CLASS__);
     }
 
@@ -105,7 +126,7 @@ class Defero extends Application
     $messages = [];
     foreach($batch as $data)
     {
-      $data['campaign_id'] = $campaign_id;
+      $data['campaign_id'] = $campaignId;
 
       $message = new ProcessMessage();
       $message->setData('data', $data);
@@ -168,7 +189,7 @@ class Defero extends Application
       }
       $messages[] = serialize($message);
     }
-    \Queue::pushBatch(new StdQueue("defero"), $messages);
+    \Queue::pushBatch(new StdQueue("defero_messages"), $messages);
   }
 
   public static function replaceData($text, $data)

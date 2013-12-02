@@ -95,7 +95,7 @@ abstract class RecordMapperDataSource implements IDataSource
     $this->resetPointer();
     while(($data = $this->getBatch()))
     {
-      Defero::pushBatch($campaign_id, $data);
+      Defero::pushMessageBatch($campaign_id, $data);
       if(count($data) < $this->_batchSize)
       {
         // don't search for more if the last batch was not full

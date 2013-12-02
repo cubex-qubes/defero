@@ -51,7 +51,7 @@ class QueueCampaigns extends CliCommand
       $message->setData('started_at', $ts);
       $message->setData('last_sent', $lastTime);
 
-      \Queue::push(new StdQueue('defero_cq'), serialize($message));
+      \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
     }
   }
 }

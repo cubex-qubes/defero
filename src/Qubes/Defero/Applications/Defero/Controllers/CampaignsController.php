@@ -69,7 +69,7 @@ class CampaignsController extends BaseDeferoController
       'email'     => 'tom.kay@justdevelop.it'
     ];
 
-    Defero::push($id, $message);
+    Defero::pushMessage($id, $message);
 
     echo 'Test sent to tom.kay@justdevelop.it';
   }

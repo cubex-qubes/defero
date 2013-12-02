@@ -33,7 +33,7 @@ class ProcessCampaignQueue extends CliCommand
    *
    * @valuerequired
    */
-  public $queueName = 'defero_cq';
+  public $queueName = 'defero_campaigns';
 
   /**
    * @return int
