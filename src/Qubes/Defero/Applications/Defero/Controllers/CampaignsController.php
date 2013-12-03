@@ -63,10 +63,13 @@ class CampaignsController extends BaseDeferoController
   public function renderSend($id)
   {
     $message = [
-      'firstName' => 'tom',
-      'lastName'  => 'kay',
+      'firstname' => 'tom',
+      'lastname'  => 'kay',
       'name'      => 'tom kay',
-      'email'     => 'tom.kay@justdevelop.it'
+      'email'     => 'tom.kay@justdevelop.it',
+      'domain_id' => '3',
+      'user_id'   => '22492349',
+      'currency'  => '£',
     ];
 
     Defero::pushMessage($id, $message);
