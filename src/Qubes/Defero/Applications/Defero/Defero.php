@@ -74,6 +74,7 @@ class Defero extends Application
     $message->setData('started_at', $startTime);
     $message->setData('last_sent', $lastTime);
 
+    \Queue::setDefaultQueueProvider("campaignqueue");
     \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
   }
 
@@ -181,6 +182,7 @@ class Defero extends Application
       }
       $messages[] = serialize($message);
     }
+    \Queue::setDefaultQueueProvider("messagequeue");
     \Queue::pushBatch(new StdQueue("defero_messages"), $messages);
   }
 

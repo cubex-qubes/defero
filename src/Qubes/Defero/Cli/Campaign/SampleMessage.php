@@ -119,6 +119,7 @@ class SampleMessage extends CliCommand
     );
     $message->addProcess($process);
 
-    \Queue::push(new StdQueue("defero"), serialize($message));
+    \Queue::setDefaultQueueProvider("messagequeue");
+    \Queue::push(new StdQueue("defero_messages"), serialize($message));
   }
 }

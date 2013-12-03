@@ -26,7 +26,7 @@ class ProcessCampaignQueue extends CliCommand
    *
    * @valuerequired
    */
-  public $queueService = 'queue';
+  public $queueService = 'campaignqueue';
 
   /**
    * Queue Name to pull messages from

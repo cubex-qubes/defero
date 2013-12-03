@@ -23,7 +23,7 @@ class QueueProcess extends CliCommand
    *
    * @valuerequired
    */
-  public $queueService = 'queue';
+  public $queueService = 'messagequeue';
 
   /**
    * Queue Name to pull messages from
