@@ -161,8 +161,7 @@ class Defero extends Application
       EphemeralCache::storeCache($processorsCacheId, $processors, __CLASS__);
     }
 
-    $lastUserId = null;
-    $messages   = [];
+    $messages = [];
     foreach($batch as $data)
     {
       $message = new ProcessMessage();
@@ -236,10 +235,6 @@ class Defero extends Application
         $message->addProcess($process);
       }
       $messages[] = serialize($message);
-      if(isset($data['user_id']))
-      {
-        $lastUserId = $data['user_id'];
-      }
     }
 
     // queue
@@ -254,7 +249,6 @@ class Defero extends Application
 
     \Log::info(
       'Queued ' . count($messages) . ' messages for Campaign ' . $campaignId
-      . ($lastUserId ? ' | Last User ID: ' . $lastUserId : '')
     );
     return true;
   }
