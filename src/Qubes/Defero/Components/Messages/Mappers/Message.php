@@ -9,6 +9,7 @@ use Cubex\Data\Validator\Validator;
 use Cubex\Helpers\Inflection;
 use Cubex\Mapper\Database\I18n\I18nRecordMapper;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Contact\Mappers\Contact;
 
 class Message extends I18nRecordMapper
 {
@@ -40,6 +41,13 @@ class Message extends I18nRecordMapper
   public function campaign()
   {
     return $this->belongsTo(new Campaign());
+  }
+
+  public function contacts()
+  {
+    return [0 => '- Campaign Default -'] + Contact::collection()->getKeyPair(
+      'id', 'name'
+    );
   }
 
   public function getTableName($plural = true)

@@ -8,7 +8,9 @@
 
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
-use Qubes\Defero\Components\DataSource;
+use Cubex\Data\Transportable\TransportMessage;
+use Cubex\Facade\Redirect;
+use Qubes\Defero\Applications\Defero\Forms\DeferoForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignSourceView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
@@ -16,32 +18,26 @@ class CampaignSourceController extends DeferoController
 {
   public function renderIndex()
   {
-    $campaign = new Campaign($this->getInt('id'));
-    if($post = $this->request()->postVariables())
-    {
-      if(!$campaign->dataSource)
-      {
-        $campaign->dataSource = new \stdClass();
-      }
-      $campaign->dataSource->conditions = [];
-      if(isset($post['compareField']))
-      {
-        foreach($post['compareField'] as $k => $f)
-        {
-          if($f)
-          {
-            $s          = new \stdClass();
-            $s->field   = $f;
-            $s->compare = $post['conditionCompare'][$k];
-            $s->value   = $post['conditionValue'][$k];
+    $campaign   = new Campaign($this->getInt('id'));
+    $dataSource = $campaign->getDataSource();
+    $dataSource->setExists();
+    $form       = (new DeferoForm('source'))->bindMapper($dataSource);
 
-            $campaign->dataSource->conditions[] = $s;
-          }
-        }
+    if(($post = $this->request()->postVariables()))
+    {
+      $form->hydrate($post);
+      if($form->isValid() && $form->csrfCheck())
+      {
+        $dataSource->hydrate($form->jsonSerialize());
+        $campaign->dataSourceOptions = $dataSource->jsonSerialize();
+
+        $campaign->getAttribute('dataSourceOptions')->setModified();
+        $campaign->saveChanges();
+        $msg = 'Data Source Saved';
+        return Redirect::to("/campaigns/{$campaign->id()}")
+          ->with("msg", new TransportMessage("info", $msg));
       }
     }
-    $campaign->getAttribute('dataSource')->setModified();
-    $campaign->saveChanges();
-    return new CampaignSourceView($campaign);
+    return new CampaignSourceView($form);
   }
 }

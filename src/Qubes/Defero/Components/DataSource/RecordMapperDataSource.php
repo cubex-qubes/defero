@@ -11,10 +11,8 @@ namespace Qubes\Defero\Components\DataSource;
 use Cubex\Mapper\Database\RecordCollection;
 use Qubes\Defero\Applications\Defero\Defero;
 
-abstract class RecordMapperDataSource implements IDataSource
+abstract class RecordMapperDataSource extends DataSource
 {
-  use DataSourceConditionsTrait;
-
   protected $_batchSize = 250;
   protected $_batchPointer = 0;
 
@@ -82,20 +80,14 @@ abstract class RecordMapperDataSource implements IDataSource
     return $collection->get()->jsonSerialize();
   }
 
-  public function process($campaign_id, $startTime, $lastSent)
+  public function process(
+    $campaignId, $startTime, $lastSent, $startId = null, $endId = null
+  )
   {
-    foreach($this->getConditionValues() as $condition)
-    {
-      if($c = $this->getCondition($condition->field))
-      {
-        $c->call($condition);
-      }
-    }
-
     $this->resetPointer();
     while(($data = $this->getBatch()))
     {
-      Defero::pushMessageBatch($campaign_id, $data);
+      Defero::pushMessageBatch($campaignId, $data);
       if(count($data) < $this->_batchSize)
       {
         // don't search for more if the last batch was not full

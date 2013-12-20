@@ -9,7 +9,8 @@
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
 use Cubex\Facade\Redirect;
-use Cubex\I18n\Translator\Reversulator;
+use Cubex\Foundation\Config\Config;
+use Cubex\Foundation\Container;
 use Cubex\Routing\StdRoute;
 use Qubes\Defero\Applications\Defero\Forms\CampaignMessageForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignMessageView;
@@ -35,7 +36,7 @@ class CampaignMessageController extends DeferoController
     {
       $form->saveChanges();
     }
-    return Redirect::to('/campaigns/' . $this->getInt('id'));
+    return $this->renderIndex();
   }
 
   protected function _getMessage()
@@ -108,15 +109,23 @@ class CampaignMessageController extends DeferoController
     $match = substr($string, $start, $end - $start);
 
     // translate
-    $translator = new Reversulator();
+    $config         = Container::config()->get("i18n", new Config());
+    $translateClass = $config->getStr("translator", null);
+    if(!$translateClass)
+    {
+      throw new \Exception(
+        'Missing \'translator\' in i18n section of the config'
+      );
+    }
+    $translator = new $translateClass();
     $replace    = $translator->translate(
       substr($match, 2, -2),
       'en',
       $this->getStr('hl')
     );
-
     // replace
     $string = str_replace($match, $replace, $string);
+
     return $string !== $startString;
   }
 

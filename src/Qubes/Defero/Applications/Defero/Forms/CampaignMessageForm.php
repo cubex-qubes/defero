@@ -9,7 +9,6 @@
 namespace Qubes\Defero\Applications\Defero\Forms;
 
 use Cubex\Form\FormElement;
-use Qubes\Defero\Components\Contact\Mappers\Contact;
 
 class CampaignMessageForm extends DeferoForm
 {
@@ -26,11 +25,5 @@ class CampaignMessageForm extends DeferoForm
 
     $this->getElement('campaignId')
       ->setType(FormElement::NONE);
-
-    $contacts = ['' => ''] + Contact::collection()->getKeyPair('id', 'name');
-
-    $this->getElement('contactId')
-      ->setType(FormElement::SELECT)
-      ->setOptions($contacts);
   }
 }

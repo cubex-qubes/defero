@@ -13,7 +13,6 @@ class Test extends CliCommand
   /**
    * @required
    * @valuerequired
-   * @datatype int
    */
   public $campaignId;
 

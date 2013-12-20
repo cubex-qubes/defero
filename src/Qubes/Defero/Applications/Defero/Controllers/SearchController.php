@@ -31,10 +31,14 @@ class SearchController extends BaseDeferoController
 
     if($this->canProcess())
     {
-      $data = $this->getData($query, $this->_getType());
-      if($data === null)
+      if(!($type = $this->_getType()))
       {
         return 'Type not recognised';
+      }
+      $data = $this->getSearchData($query, $type);
+      if(!$data)
+      {
+        return 'No results found';
       }
       return new SearchView($this->_sortResults($query, $data));
     }
@@ -44,7 +48,7 @@ class SearchController extends BaseDeferoController
     }
   }
 
-  public function getData($query, $type)
+  public function getSearchData($query, $type)
   {
     $data = null;
     switch($type)
@@ -60,9 +64,20 @@ class SearchController extends BaseDeferoController
         break;
     }
 
-    foreach($data as $k => $item)
+    if($data)
     {
-      $data[$k] = ['text' => $item, 'url' => $this->_tryGetMapperUrl($item)];
+      foreach($data as $k => $item)
+      {
+        if(is_object($item))
+        {
+          $item = get_object_vars($item);
+        }
+        $data[$k] = [
+          'text' => $item['key'],
+          'url'  => $this->_tryGetMapperUrl($item['key']),
+          'type' => $item['type'],
+        ];
+      }
     }
 
     return $data;

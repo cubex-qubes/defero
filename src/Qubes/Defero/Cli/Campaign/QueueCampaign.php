@@ -14,28 +14,35 @@ use Psr\Log\LogLevel;
 use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
-class QueueCampaigns extends CliCommand
+class QueueCampaign extends CliCommand
 {
   protected $_echoLevel = LogLevel::INFO;
+
+  /**
+   * @required
+   * @valuerequired
+   */
+  public $campaign;
+
+  /**
+   * @valuerequired
+   * @datatype int
+   */
+  public $startId;
+  /**
+   * @valuerequired
+   * @datatype int
+   */
+  public $endId;
 
   public function execute()
   {
     $startedAt = time();
     $startedAt -= $startedAt % 60;
-    $collection = new RecordCollection(new Campaign());
-    foreach($collection as $campaign)
-    {
-      /** @var Campaign $campaign */
-      if(!$campaign->active)
-      {
-        continue;
-      }
+    $campaign = new Campaign($this->campaign);
 
-      if(!$campaign->isDue())
-      {
-        continue;
-      }
-      Defero::pushCampaign($campaign->id(), $startedAt);
-    }
+    Defero::pushCampaign(
+      $campaign->id(), $startedAt, $this->startId, $this->endId
+    );
   }
 }

@@ -18,7 +18,7 @@ use Qubes\Defero\Components\Campaign\Enums\TrackingType;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Components\Cron\CronParser;
 use Qubes\Defero\Components\DataSource\DataSourceConditionsTrait;
-use Qubes\Defero\Components\DataSource\IDataSource;
+use Qubes\Defero\Components\DataSource\DataSource;
 use Qubes\Defero\Components\Messages\Mappers\Message;
 
 class Campaign extends RecordMapper
@@ -35,9 +35,19 @@ class Campaign extends RecordMapper
   public $description;
 
   /**
-   * @type \stdClass
+   * @datatype varchar(50)
+   */
+  public $label;
+
+  /**
+   * @enum
    */
   public $dataSource;
+
+  /**
+   * @datatype text
+   */
+  public $dataSourceOptions;
 
   /**
    * @enumclass \Qubes\Defero\Components\Campaign\Enums\SendType
@@ -84,6 +94,9 @@ class Campaign extends RecordMapper
       ->setRequired(true);
 
     $this->_attribute('dataSource')
+      ->setRequired(true);
+
+    $this->_attribute('dataSourceOptions')
       ->setSerializer(Attribute::SERIALIZATION_JSON);
 
     $this->_attribute('sendType')
@@ -114,28 +127,39 @@ class Campaign extends RecordMapper
   }
 
   /**
-   * @return null|IDataSource
+   * @return DataSource
    */
   public function getDataSource()
   {
-    if(isset($this->dataSource->sourceClass))
+    if(isset($this->dataSource))
     {
-      $dataSource = $this->getData('dataSource');
-
-      $ds = $dataSource->sourceClass;
-      if(!class_exists($ds))
+      $sourceClass = $this->dataSource;
+      if(!class_exists($sourceClass))
       {
-        $ds = $this->config('datasources')->getStr($ds);
+        $sourceClass = $this->config('datasources')->getStr($sourceClass);
       }
-
-      $ds = new $ds();
-      if(method_exists($ds, 'setConditionValues'))
+      if(class_exists($sourceClass))
       {
-        $ds->setConditionValues($dataSource->conditions);
+        /**
+         * @var $dataSource DataSource
+         */
+
+        $dataSource = new $sourceClass();
+        if($this->dataSourceOptions)
+        {
+          $dataSource->hydrate((array)$this->dataSourceOptions);
+        }
+        return $dataSource;
       }
-      return $ds;
     }
     return null;
+  }
+
+  public function dataSources()
+  {
+    return ['' => ''] + array_fuse(
+      $this->config('datasources')->availableKeys()
+    );
   }
 
   public function sendTypes()
@@ -196,11 +220,11 @@ class Campaign extends RecordMapper
 
   public function isDue()
   {
-    if($this->active)
+    if($this->active && ($check = $this->nextRun()))
     {
       $time = time();
       $time -= $time % 60;
-      $check = $this->nextRun()->getTimestamp();
+      $check = $check->getTimestamp();
       $check -= $check % 60;
       return ($check === $time);
     }
@@ -221,5 +245,22 @@ class Campaign extends RecordMapper
 
     $nr = CronParser::nextRun($this->sendAt, null, true);
     return $nr ? : null;
+  }
+
+  public function getRequiredFields()
+  {
+    // find what data the email message requires
+    $requiredFields = ['firstName', 'lastName', 'email'];
+
+    $message = $this->message()->reload();
+    preg_match_all('/{!([^}]+)}/', $message->plainText, $matches);
+    preg_match_all('/{!([^}]+)}/', $message->htmlContent, $matches2);
+    $matches = array_unique(
+      array_merge($requiredFields, $matches[1], $matches2[1])
+    );
+
+    // read from all processes for 'requiredData'
+
+    return $matches;
   }
 }

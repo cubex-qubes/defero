@@ -6,28 +6,23 @@
 namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 
 use Cubex\Facade\Email;
-use Cubex\Foundation\Config\Config;
-use Cubex\Foundation\Container;
-use Cubex\Log\Debug;
 use Cubex\Log\Log;
-use Cubex\ServiceManager\ServiceConfig;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
+use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
 use Qubes\Defero\Transport\StdProcess;
 
 class SendEmail extends StdProcess implements IEmailProcess
 {
   public function process()
   {
-    Log::info("Sending message through configured SMTP relay");
-
     $userData = $this->_message->getArr('data');
 
     $name  = trim($userData['firstname'] . ' ' . $userData['lastname']);
     $email = $userData['email'];
 
-    Log::debug("Sending to $name <$email>");
+    Log::info("Sending to $name <$email>");
 
-    $mailer = Email::getAccessor();
+    $mailer = Email::getAccessor('email');
 
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
@@ -51,6 +46,30 @@ class SendEmail extends StdProcess implements IEmailProcess
       $this->_message->getStr('senderName')
     );
 
-    return $mailer->send();
+    try
+    {
+      $result = $mailer->send();
+    }
+    catch(\Exception $e)
+    {
+      $result = false;
+      Log::error($e->getMessage());
+      Email::getServiceManager()->destroy('email');
+    }
+
+    $campaignId = $this->_message->getStr('campaignId');
+    $hour = time();
+    $hour -= $hour % 3600;
+    $statsCf = MailStatistic::cf();
+
+    if($result !== false)
+    {
+      $statsCf->increment($campaignId, $hour . '|sent');
+    }
+    else
+    {
+      $statsCf->increment($campaignId, $hour . '|failed');
+    }
+    return false;
   }
 }

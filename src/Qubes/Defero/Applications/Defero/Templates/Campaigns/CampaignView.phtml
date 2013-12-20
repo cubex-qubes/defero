@@ -4,9 +4,9 @@
  *
  * @var $this \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
  */
-
 use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
 
+$ds = $this->campaign->getDataSource();
 ?>
 <div class="wrappedContent">
   <div class="pull-right btn-toolbar">
@@ -17,9 +17,11 @@ use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
       <a href="/campaigns/<?= $this->campaign->id() ?>/message"
          title="Compose <?= $this->campaign->name ?>"
          class="btn btn-info">Compose</a>
-      <a href="/campaigns/<?= $this->campaign->id() ?>/source"
-         title="Edit Data Source"
-         class="btn btn-info">Data Source</a>
+      <?php if($ds && $ds->hasAttributes()): ?>
+        <a href="/campaigns/<?= $this->campaign->id() ?>/source"
+           title="Edit Data Source"
+           class="btn btn-info">Data Source</a>
+      <?php endif ?>
     </div>
     <div class="btn-group">
       <a href="/campaigns/<?= $this->campaign->id() ?>/delete"
@@ -32,9 +34,21 @@ use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
       <a href="/campaigns/new" class="btn btn-primary">New</a>
     </div>
     <div class="btn-group">
+      <a href="/campaigns/<?= $this->campaign->id() ?>/test"
+         title="Test <?= $this->campaign->name ?>"
+         class="btn btn-primary">Test</a>
+    </div>
+    <div class="btn-group">
       <a href="/campaigns/<?= $this->campaign->id() ?>/send"
          title="Send <?= $this->campaign->name ?>"
-         class="btn btn-success">Send Test</a>
+         class="js-popover btn btn-success"
+         data-content="<?=
+         $this->getConfirmPopover(
+           '/campaigns/' . $this->campaign->id() . '/send'
+         ) ?>"
+         data-placement="bottom"
+         data-html="true" data-container="body"
+         data-prevent-default="true">Queue Campaign</a>
     </div>
   </div>
   <div>
@@ -46,7 +60,6 @@ use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
       <dd><?= $this->campaign->reference ?></dd>
       <dt>Data Source</dt>
       <dd><?php
-        $ds = $this->campaign->getDataSource();
         if($ds)
         {
           echo $ds->getName();
@@ -66,25 +79,60 @@ use \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignProcessorsView;
       <dt>Last Run</dt>
       <dd><?=
         $this->campaign->lastSent ?
-          \Cubex\Helpers\DateTimeHelper::formattedDateFromAnything(
-                                       $this->campaign->lastSent,
-                                       DATE_RFC2822
-          )
-          : 'Never'; ?></dd>
+        \Cubex\Helpers\DateTimeHelper::formattedDateFromAnything(
+          $this->campaign->lastSent,
+          DATE_RFC2822
+        )
+        : 'Never'; ?></dd>
       <dt>Next Run</dt>
       <dd><?=
         ($nr = $this->campaign->nextRun()) ? $nr->format(
-                                                DATE_RFC2822
+          DATE_RFC2822
         ) : 'Never'; ?></dd>
     </dl>
   </div>
+    <div class="stat50wrapper pull-left">
+    <div class="well" style="height:120px; margin-right:5px;">
+      <h3>24hr Statistics</h3>
+      <?php
+      echo '<span style="float:left;margin-right:20px" id="spark24h"'
+      . ' data-max-queued="' . max($this->getQueued('24h')) . '"'
+      . ' data-max-sent="' . max($this->getSent('24h')) . '"'
+      . ' data-max-failed="' . max($this->getFailed('24h')) . '"'
+      . ' data-queued="' . implode(',', $this->getQueued('24h')) . '"'
+      . ' data-sent="' . implode(',', $this->getSent('24h')) . '"'
+      . ' data-failed="' . implode(',', $this->getFailed('24h')) . '"'
+      . '></span>';
+      ?>
+      <div>Total Queued: <?= number_format($this->getTotalQueued('24h')) ?></div>
+      <div>Total Sent: <?= number_format($this->getTotalSent('24h')) ?></div>
+      <div>Total Failed: <?= number_format($this->getTotalFailed('24h')) ?></div>
+    </div></div>
+    <div class="stat50wrapper pull-left">
+    <div class="well" style="height: 120px;">
+      <h3>30days Statistics</h3>
+      <?php
+      echo '<span style="float:left;margin-right:20px" id="spark30d"'
+      . ' data-max-queued="' . max($this->getQueued('30d')) . '"'
+      . ' data-max-sent="' . max($this->getSent('30d')) . '"'
+      . ' data-max-failed="' . max($this->getFailed('30d')) . '"'
+      . ' data-queued="' . implode(',', $this->getQueued('30d')) . '"'
+      . ' data-sent="' . implode(',', $this->getSent('30d')) . '"'
+      . ' data-failed="' . implode(',', $this->getFailed('30d')) . '"'
+      . '></span>';
+      ?>
+      <div>Total Queued: <?= number_format($this->getTotalQueued('30d')) ?></div>
+      <div>Total Sent: <?= number_format($this->getTotalSent('30d')) ?></div>
+      <div>Total Failed: <?= number_format($this->getTotalFailed('30d')) ?></div>
+  </div></div>
+  <div class="clearfix"></div>
   <div>
     <?php
     $cpv = new CampaignProcessorsView($this->campaign);
 
     $controller = clone $this->getHostController();
     $controller->setBaseUri(
-               sprintf("/campaigns/%d/processors", $this->campaign->id())
+      sprintf("/campaigns/%d/processors", $this->campaign->id())
     );
     echo $cpv->setHostController($controller)
     ?>

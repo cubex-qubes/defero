@@ -32,21 +32,37 @@ class SearchLibrary
   {
     $campaignsSelect = self::_getDisplayResultPattern("C", "name");
 
-    return Campaign::collection()->whereLike("name", $query)
-    ->setColumns([$campaignsSelect, "name"])
-    ->orderByKeys(["key"])
-    ->setOrderByQuery("name")
-    ->getFieldValues('key');
+    $data = Campaign::collection()
+      ->loadWhereAppend(
+        "%C LIKE %~ OR %C LIKE %~", 'name', $query, 'label', $query
+      )
+      ->setColumns([$campaignsSelect, "name"])
+      ->orderByKeys(["key"])
+      ->setOrderByQuery("name")
+      ->jsonSerialize();
+
+    foreach($data as $k => $d)
+    {
+      $data[$k]['type'] = 'Campaign';
+    }
+    return $data;
   }
 
   public static function getContacts($query)
   {
     $contactSelect = self::_getDisplayResultPattern("c", "name");
 
-    return Contact::collection()->whereLike("name", $query)
-    ->setColumns([$contactSelect, "name"])
-    ->setOrderByQuery("name")
-    ->getFieldValues('key');
+    $data = Contact::collection()->whereLike("name", $query)
+      ->setColumns([$contactSelect, "name"])
+      ->setOrderByQuery("name")
+      ->jsonSerialize();
+
+    foreach($data as $k => $d)
+    {
+      $data[$k]['type'] = 'Contact';
+    }
+
+    return $data;
   }
 
   public static function getAll($query)
@@ -55,12 +71,11 @@ class SearchLibrary
     $campaignsSelect = self::_getDisplayResultPattern("C", "name");
 
     $queryData = [
-      "SELECT %C FROM (
-        (SELECT {$contactSelect}, %C FROM %T WHERE %C LIKE %~)
+      "SELECT * FROM (
+        (SELECT {$contactSelect}, %C, 'Contact' as `type` FROM %T WHERE %C LIKE %~)
         UNION ALL
-        (SELECT {$campaignsSelect}, %C FROM %T WHERE %C LIKE %~)
+        (SELECT {$campaignsSelect}, %C, 'Campaign' as `type` FROM %T WHERE %C LIKE %~ OR %C LIKE %~)
         ) %T ORDER BY %C",
-      "key",
       "name",
       Contact::tableName(),
       "name",
@@ -68,6 +83,8 @@ class SearchLibrary
       "name",
       Campaign::tableName(),
       "name",
+      $query,
+      "label",
       $query,
       "temp",
       "name"
@@ -77,6 +94,6 @@ class SearchLibrary
       ParseQuery::parse(DB::getAccessor("defero_db"), $queryData)
     );
 
-    return ppull($results, "key");
+    return $results;
   }
 }

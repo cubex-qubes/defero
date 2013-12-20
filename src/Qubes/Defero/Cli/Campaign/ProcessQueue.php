@@ -6,6 +6,7 @@
 namespace Qubes\Defero\Cli\Campaign;
 
 use Cubex\Cli\CliCommand;
+use Cubex\Cli\PidFile;
 use Cubex\Cli\Shell;
 use Cubex\Facade\Queue;
 use Cubex\Figlet\Figlet;
@@ -14,9 +15,9 @@ use Cubex\Queue\StdQueue;
 use Psr\Log\LogLevel;
 use Qubes\Defero\Components\Campaign\Consumers\CampaignConsumer;
 
-class QueueProcess extends CliCommand
+class ProcessQueue extends CliCommand
 {
-  protected $_echoLevel = LogLevel::DEBUG;
+  protected $_echoLevel = LogLevel::INFO;
 
   /**
    * Queue Provider Service to read messages from
@@ -33,10 +34,19 @@ class QueueProcess extends CliCommand
   public $queueName = 'defero_messages';
 
   /**
+   * @valuerequired
+   */
+  public $instanceName;
+
+  private $_pidFile;
+
+  /**
    * @return int
    */
   public function execute()
   {
+    $this->_pidFile = new PidFile("", $this->instanceName);
+
     echo Shell::colourText(
       (new Figlet("speed"))->render("Defero"),
       Shell::COLOUR_FOREGROUND_GREEN

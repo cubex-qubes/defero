@@ -34,15 +34,20 @@ class DeferoView extends TemplatedViewModel
 
   public function getDeletePopover($id)
   {
+    return $this->getConfirmPopover("{$this->baseUri()}/{$id}/delete");
+  }
+
+  public function getConfirmPopover($url)
+  {
     $popover = (new HtmlElement(
       "div", ["class" => "text-center"], "Are you sure?<br />"
-    ))->nestElement("a", ["href" => "{$this->baseUri()}/{$id}/delete"], "Yes")
-    ->nestElement("span", [], " | ")
-    ->nestElement(
-      "a",
-      ["href" => "#", "class" => "js-popover-hide"],
-      "<strong>No</strong>"
-    );
+    ))->nestElement("a", ["href" => $url], "Yes")
+      ->nestElement("span", [], " | ")
+      ->nestElement(
+        "a",
+        ["href" => "#", "class" => "js-popover-hide"],
+        "<strong>No</strong>"
+      );
 
     return htmlspecialchars($popover);
   }

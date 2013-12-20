@@ -10,7 +10,9 @@ use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Foundation\Container;
 use Cubex\Queue\StdQueue;
+use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Transport\ProcessDefinition;
 use Qubes\Defero\Transport\ProcessMessage;
@@ -56,7 +58,9 @@ class Defero extends Application
     ];
   }
 
-  public static function pushCampaign($campaignId, $startTime = null)
+  public static function pushCampaign(
+    $campaignId, $startTime = null, $startId = null, $endId = null
+  )
   {
     if($startTime === null)
     {
@@ -64,27 +68,45 @@ class Defero extends Application
       $startTime -= $startTime % 60;
     }
     $campaign = new Campaign($campaignId);
+    if(!$campaign->processors)
+    {
+      throw new \Exception('Cannot queue a Campaign with no Processors');
+    }
+
     $lastTime = $campaign->lastSent;
+    if($lastTime != $startTime)
+    {
+      $campaign->lastSent = $startTime;
+      $campaign->saveChanges();
 
-    $campaign->lastSent = $startTime;
-    $campaign->saveChanges();
+      $message = new ProcessMessage();
+      $message->setData('campaignId', $campaignId);
+      $message->setData('startedAt', $startTime);
+      $message->setData('lastSent', $lastTime);
+      $message->setData('startId', $startId);
+      $message->setData('endId', $endId);
 
-    $message = new ProcessMessage();
-    $message->setData('campaign_id', $campaignId);
-    $message->setData('started_at', $startTime);
-    $message->setData('last_sent', $lastTime);
-
-    \Queue::setDefaultQueueProvider("campaignqueue");
-    \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
+      \Queue::setDefaultQueueProvider("campaignqueue");
+      \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
+      \Log::info('Queued Campaign ' . $campaignId);
+      return true;
+    }
+    return false;
   }
 
+  //TODO: Move statistics tracking here, from DataSource
   public static function pushMessage($campaignId, $data)
   {
-    self::pushMessageBatch($campaignId, [$data]);
+    return self::pushMessageBatch($campaignId, [$data]);
   }
 
   public static function pushMessageBatch($campaignId, $batch)
   {
+    if(!$batch)
+    {
+      return false;
+    }
+
     $cacheId = 'DeferoQueueCampaign' . $campaignId;
     /**
      * @var Campaign $campaign
@@ -93,9 +115,23 @@ class Defero extends Application
     $campaign = EphemeralCache::getCache($cacheId, __CLASS__);
     if($campaign === null)
     {
-      $campaign = new Campaign($campaignId);
+      if(!is_numeric($campaignId))
+      {
+        $campaign = Campaign::collection()->loadOneWhere(
+          '%C = %s', 'reference', $campaignId
+        );
+      }
+      else
+      {
+        $campaign = new Campaign($campaignId);
+      }
       EphemeralCache::storeCache($cacheId, $campaign, __CLASS__);
     }
+    if(!$campaign || !$campaign->exists())
+    {
+      throw new \Exception('Campaign does not exist');
+    }
+    $campaignId = $campaign->id();
 
     $processorsCacheId = $cacheId . ':processors';
     $processors        = EphemeralCache::getCache(
@@ -125,18 +161,18 @@ class Defero extends Application
       EphemeralCache::storeCache($processorsCacheId, $processors, __CLASS__);
     }
 
-    $messages = [];
+    $lastUserId = null;
+    $messages   = [];
     foreach($batch as $data)
     {
-      $data['campaign_id'] = $campaignId;
-      $data['mailer_tracking'] = $campaign->trackingType;
-
       $message = new ProcessMessage();
-      $message->setData('data', $data);
+      $message->setData('campaignId', $campaignId);
+      $message->setData('mailerTracking', $campaign->trackingType);
+      $message->setData('data', array_change_key_case($data));
 
       // move language here.
-      $userLanguage    = 'en';
-      $languageCacheId = $cacheId . ':' . $userLanguage;
+      $userLanguage    = !empty($data['language']) ? $data['language'] : 'en';
+      $languageCacheId = $cacheId . ':language:' . $userLanguage;
       $msg             = EphemeralCache::getCache($languageCacheId, __CLASS__);
       if($msg === null)
       {
@@ -144,11 +180,24 @@ class Defero extends Application
         $msg->setLanguage($userLanguage);
         $msg->reload();
 
+        if($userLanguage !== 'en'
+          && (!$msg->subject
+            || ($campaign->sendType != SendType::PLAIN_TEXT
+              && !$msg->htmlContent)
+            || ($campaign->sendType != SendType::HTML_ONLY
+              && !$msg->plainText)
+          )
+        )
+        {
+          $msg->setLanguage('en');
+          $msg->reload();
+        }
+
         EphemeralCache::storeCache($languageCacheId, $msg, __CLASS__);
       }
 
       $contactId      = $msg->contactId ? : $campaign->contactId;
-      $contactCacheId = $cacheId . ':' . $contactId;
+      $contactCacheId = $cacheId . ':contact:' . $contactId;
       $contact        = EphemeralCache::getCache($contactCacheId, __CLASS__);
       if($contact === null)
       {
@@ -158,22 +207,28 @@ class Defero extends Application
       $data['signature'] = $contact->signature;
 
       $message->setData(
-        'senderName', self::replaceData($contact->name, $data)
+        'senderName',
+        self::replaceData($contact->name, $data)
       );
       $message->setData(
-        'senderEmail', self::replaceData($contact->email, $data)
+        'senderEmail',
+        self::replaceData($contact->email, $data)
       );
       $message->setData(
-        'sendType', self::replaceData($campaign->sendType, $data)
+        'sendType',
+        self::replaceData($campaign->sendType, $data)
       );
       $message->setData(
-        'subject', self::replaceData($msg->subject, $data)
+        'subject',
+        self::replaceData($msg->subject, $data)
       );
       $message->setData(
-        'plainText', self::replaceData($msg->plainText, $data)
+        'plainText',
+        self::replaceData($msg->plainText, $data)
       );
       $message->setData(
-        'htmlContent', self::replaceData($msg->htmlContent, $data, true)
+        'htmlContent',
+        self::replaceData($msg->htmlContent, $data, true)
       );
 
       foreach($processors as $process)
@@ -181,9 +236,27 @@ class Defero extends Application
         $message->addProcess($process);
       }
       $messages[] = serialize($message);
+      if(isset($data['user_id']))
+      {
+        $lastUserId = $data['user_id'];
+      }
     }
+
+    // queue
     \Queue::setDefaultQueueProvider("messagequeue");
     \Queue::pushBatch(new StdQueue("defero_messages"), $messages);
+
+    // stats
+    $hour = time();
+    $hour -= $hour % 3600;
+    $statsCf = MailStatistic::cf();
+    $statsCf->increment($campaignId, $hour . '|queued', count($messages));
+
+    \Log::info(
+      'Queued ' . count($messages) . ' messages for Campaign ' . $campaignId
+      . ($lastUserId ? ' | Last User ID: ' . $lastUserId : '')
+    );
+    return true;
   }
 
   public static function replaceData($text, $data, $nl2br = false)

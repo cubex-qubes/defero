@@ -8,10 +8,12 @@
 
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
+use Cubex\Form\FormElement;
 use Cubex\Foundation\Config\ConfigTrait;
 use Cubex\View\HtmlElement;
 use Qubes\Defero\Applications\Defero\Forms\CampaignMessageForm;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
+use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Messages\Mappers\Message;
 
@@ -23,13 +25,24 @@ class CampaignMessageView extends DeferoView
   public function __construct(Message $message, $languages)
   {
     $this->requireJs(
-      'http://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
+      '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
     );
 
     $this->message   = $message;
     $this->languages = $languages;
     $this->form      = (new CampaignMessageForm('campaign_message'))
       ->bindMapper($message);
+
+    $campaign = new Campaign($message->campaignId);
+    switch($campaign->sendType)
+    {
+      case SendType::PLAIN_TEXT:
+        $this->form->getElement('htmlContent')->setType(FormElement::NONE);
+        break;
+      case SendType::HTML_ONLY:
+        $this->form->getElement('plainText')->setType(FormElement::NONE);
+        break;
+    }
   }
 
   public function getConfirmPopover($href)

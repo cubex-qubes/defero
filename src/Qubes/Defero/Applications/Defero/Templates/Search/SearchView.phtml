@@ -6,9 +6,11 @@
  */
 ?>
 
-<?php
-foreach($this->data as $d)
-{
-  echo '<a href="'.$d['url'].'">'.$d['text'].'</a>';
-}
-?>
+<table class="table table-striped table-bordered table-hover table-href">
+  <?php
+  foreach($this->data as $d)
+  {
+    echo '<tr><td>' . $d['type'] . '</td><td><a href="' . $d['url'] . '">' . $d['text'] . '</a></td></tr>';
+  }
+  ?>
+</table>

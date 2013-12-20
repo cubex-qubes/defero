@@ -34,5 +34,13 @@ jQuery(document).ready(function() {
       }
     });
 
+    $('#form-campaign-send-at').change(function(){
+       if($(this).val() == 'custom')
+       {
+         $(this).replaceWith('<input type="text" name="send_at"/>')
+       }
+
+    })
+
   })(jQuery, window);
 });

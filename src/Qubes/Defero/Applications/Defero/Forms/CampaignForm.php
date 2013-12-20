@@ -7,7 +7,6 @@ namespace Qubes\Defero\Applications\Defero\Forms;
 
 use Cubex\Form\Form;
 use Cubex\Form\FormElement;
-use Qubes\Defero\Components\DataSource\DataSourceCollection;
 
 class CampaignForm extends DeferoForm
 {
@@ -15,7 +14,8 @@ class CampaignForm extends DeferoForm
   {
     $this->getElement("active")->setLabelPosition(Form::LABEL_NONE);
 
-    $this->getElement('dataSource')->setType(FormElement::NONE);
+    $this->getElement('dataSourceOptions')->setType(FormElement::NONE);
+
     $this->getElement('processors')->setType(FormElement::NONE);
     $this->getElement('lastSent')->setType(FormElement::NONE);
 

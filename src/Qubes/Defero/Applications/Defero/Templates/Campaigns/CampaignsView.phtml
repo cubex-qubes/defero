@@ -24,6 +24,7 @@
         <th>Reference</th>
         <th>Data Source</th>
         <th>Send Type</th>
+        <th>Label</th>
         <th>Active</th>
         <th></th>
       </tr>
@@ -41,10 +42,9 @@
           </td>
           <td><?= $campaign->name ?></td>
           <td><?= $campaign->reference ?></td>
-          <td><?=
-            $campaign->getDataSource() ?
-            $campaign->getDataSource()->getName() : ''; ?></td>
+          <td><?= $campaign->dataSource ?></td>
           <td><?= $campaign->getTitledSendType() ?></td>
+          <td><?= $campaign->label ?></td>
           <td><?= $campaign->active ? "Yes" : "No" ?></td>
           <td>
             <a href="/campaigns/<?= $campaign->id() ?>/edit"
