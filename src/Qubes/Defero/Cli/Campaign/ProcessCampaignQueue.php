@@ -9,6 +9,7 @@
 namespace Qubes\Defero\Cli\Campaign;
 
 use Cubex\Cli\CliCommand;
+use Cubex\Cli\PidFile;
 use Cubex\Cli\Shell;
 use Cubex\Facade\Queue;
 use Cubex\Figlet\Figlet;
@@ -35,11 +36,15 @@ class ProcessCampaignQueue extends CliCommand
    */
   public $queueName = 'defero_campaigns';
 
+  private $_pidFile;
+
   /**
    * @return int
    */
   public function execute()
   {
+    $this->_pidFile = new PidFile();
+
     echo Shell::colourText(
       (new Figlet("speed"))->render("Defero"),
       Shell::COLOUR_FOREGROUND_GREEN
