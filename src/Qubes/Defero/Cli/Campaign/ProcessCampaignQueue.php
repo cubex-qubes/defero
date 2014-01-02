@@ -14,6 +14,7 @@ use Cubex\Cli\Shell;
 use Cubex\Facade\Queue;
 use Cubex\Figlet\Figlet;
 use Cubex\Log\Log;
+use Cubex\Queue\Provider\Database\DatabaseQueue;
 use Cubex\Queue\StdQueue;
 use Psr\Log\LogLevel;
 use Qubes\Defero\Components\Campaign\Consumers\CampaignQueueConsumer;
@@ -36,6 +37,11 @@ class ProcessCampaignQueue extends CliCommand
    */
   public $queueName = 'defero_campaigns';
 
+  /**
+   * @valuerequired
+   */
+  public $instanceName;
+
   private $_pidFile;
 
   /**
@@ -43,7 +49,7 @@ class ProcessCampaignQueue extends CliCommand
    */
   public function execute()
   {
-    $this->_pidFile = new PidFile();
+    $this->_pidFile = new PidFile("", $this->instanceName);
 
     echo Shell::colourText(
       (new Figlet("speed"))->render("Defero"),
@@ -54,8 +60,15 @@ class ProcessCampaignQueue extends CliCommand
     Log::debug("Setting Default Queue Provider to " . $this->queueService);
     Queue::setDefaultQueueProvider($this->queueService);
 
+    $queue = Queue::getAccessor();
+    if($queue instanceof DatabaseQueue && $this->instanceName)
+    {
+      $queue->setOwnKey(gethostname() . ':' . $this->instanceName);
+    }
     Log::info("Starting to consume queue " . $this->queueName);
-    Queue::consume(new StdQueue($this->queueName), new CampaignQueueConsumer());
+    $queue->consume(
+      new StdQueue($this->queueName), new CampaignQueueConsumer()
+    );
 
     Log::info("Exiting Defero Processor");
   }

@@ -11,6 +11,7 @@ use Cubex\Cli\Shell;
 use Cubex\Facade\Queue;
 use Cubex\Figlet\Figlet;
 use Cubex\Log\Log;
+use Cubex\Queue\Provider\Database\DatabaseQueue;
 use Cubex\Queue\StdQueue;
 use Psr\Log\LogLevel;
 use Qubes\Defero\Components\Campaign\Consumers\CampaignConsumer;
@@ -56,8 +57,15 @@ class ProcessQueue extends CliCommand
     Log::debug("Setting Default Queue Provider to " . $this->queueService);
     Queue::setDefaultQueueProvider($this->queueService);
 
+    $queue = Queue::getAccessor();
+    if($queue instanceof DatabaseQueue && $this->instanceName)
+    {
+      $queue->setOwnKey(gethostname() . ':' . $this->instanceName);
+    }
     Log::info("Starting to consume queue " . $this->queueName);
-    Queue::consume(new StdQueue($this->queueName), new CampaignConsumer());
+    $queue->consume(
+      new StdQueue($this->queueName), new CampaignConsumer()
+    );
 
     Log::info("Exiting Defero Processor");
   }
