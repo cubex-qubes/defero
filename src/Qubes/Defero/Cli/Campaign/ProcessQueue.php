@@ -58,9 +58,14 @@ class ProcessQueue extends CliCommand
     Queue::setDefaultQueueProvider($this->queueService);
 
     $queue = Queue::getAccessor();
-    if($queue instanceof DatabaseQueue && $this->instanceName)
+    if($queue instanceof DatabaseQueue)
     {
-      $queue->setOwnKey(gethostname() . ':' . $this->instanceName);
+      $instance = gethostname();
+      if($this->instanceName)
+      {
+        $instance .= ':' . $this->instanceName;
+      }
+      $queue->setOwnKey($instance);
     }
     Log::info("Starting to consume queue " . $this->queueName);
     $queue->consume(
