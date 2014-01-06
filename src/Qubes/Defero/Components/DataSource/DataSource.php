@@ -18,7 +18,8 @@ abstract class DataSource extends DataMapper
   abstract public function getName();
 
   abstract public function process(
-    $taskId, $campaignId, $startTime, $lastSent, $startId = null, $endId = null
+    $taskId, $campaignId, $startTime, $lastSent, $startId = null, $endId = null,
+    $additionalData = null
   );
 
   public function hydrate(
@@ -66,5 +67,16 @@ abstract class DataSource extends DataMapper
       }
     }
     return $this->_fixedProperties;
+  }
+
+  protected function _mergeAdditionalData(&$data, $additionalData = null)
+  {
+    if($additionalData)
+    {
+      foreach($data as $k => $thisData)
+      {
+        $data[$k] = array_merge($thisData, $additionalData);
+      }
+    }
   }
 }
