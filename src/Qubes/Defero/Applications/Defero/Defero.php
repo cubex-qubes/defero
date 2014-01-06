@@ -63,12 +63,14 @@ class Defero extends Application
    * @param int $startTime
    * @param int $startId
    * @param int $endId
+   * @param null|array $additionalData
    *
    * @return bool
    * @throws \Exception
    */
   public static function pushCampaign(
-    $campaignId, $startTime = null, $startId = null, $endId = null
+    $campaignId, $startTime = null, $startId = null, $endId = null,
+    $additionalData = null
   )
   {
     if($startTime === null)
@@ -94,6 +96,10 @@ class Defero extends Application
       $message->setData('lastSent', $lastTime);
       $message->setData('startId', $startId);
       $message->setData('endId', $endId);
+      if($additionalData)
+      {
+        $message->setData('additionalData', $additionalData);
+      }
 
       \Queue::setDefaultQueueProvider("campaignqueue");
       \Queue::push(new StdQueue('defero_campaigns'), serialize($message));
