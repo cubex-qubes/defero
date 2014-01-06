@@ -8,7 +8,9 @@
 
 namespace Qubes\Defero\Components\DataSource;
 
+use Cubex\Form\Form;
 use Cubex\Mapper\DataMapper;
+use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 abstract class DataSource extends DataMapper
 {
@@ -21,6 +23,10 @@ abstract class DataSource extends DataMapper
     $taskId, $campaignId, $startTime, $lastSent, $startId = null, $endId = null,
     $additionalData = null
   );
+
+  public function configureForm(Form $form, Campaign $campaign)
+  {
+  }
 
   public function hydrate(
     array $data, $setUnmodified = false, $createAttributes = false, $raw = true

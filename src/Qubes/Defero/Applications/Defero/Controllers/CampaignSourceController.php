@@ -28,6 +28,8 @@ class CampaignSourceController extends DeferoController
       $form->get($name)->addAttribute('disabled');
     }
 
+    $dataSource->configureForm($form, $campaign);
+
     if(($post = $this->request()->postVariables()))
     {
       $form->hydrate($post);
