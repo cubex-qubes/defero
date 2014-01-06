@@ -136,16 +136,7 @@ class Defero extends Application
     $campaign = EphemeralCache::getCache($cacheId, __CLASS__);
     if($campaign === null)
     {
-      if(!is_numeric($campaignId))
-      {
-        $campaign = Campaign::collection()->loadOneWhere(
-          '%C = %s', 'reference', $campaignId
-        );
-      }
-      else
-      {
-        $campaign = new Campaign($campaignId);
-      }
+      $campaign = new Campaign($campaignId);
       EphemeralCache::storeCache($cacheId, $campaign, __CLASS__);
     }
     if(!$campaign || !$campaign->exists())
@@ -272,6 +263,28 @@ class Defero extends Application
       'Queued ' . count($messages) . ' messages for Campaign ' . $campaignId
     );
     return true;
+  }
+
+  /**
+   * @param string $reference
+   *
+   * @return null
+   * @throws \Exception
+   */
+  public static function getCampaignIdFromReference($reference)
+  {
+    if(!is_numeric($reference))
+    {
+      $campaign = Campaign::collection()->loadOneWhere(
+        '%C = %s', 'reference', $reference
+      );
+      if(!$campaign)
+      {
+        throw new \Exception('Reference does not match any campaigns');
+      }
+      $reference = $campaign->id();
+    }
+    return $reference;
   }
 
   public static function replaceData($text, $data, $nl2br = false)
