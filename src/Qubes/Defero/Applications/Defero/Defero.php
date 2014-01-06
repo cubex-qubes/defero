@@ -58,6 +58,15 @@ class Defero extends Application
     ];
   }
 
+  /**
+   * @param int $campaignId
+   * @param int $startTime
+   * @param int $startId
+   * @param int $endId
+   *
+   * @return bool
+   * @throws \Exception
+   */
   public static function pushCampaign(
     $campaignId, $startTime = null, $startId = null, $endId = null
   )
@@ -94,12 +103,25 @@ class Defero extends Application
     return false;
   }
 
+  /**
+   * @param int   $campaignId
+   * @param array $data
+   *
+   * @return bool
+   */
   public static function pushMessage($campaignId, $data)
   {
     return self::pushMessageBatch($campaignId, [$data]);
   }
 
-  public static function pushMessageBatch($campaignId, $batch)
+  /**
+   * @param int     $campaignId
+   * @param array[] $batch
+   *
+   * @return bool
+   * @throws \Exception
+   */
+  public static function pushMessageBatch($campaignId, array $batch)
   {
     if(!$batch)
     {
