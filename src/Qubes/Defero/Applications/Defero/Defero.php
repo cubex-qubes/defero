@@ -290,6 +290,8 @@ class Defero extends Application
 
   public static function replaceData($text, $data, $nl2br = false)
   {
+    self::_replaceConditionals($text, $data, $nl2br);
+
     foreach($data as $k => $v)
     {
       if($nl2br)
@@ -297,6 +299,48 @@ class Defero extends Application
         $v = nl2br($v);
       }
       $text = str_ireplace('{!' . $k . '}', $v, $text);
+    }
+
+    return $text;
+  }
+
+  /**
+   * Process conditionals in the format {?VARNAME|otherValue}.
+   *  - If $data['VARNAME'] is set then use it, otherwise use the "otherValue"
+   *
+   * @param      $text
+   * @param      $data
+   * @param bool $nl2br
+   *
+   * @return string
+   */
+  private static function _replaceConditionals($text, $data, $nl2br = false)
+  {
+    $found = true;
+    while($found)
+    {
+      $found = false;
+      if(preg_match_all('/{([^{}]*|(?R))*}/', $text, $matches))
+      {
+        foreach($matches[0] as $expression)
+        {
+          if(preg_match('/^{\?([^|]*)\|(.*)}$/', $expression, $expMatches))
+          {
+            $found = true;
+
+            $varName = strtolower($expMatches[1]);
+            $alternative = $expMatches[2];
+
+            $value = empty($data[$varName]) ? $alternative : $data[$varName];
+            if($nl2br)
+            {
+              $value = nl2br($value);
+            }
+            $text = str_replace($expression, $value, $text);
+          }
+        }
+      }
+      $matches = array();
     }
     return $text;
   }
