@@ -39,7 +39,7 @@ class CampaignSourceController extends DeferoController
         $campaign->getAttribute('dataSourceOptions')->setModified();
         $campaign->saveChanges();
         $msg = 'Data Source Saved';
-        return Redirect::to("/campaigns/{$campaign->id()}")
+        return Redirect::to('/campaigns/' . $campaign->id())
           ->with("msg", new TransportMessage("info", $msg));
       }
     }
