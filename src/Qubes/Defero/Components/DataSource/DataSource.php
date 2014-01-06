@@ -13,43 +13,21 @@ use Cubex\Mapper\DataMapper;
 abstract class DataSource extends DataMapper
 {
   protected $_autoTimestamp = false;
-  protected $_fixedAttributes = [];
+  protected $_fixedProperties;
 
   abstract public function getName();
 
   abstract public function process(
-    $campaignId, $startTime, $lastSent, $startId = null, $endId = null
+    $taskId, $campaignId, $startTime, $lastSent, $startId = null, $endId = null
   );
-
-  public function __construct($id = null)
-  {
-    parent::__construct($id);
-    if($this->_attributes)
-    {
-      foreach($this->_attributes as $attr)
-      {
-        if($attr->data() !== null)
-        {
-          $this->_fixedAttributes[] = $attr->name();
-          $attr->setSaveToDatabase(false);
-        }
-      }
-    }
-  }
 
   public function hydrate(
     array $data, $setUnmodified = false, $createAttributes = false, $raw = true
   )
   {
-    if($this->_attributes)
+    foreach($this->getFixedProperties() as $name => $value)
     {
-      foreach($this->_attributes as $attr)
-      {
-        if(array_search($attr->name(), $this->_fixedAttributes) !== false)
-        {
-          unset($data[$attr->name()]);
-        }
-      }
+      unset($data[$name]);
     }
     parent::hydrate($data, $setUnmodified, $createAttributes, $raw);
   }
@@ -57,10 +35,36 @@ abstract class DataSource extends DataMapper
   public function jsonSerialize()
   {
     $return = parent::jsonSerialize();
-    foreach($this->_fixedAttributes as $name)
+    foreach($this->getFixedProperties() as $name => $value)
     {
       unset($return[$name]);
     }
     return $return;
+  }
+
+  public function isFixedProperty($name)
+  {
+    $properties = $this->getFixedProperties();
+    return isset($properties[$name]);
+  }
+
+  public function getFixedProperties()
+  {
+    if(!$this->_fixedProperties)
+    {
+      $this->_fixedProperties = [];
+
+      $class            = new \ReflectionClass($this);
+      $publicProperties = $class->getProperties(\ReflectionProperty::IS_PUBLIC);
+      $defaults         = $class->getDefaultProperties();
+      foreach($publicProperties as $prop)
+      {
+        if($defaults[$prop->name] !== null)
+        {
+          $this->_fixedProperties[$prop->name] = $defaults[$prop->name];
+        }
+      }
+    }
+    return $this->_fixedProperties;
   }
 }

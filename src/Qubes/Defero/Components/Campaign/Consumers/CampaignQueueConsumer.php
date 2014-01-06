@@ -46,7 +46,7 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
       $endId    = $message->getInt('endId') ? : 0;
       $campaign = new Campaign($cid);
       $campaign->getDataSource()->process(
-        $cid, $started, $lastSent, $startId, $endId
+        $taskId, $cid, $started, $lastSent, $startId, $endId
       );
 
       $results[$taskId] = true;

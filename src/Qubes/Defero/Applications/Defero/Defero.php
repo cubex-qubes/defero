@@ -94,7 +94,6 @@ class Defero extends Application
     return false;
   }
 
-  //TODO: Move statistics tracking here, from DataSource
   public static function pushMessage($campaignId, $data)
   {
     return self::pushMessageBatch($campaignId, [$data]);

@@ -81,7 +81,7 @@ abstract class RecordMapperDataSource extends DataSource
   }
 
   public function process(
-    $campaignId, $startTime, $lastSent, $startId = null, $endId = null
+    $taskId, $campaignId, $startTime, $lastSent, $startId = null, $endId = null
   )
   {
     $this->resetPointer();

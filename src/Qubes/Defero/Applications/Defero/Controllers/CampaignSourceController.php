@@ -21,7 +21,12 @@ class CampaignSourceController extends DeferoController
     $campaign   = new Campaign($this->getInt('id'));
     $dataSource = $campaign->getDataSource();
     $dataSource->setExists();
-    $form       = (new DeferoForm('source'))->bindMapper($dataSource);
+    $form = (new DeferoForm('source'))->bindMapper($dataSource);
+
+    foreach($dataSource->getFixedProperties() as $name => $value)
+    {
+      $form->get($name)->addAttribute('disabled');
+    }
 
     if(($post = $this->request()->postVariables()))
     {
