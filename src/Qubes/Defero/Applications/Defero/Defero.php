@@ -176,10 +176,11 @@ class Defero extends Application
     $messages = [];
     foreach($batch as $data)
     {
+      $data = array_change_key_case($data);
       $message = new ProcessMessage();
       $message->setData('campaignId', $campaignId);
       $message->setData('mailerTracking', $campaign->trackingType);
-      $message->setData('data', array_change_key_case($data));
+      $message->setData('data', $data);
 
       // move language here.
       $userLanguage    = !empty($data['language']) ? $data['language'] : 'en';
