@@ -8,8 +8,6 @@
 
 namespace Qubes\Defero\Components\Cron;
 
-use Cubex\Helpers\DateTimeHelper;
-
 class CronParser
 {
   const MINUTE  = 0;
@@ -97,7 +95,9 @@ class CronParser
     return $split;
   }
 
-  protected static function _getPartDiff($pattern, $type, $time = null)
+  protected static function _getPartDiff(
+    $pattern, $type, $time = null, $reverse = false
+  )
   {
     self::_resetTime($time);
     $pattern = self::_parse($pattern);
@@ -106,10 +106,10 @@ class CronParser
       return 0;
     }
     $fmt  = self::$_formats[$type];
-    $ret  = DateTimeHelper::dateTimeFromAnything($time);
+    $ret  = self::_makeDateTime($time);
     $curr = intval(date($fmt, $ret->getTimestamp()));
 
-    $minimum = null;
+    $possibles = [];
     foreach($pattern[$type] as $part)
     {
       if($part['full'] == '*')
@@ -117,18 +117,31 @@ class CronParser
         return false;
       }
 
-      // start at $curr, increase to max, then start back at min until this part matches the range or the val AND mod
-      $checks = array_unique(
-        array_merge(
+      // start at $curr, increase to max, then start back at min
+      // until this part matches the range or the val AND mod
+      if(!$reverse)
+      {
+        $checks = array_merge(
           range($curr, self::$_max[$type]),
           range(
             self::$_min[$type],
             max($curr - 1, self::$_min[$type])
           )
-        )
-      );
+        );
+      }
+      else
+      {
+        $checks = array_merge(
+          range(
+            max($curr, self::$_min[$type]),
+            self::$_min[$type]
+          ),
+          range(self::$_max[$type], $curr - 1)
+        );
+      }
+      $checks = array_unique($checks);
 
-      $cv = -1;
+      $cv     = -1;
       foreach($checks as $check)
       {
         $cv++;
@@ -137,21 +150,17 @@ class CronParser
           continue;
         }
         if(
-        (isset($part['val']) && ($part['val'] == $check || $part['val'] == '*')) ||
-        (isset($part['min']) && $check >= $part['min'] && $check <= $part['max'])
+          (isset($part['val']) && ($part['val'] == $check || $part['val'] == '*')) ||
+          (isset($part['min']) && $check >= $part['min'] && $check <= $part['max'])
         )
         {
-          $offset = isset($part['min']) ? $part['min'] : 0;
-          if($minimum === null || ($cv + $offset) < $minimum)
-          {
-            $minimum = $cv + $offset;
-          }
+          $possibles[] = $cv;
           break;
         }
       }
     }
 
-    return $minimum;
+    return min($possibles);
   }
 
   public static function isValid($pattern)
@@ -227,8 +236,8 @@ class CronParser
     $originalPattern = $pattern;
     $pattern         = self::_parse($pattern);
 
-    $orig = DateTimeHelper::dateTimeFromAnything($time);
-    $ret  = DateTimeHelper::dateTimeFromAnything($time);
+    $orig = self::_makeDateTime($time);
+    $ret  = self::_makeDateTime($time);
 
     foreach(self::$_groupings as $pos => $grp)
     {
@@ -254,6 +263,8 @@ class CronParser
 
       $fmt = self::$_formats[$pos];
       $ret->add(self::_getInterval($pos, $diff));
+      // reset each previous segment to its minimum
+      // (next hour should be at zero minutes)
       if($orig->format($fmt) != $ret->format($fmt))
       {
         for($i = $pos - 1; $i >= 0; $i--)
@@ -276,5 +287,78 @@ class CronParser
     }
 
     return $ret;
+  }
+
+  public static function prevRun($pattern, $time = null, $now = false)
+  {
+    self::_resetTime($time);
+    if(!$now)
+    {
+      $time -= 60;
+    }
+    $originalPattern = $pattern;
+    $pattern         = self::_parse($pattern);
+
+    $ret  = self::_makeDateTime($time);
+
+    foreach(self::$_groupings as $pos => $grp)
+    {
+      $values = [];
+      foreach($grp as $type)
+      {
+        $v = self::_getPartDiff($pattern, $type, $ret->getTimestamp(), true);
+        if($v !== false)
+        {
+          $values[] = $v;
+        }
+      }
+      if(!$values)
+      {
+        continue;
+      }
+      $diff = min($values);
+
+      if(!$diff)
+      {
+        continue;
+      }
+
+      $ret->sub(self::_getInterval($pos, $diff));
+    }
+
+    if(!self::isDue($pattern, $ret->getTimestamp()))
+    {
+      throw new \Exception(
+        "Cron Error: Calculated prevRun is not due. $originalPattern $time"
+      );
+    }
+
+    return $ret;
+  }
+
+  /**
+   * @param mixed $anything
+   *
+   * @return \DateTime
+   * @throws \InvalidArgumentException
+   */
+  private static function _makeDateTime($anything)
+  {
+    if(ctype_digit($anything))
+    {
+      return (new \DateTime())->setTimestamp((int)$anything);
+    }
+
+    $anything = strtotime($anything);
+    if($anything !== false)
+    {
+      return (new \DateTime())->setTimestamp($anything);
+    }
+
+    throw new \InvalidArgumentException(
+      'Failed Converting param of \'' . gettype(
+        $anything
+      ) . '\' to DateTime object'
+    );
   }
 }
