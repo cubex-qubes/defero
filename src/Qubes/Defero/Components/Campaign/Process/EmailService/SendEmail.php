@@ -46,6 +46,12 @@ class SendEmail extends StdProcess implements IEmailProcess
       $this->_message->getStr('senderName')
     );
 
+    $returnPath = $this->_message->getStr('returnPath');
+    if($returnPath)
+    {
+      $mailer->setSender($returnPath);
+    }
+
     try
     {
       $result = $mailer->send();

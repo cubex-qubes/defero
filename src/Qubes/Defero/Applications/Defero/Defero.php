@@ -233,6 +233,10 @@ class Defero extends Application
         self::replaceData($contact->email, $data)
       );
       $message->setData(
+        'returnPath',
+        self::replaceData($contact->returnPath, $data)
+      );
+      $message->setData(
         'sendType',
         self::replaceData($campaign->sendType, $data)
       );

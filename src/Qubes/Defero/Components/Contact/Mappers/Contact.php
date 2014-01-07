@@ -23,6 +23,8 @@ class Contact extends RecordMapper
   public $email;
   public $jobTitle;
   public $signature;
+  public $returnPath;
+
   /**
    * @length 2
    */
