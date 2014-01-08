@@ -21,7 +21,7 @@
       <tr>
         <th></th>
         <th>Name</th>
-        <th>Reference</th>
+        <th>Subject</th>
         <th>Data Source</th>
         <th>Send Type</th>
         <th>Label</th>
@@ -41,7 +41,7 @@
             </a>
           </td>
           <td><?= $campaign->name ?></td>
-          <td><?= $campaign->reference ?></td>
+          <td><?= $campaign->message()->subject ?></td>
           <td><?= $campaign->dataSource ?></td>
           <td><?= $campaign->getTitledSendType() ?></td>
           <td><?= $campaign->label ?></td>
