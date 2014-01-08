@@ -62,15 +62,8 @@ class CampaignMessageController extends DeferoController
     $message  = $campaign->message();
     $message->reload();
 
-    $subject = $message->subject;
-    while($this->translateBlock($subject))
-    {
-    }
-
-    $plainText = $message->plainText;
-    while($this->translateBlock($plainText))
-    {
-    }
+    $subject   = $this->translateString($message->subject);
+    $plainText = $this->translateString($message->plainText);
 
     $htmlContent = $message->htmlContent;
     while($this->translateBlock($htmlContent))
@@ -108,6 +101,16 @@ class CampaignMessageController extends DeferoController
     }
     $match = substr($string, $start, $end - $start);
 
+    $replace = $this->translateString(substr($match, 2, -2));
+
+    // replace
+    $string = str_replace($match, $replace, $string);
+
+    return $string !== $startString;
+  }
+
+  public function translateString($string)
+  {
     // translate
     $config         = Container::config()->get("i18n", new Config());
     $translateClass = $config->getStr("translator", null);
@@ -118,15 +121,11 @@ class CampaignMessageController extends DeferoController
       );
     }
     $translator = new $translateClass();
-    $replace    = $translator->translate(
-      substr($match, 2, -2),
+    return $translator->translate(
+      $string,
       'en',
       $this->getStr('hl')
     );
-    // replace
-    $string = str_replace($match, $replace, $string);
-
-    return $string !== $startString;
   }
 
   public function getRoutes()
