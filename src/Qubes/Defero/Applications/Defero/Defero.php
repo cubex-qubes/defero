@@ -59,10 +59,10 @@ class Defero extends Application
   }
 
   /**
-   * @param int $campaignId
-   * @param int $startTime
-   * @param int $startId
-   * @param int $endId
+   * @param int        $campaignId
+   * @param int        $startTime
+   * @param int        $startId
+   * @param int        $endId
    * @param null|array $additionalData
    *
    * @return bool
@@ -182,7 +182,7 @@ class Defero extends Application
     $messages = [];
     foreach($batch as $data)
     {
-      $data = array_change_key_case($data);
+      $data    = array_change_key_case($data);
       $message = new ProcessMessage();
       $message->setData('campaignId', $campaignId);
       $message->setData('mailerTracking', $campaign->trackingType);
@@ -298,17 +298,18 @@ class Defero extends Application
     return $reference;
   }
 
-  public static function replaceData($text, $data, $nl2br = false)
+  public static function replaceData($text, $data, $html = false)
   {
-    self::_replaceConditionals($text, $data, $nl2br);
+    $text = self::_replaceConditionals($text, $data, $html);
 
-    foreach($data as $k => $v)
+    foreach($data as $varName => $value)
     {
-      if($nl2br)
+      if($html)
       {
-        $v = nl2br($v);
+        $value = mb_convert_encoding($value, 'HTML-ENTITIES', 'utf8');
+        $value = nl2br($value);
       }
-      $text = str_ireplace('{!' . $k . '}', $v, $text);
+      $text = str_ireplace('{!' . $varName . '}', $value, $text);
     }
 
     return $text;
@@ -320,11 +321,11 @@ class Defero extends Application
    *
    * @param      $text
    * @param      $data
-   * @param bool $nl2br
+   * @param bool $html
    *
    * @return string
    */
-  private static function _replaceConditionals($text, $data, $nl2br = false)
+  private static function _replaceConditionals($text, $data, $html = false)
   {
     $found = true;
     while($found)
@@ -338,12 +339,13 @@ class Defero extends Application
           {
             $found = true;
 
-            $varName = strtolower($expMatches[1]);
+            $varName     = strtolower($expMatches[1]);
             $alternative = $expMatches[2];
 
             $value = empty($data[$varName]) ? $alternative : $data[$varName];
-            if($nl2br)
+            if($html)
             {
+              $value = mb_convert_encoding($value, 'HTML-ENTITIES', 'utf8');
               $value = nl2br($value);
             }
             $text = str_replace($expression, $value, $text);
