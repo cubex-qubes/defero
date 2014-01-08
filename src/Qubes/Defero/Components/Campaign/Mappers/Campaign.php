@@ -123,7 +123,7 @@ class Campaign extends RecordMapper
   public function message()
   {
     $this->newInstanceOnFailedRelation(true);
-    return $this->hasOne(new Message());
+    return $this->hasOne(new Message())->reload();
   }
 
   /**
@@ -252,7 +252,7 @@ class Campaign extends RecordMapper
     // find what data the email message requires
     $requiredFields = ['firstName', 'lastName', 'email'];
 
-    $message = $this->message()->reload();
+    $message = $this->message();
     preg_match_all('/{!([^}]+)}/', $message->plainText, $matches);
     preg_match_all('/{!([^}]+)}/', $message->htmlContent, $matches2);
     $matches = array_unique(
