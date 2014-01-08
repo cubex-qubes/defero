@@ -53,6 +53,10 @@ class CronParser
 
   protected static function _parse($pattern)
   {
+    if(!$pattern)
+    {
+      throw new \InvalidArgumentException('Invalid cron pattern');
+    }
     if(is_array($pattern))
     {
       return $pattern;
@@ -141,7 +145,7 @@ class CronParser
       }
       $checks = array_unique($checks);
 
-      $cv     = -1;
+      $cv = -1;
       foreach($checks as $check)
       {
         $cv++;
@@ -299,7 +303,7 @@ class CronParser
     $originalPattern = $pattern;
     $pattern         = self::_parse($pattern);
 
-    $ret  = self::_makeDateTime($time);
+    $ret = self::_makeDateTime($time);
 
     foreach(self::$_groupings as $pos => $grp)
     {
