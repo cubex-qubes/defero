@@ -280,4 +280,9 @@ class Campaign extends RecordMapper
 
     return $matches;
   }
+
+  public function getStats(\DateTime $from, \DateTime $to)
+  {
+    return MailStatistic::getCampaignStats($this->id(), $from, $to);
+  }
 }

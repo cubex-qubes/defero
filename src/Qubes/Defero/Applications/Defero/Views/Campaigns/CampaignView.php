@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
+use Cubex\Helpers\DateTimeHelper;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
@@ -34,20 +35,20 @@ class CampaignView extends DeferoView
     $this->_stats['24h'] = new \stdClass();
     $time                = strtotime('-23 hours');
     $time -= $time % 3600; //round off to the hour
-    $statsCf = MailStatistic::cf();
-    $d       = $statsCf->getSlice($this->campaign->id(), '', $time, true, 50);
+
     for($i = 24; $i > 0; $i--)
     {
-      $queued = isset($d[$time . '|queued']) ? $d[$time . '|queued'] : 0;
-      $sent   = isset($d[$time . '|sent']) ? $d[$time . '|sent'] : 0;
-      $failed = isset($d[$time . '|failed']) ? $d[$time . '|failed'] : 0;
+      $stats = $this->campaign->getStats(
+        DateTimeHelper::dateTimeFromAnything($time),
+        DateTimeHelper::dateTimeFromAnything($time + 3599)
+      );
 
-      $this->_stats['24h']->queued[] = $queued;
-      $this->_stats['24h']->sent[]   = $sent;
-      $this->_stats['24h']->failed[] = $failed;
-      $this->_stats['24h']->totalQueued += $queued;
-      $this->_stats['24h']->totalSent += $sent;
-      $this->_stats['24h']->totalFailed += $failed;
+      $this->_stats['24h']->queued[] = $stats->queued;
+      $this->_stats['24h']->sent[]   = $stats->sent;
+      $this->_stats['24h']->failed[] = $stats->failed;
+      $this->_stats['24h']->totalQueued += $stats->queued;
+      $this->_stats['24h']->totalSent += $stats->sent;
+      $this->_stats['24h']->totalFailed += $stats->failed;
       $time += 3600;
     }
   }
@@ -59,28 +60,19 @@ class CampaignView extends DeferoView
       '-29 days'
     ); //so counting 30 days brings us to today
     $time -= $time % 86400; //round off to the hour
-    $statsCf = MailStatistic::cf();
-    $d       = $statsCf->getSlice($this->campaign->id(), '', $time, true);
     for($i = 30; $i > 0; $i--)
     {
-      $hTime  = $time;
-      $queued = 0;
-      $sent   = 0;
-      $failed = 0;
-      for($x = 24; $x > 0; $x--)
-      {
-        $queued += isset($d[$hTime . '|queued']) ? $d[$hTime . '|queued'] : 0;
-        $sent += isset($d[$hTime . '|sent']) ? $d[$hTime . '|sent'] : 0;
-        $failed += isset($d[$hTime . '|failed']) ? $d[$hTime . '|failed'] : 0;
-        $hTime += 3600;
-      }
+      $stats = $this->campaign->getStats(
+        DateTimeHelper::dateTimeFromAnything($time),
+        DateTimeHelper::dateTimeFromAnything($time + 86399)
+      );
 
-      $this->_stats['30d']->queued[] = $queued;
-      $this->_stats['30d']->sent[]   = $sent;
-      $this->_stats['30d']->failed[] = $failed;
-      $this->_stats['30d']->totalQueued += $queued;
-      $this->_stats['30d']->totalSent += $sent;
-      $this->_stats['30d']->totalFailed += $failed;
+      $this->_stats['30d']->queued[] = $stats->queued;
+      $this->_stats['30d']->sent[]   = $stats->sent;
+      $this->_stats['30d']->failed[] = $stats->failed;
+      $this->_stats['30d']->totalQueued += $stats->queued;
+      $this->_stats['30d']->totalSent += $stats->sent;
+      $this->_stats['30d']->totalFailed += $stats->failed;
       $time += 86400;
     }
   }
