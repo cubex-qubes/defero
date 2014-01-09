@@ -86,6 +86,18 @@ class Campaign extends RecordMapper
    */
   public $sortOrder;
 
+  protected static $_labels;
+
+  public static function setLabels($labels)
+  {
+    self::$_labels = $labels;
+  }
+
+  public function labels()
+  {
+    return self::$_labels;
+  }
+
   protected function _configure()
   {
     $this->_dbServiceName = "defero_db";
