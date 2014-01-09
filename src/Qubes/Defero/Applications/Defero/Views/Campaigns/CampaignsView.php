@@ -6,19 +6,13 @@
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
 use Cubex\Mapper\Database\RecordCollection;
-use Cubex\View\HtmlElement;
 use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
-use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Applications\Defero\Views\Base\TypeAheadSearchFormView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsView extends DeferoView
 {
-  public $pager;
-
-  public $pagerInfo;
-
   /**
    * @var Campaign[]
    */
@@ -26,16 +20,10 @@ class CampaignsView extends DeferoView
 
   public $campaignsSearch;
 
-  public function __construct(
-    RecordCollection $campaigns,
-    RecordCollectionPagination $pagination
-  )
+  public function __construct(RecordCollection $campaigns)
   {
-    $pagination->setNumResultsPerPage($this->getResultsPerPage());
 
-    $this->pager     = $pagination->getPager();
-    $this->pagerInfo = $pagination->getInfo();
-    $this->campaigns = $pagination->getPaginatedResults();
+    $this->campaigns = $campaigns;
 
     $this->requireJsPackage("typeahead");
     $this->campaignsSearch = new TypeAheadSearchFormView(

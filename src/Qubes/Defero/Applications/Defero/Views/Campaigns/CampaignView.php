@@ -17,7 +17,7 @@ class CampaignView extends DeferoView
   public $campaign;
   private $_stats;
 
-  public function __construct(Campaign $campaign, $page)
+  public function __construct(Campaign $campaign)
   {
     $this->requireJsLibrary('jquery');
     $this->requireJs(

@@ -169,15 +169,14 @@ class CampaignsController extends BaseDeferoController
    * Output a single campaign
    *
    * @param int $id
-   * @param int $page
    *
    * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
    */
-  public function renderShow($id, $page = 1)
+  public function renderShow($id)
   {
     $campaign = new Campaign($id);
 
-    return new CampaignView($campaign, $page);
+    return new CampaignView($campaign);
   }
 
   /**
@@ -199,14 +198,10 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderIndex($page = 1)
   {
-    $campaigns = (new RecordCollection(new Campaign()))->setOrderBy("id");
+    $campaigns = (new RecordCollection(new Campaign()))
+      ->setOrderBy("sortOrder");
 
-    $pagination = new RecordCollectionPagination(
-      $campaigns, $page
-    );
-    $pagination->setUri("/campaigns/page");
-
-    return new CampaignsView($campaigns, $pagination);
+    return new CampaignsView($campaigns);
   }
 
   /**
@@ -257,10 +252,6 @@ class CampaignsController extends BaseDeferoController
     $routes = ResourceTemplate::getRoutes();
     array_unshift($routes, new StdRoute('/:id/send', 'send'));
     array_unshift($routes, new StdRoute('/:id/test', 'test'));
-    $routes[] = (new StdRoute('/:id/page/:pnumber', 'show', ['ANY']))
-    ->excludeVerb('POST')
-    ->excludeVerb('DELETE')
-    ->excludeVerb('PUT');
 
     return $routes;
   }
