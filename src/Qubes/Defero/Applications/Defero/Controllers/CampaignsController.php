@@ -93,8 +93,12 @@ class CampaignsController extends BaseDeferoController
     $campaign = new Campaign($id);
 
     $form = new DeferoForm('send_test_email');
-    $form->addTextElement('userId');
-    $form->get('UserId')->setRequired(true);
+    $form->addTextElement('email');
+    foreach($campaign->message()->findVariables() as $var)
+    {
+      $form->addTextElement($var);
+    }
+    $form->get('email')->setRequired(true);
     $form->addSubmitElement();
 
     if($post = $this->request()->postVariables())
@@ -103,14 +107,7 @@ class CampaignsController extends BaseDeferoController
       if($form->isValid() && $form->csrfCheck(true))
       {
         $msg = 'Test queued for user';
-        $ds  = $campaign->getDataSource();
-        $ds->process(
-          $id,
-          time(),
-          $campaign->lastSent,
-          $post['userId'],
-          $post['userId']
-        );
+        Defero::pushMessage($id, $form->jsonSerialize());
 
         return Redirect::to("/campaigns/{$id}")
           ->with("msg", new TransportMessage("info", $msg));

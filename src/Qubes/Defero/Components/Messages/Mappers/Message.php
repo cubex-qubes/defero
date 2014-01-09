@@ -59,4 +59,17 @@ class Message extends I18nRecordMapper
     }
     return $tbl;
   }
+
+  public function findVariables()
+  {
+    $variables = [];
+    foreach([$this->subject, $this->plainText, $this->htmlContent] as $text)
+    {
+      if(preg_match_all('/{[\!\?]([^{}|]*)/', $text, $matches))
+      {
+        $variables = array_merge($variables, $matches[1]);
+      }
+    }
+    return $variables;
+  }
 }
