@@ -151,10 +151,10 @@ class CampaignProcessorsController extends DeferoController
     }
     $processors    = $this->_campaign->processors;
     $newProcessors = [];
-    // TODO: find a nicer way to verify the keys of processors
-    foreach($this->request()->postVariables('order') as $data)
+
+    foreach($this->request()->postVariables('order') as $pid)
     {
-      $newProcessors[] = $processors[$data['pid']];
+      $newProcessors[] = $processors[$pid];
     }
     $this->_campaign->processors = $newProcessors;
     $response                    = [

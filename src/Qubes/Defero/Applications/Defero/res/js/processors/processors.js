@@ -9,6 +9,12 @@ $(function () {
      itemSelector: 'tr',
      placeholder: '<tr class="placeholder"/>',
      distance:20,
+      serialize: function (parent, children, isContainer) {
+        if (!isContainer) {
+          return parent.data('pid');
+        }
+        return children;
+      },
      onDrop: function($item, container, _super)
      {
        _super($item,container);
