@@ -19,7 +19,7 @@ class CampaignProcessorsView extends DeferoView
   {
     $this->campaign = $campaign;
     $this->requireJsPackage("processors");
-    $this->requireJsPackage("processors");
-    $this->requireCssPackage("processors");
+    $this->requireJs("jquery-sortable-min");
+    $this->requireCss("jquery-sortable-min");
   }
 }
