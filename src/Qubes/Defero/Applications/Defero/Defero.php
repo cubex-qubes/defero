@@ -55,6 +55,7 @@ class Defero extends Application
       "/typeahead/(.*)" => $base . 'TypeAheadController',
       "/search/(.*)"    => $base . 'SearchController',
       "/wizard/(.*)"    => $base . 'WizardController',
+      "/stats/(.*)"     => $base . 'StatsController',
     ];
   }
 

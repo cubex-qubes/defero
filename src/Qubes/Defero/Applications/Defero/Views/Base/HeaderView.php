@@ -43,6 +43,11 @@ class HeaderView extends ViewModel
         new HtmlElement("a", ["href" => "/contacts"], "Contacts"),
         $this->_getNavItemState("/contacts")
       )
+    )->addItem(
+      new NavItem(
+        new HtmlElement("a", ["href" => "/stats"], "Stats"),
+        $this->_getNavItemState("/stats")
+      )
     );
 
     // Global typeahead search
