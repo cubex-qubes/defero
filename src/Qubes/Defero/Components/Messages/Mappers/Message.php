@@ -70,6 +70,13 @@ class Message extends I18nRecordMapper
         $variables = array_merge($variables, $matches[1]);
       }
     }
+    foreach($variables as $k => $var)
+    {
+      if(strncasecmp($var, 'link=', 5) === 0)
+      {
+        unset($variables[$k]);
+      }
+    }
     return $variables;
   }
 }
