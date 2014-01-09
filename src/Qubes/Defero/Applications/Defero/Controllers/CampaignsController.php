@@ -113,7 +113,7 @@ class CampaignsController extends BaseDeferoController
         );
 
         return Redirect::to("/campaigns/{$id}")
-        ->with("msg", new TransportMessage("info", $msg));
+          ->with("msg", new TransportMessage("info", $msg));
       }
     }
 
@@ -138,12 +138,12 @@ class CampaignsController extends BaseDeferoController
     if($pushed)
     {
       return Redirect::to("/campaigns/{$id}")
-      ->with("msg", new TransportMessage("info", 'Campaign Queued'));
+        ->with("msg", new TransportMessage("info", 'Campaign Queued'));
     }
     else
     {
       return Redirect::to("/campaigns/{$id}")
-      ->with("msg", new TransportMessage("error", $failMsg));
+        ->with("msg", new TransportMessage("error", $failMsg));
     }
   }
 
@@ -227,7 +227,7 @@ class CampaignsController extends BaseDeferoController
       $msg .= $id ? " Updated" : " Created";
 
       return Redirect::to("/campaigns/{$form->getMapper()->id()}")
-      ->with("msg", new TransportMessage("info", $msg));
+        ->with("msg", new TransportMessage("info", $msg));
     }
 
     return $this->renderEdit($id, $form);
