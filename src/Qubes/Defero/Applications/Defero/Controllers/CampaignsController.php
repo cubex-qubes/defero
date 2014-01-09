@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Applications\Defero\Controllers;
 
+use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\FormElement;
 use Cubex\Mapper\Database\RecordCollection;
@@ -12,10 +13,10 @@ use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
 use Cubex\View\RenderGroup;
+use Cubex\View\Templates\Errors\Error404;
 use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Applications\Defero\Forms\DeferoForm;
-use Qubes\Defero\Applications\Defero\Helpers\RecordCollectionPagination;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
@@ -247,11 +248,39 @@ class CampaignsController extends BaseDeferoController
     return Campaign::buildCampaignForm($action, $id);
   }
 
+  public function renderReorder()
+  {
+    return new Error404();
+  }
+
+  public function ajaxReorder()
+  {
+    if(!$this->request()->postVariables())
+    {
+      $response = ['result' => false];
+      $response = new Response($response);
+      $response->addHeader('Content-Type', 'application/json');
+      return $response;
+    }
+
+    foreach($this->request()->postVariables('order') as $order => $cid)
+    {
+      $campaign            = new Campaign($cid);
+      $campaign->sortOrder = $order;
+      $campaign->saveChanges();
+    }
+    $response = ['result' => true];
+    $response = new Response($response);
+    $response->addHeader('Content-Type', 'application/json');
+    return $response;
+  }
+
   public function getRoutes()
   {
     $routes = ResourceTemplate::getRoutes();
     array_unshift($routes, new StdRoute('/:id/send', 'send'));
     array_unshift($routes, new StdRoute('/:id/test', 'test'));
+    array_unshift($routes, new StdRoute('/reorder', 'reorder'));
 
     return $routes;
   }

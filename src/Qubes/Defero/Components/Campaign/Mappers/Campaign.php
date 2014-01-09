@@ -81,6 +81,11 @@ class Campaign extends RecordMapper
    */
   public $processors;
 
+  /**
+   * @datatype int
+   */
+  public $sortOrder;
+
   protected function _configure()
   {
     $this->_dbServiceName = "defero_db";

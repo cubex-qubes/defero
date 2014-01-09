@@ -22,6 +22,9 @@ class CampaignsView extends DeferoView
 
   public function __construct(RecordCollection $campaigns)
   {
+    $this->requireJsPackage("campaigns");
+    $this->requireJs("jquery-sortable-min");
+    $this->requireCss("jquery-sortable-min");
 
     $this->campaigns = $campaigns;
 

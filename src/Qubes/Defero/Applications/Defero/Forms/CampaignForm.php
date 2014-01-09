@@ -19,6 +19,8 @@ class CampaignForm extends DeferoForm
     $this->getElement('processors')->setType(FormElement::NONE);
     $this->getElement('lastSent')->setType(FormElement::NONE);
 
+    $this->getElement('sortOrder')->setType(FormElement::NONE);
+
     if($this->_mapper->id())
     {
       $this->getElement("reference")->addAttribute("disabled", "disabled");
