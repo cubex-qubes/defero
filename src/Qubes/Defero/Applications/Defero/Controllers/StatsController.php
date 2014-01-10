@@ -16,6 +16,6 @@ class StatsController extends DeferoController
   public function renderIndex()
   {
     $campaigns = Campaign::collection()->setOrderBy('sortOrder');
-    return new StatsView($campaigns);
+    return new StatsView($campaigns, $this->request()->postVariables('date'));
   }
 }
