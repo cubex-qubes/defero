@@ -13,8 +13,8 @@ abstract class BaseDeferoController extends WebpageController
 {
   public function preRender()
   {
-    $this->requireCss("defero");
-    $this->requireJs("defero");
+    $this->requireCss("defero", 'Qubes\Defero\Applications\Defero');
+    $this->requireJs("defero", 'Qubes\Defero\Applications\Defero');
     $this->requireJsPackage("bootstrap");
     $this->tryNest("header", new HeaderView());
     $this->renderBefore("content", new PageFlashView());

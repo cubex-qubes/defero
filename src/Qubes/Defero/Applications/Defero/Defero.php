@@ -30,6 +30,12 @@ class Defero extends Application
     return "Mailer setup and configuration";
   }
 
+  protected function _configure()
+  {
+    parent::_configure();
+    $this->_listen('Qubes\Defero\Applications\Defero', $this->getConfig());
+  }
+
   public function getTheme()
   {
     return new SidekickTheme();
