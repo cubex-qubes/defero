@@ -158,6 +158,12 @@ class Defero extends Application
     }
     $campaignId = $campaign->id();
 
+    $campaign = new Campaign($campaignId);
+    if(!$campaign->processors)
+    {
+      throw new \Exception('Cannot queue a Campaign with no Processors');
+    }
+
     $processorsCacheId = $cacheId . ':processors';
     $processors        = EphemeralCache::getCache(
       $processorsCacheId,

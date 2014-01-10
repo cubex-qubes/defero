@@ -106,11 +106,18 @@ class CampaignsController extends BaseDeferoController
       $form->hydrate($post);
       if($form->isValid() && $form->csrfCheck(true))
       {
-        $msg = 'Test queued for user';
-        Defero::pushMessage($id, $form->jsonSerialize());
+        try
+        {
+          $msg = new TransportMessage("info", 'Test queued for user');
+          Defero::pushMessage($id, $form->jsonSerialize());
+        }
+        catch(\Exception $e)
+        {
+          $msg = new TransportMessage("error", $e->getMessage());
+        }
 
         return Redirect::to("/campaigns/{$id}")
-          ->with("msg", new TransportMessage("info", $msg));
+          ->with("msg", $msg);
       }
     }
 
