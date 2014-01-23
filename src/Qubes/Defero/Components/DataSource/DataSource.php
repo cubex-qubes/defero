@@ -99,7 +99,7 @@ abstract class DataSource extends DataMapper
   protected function _getLastIdPath($campaignId, $taskId)
   {
     $logsDir    = build_path(realpath(dirname(WEB_ROOT)), 'logs');
-    $folderName = last(explode("\\", get_class($this)));
+    $folderName = class_shortname($this);
     $logsDir    = build_path($logsDir, $folderName, $campaignId);
     if(!file_exists($logsDir))
     {
