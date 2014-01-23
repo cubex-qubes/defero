@@ -48,7 +48,7 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
 
       $campaign = new Campaign($cid);
       $dataSource = $campaign->getDataSource();
-      if($startId == null && method_exists($dataSource, 'getLastId'))
+      if($startId == null)
       {
         $startId = $dataSource->getLastId($taskId);
       }
