@@ -47,10 +47,14 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
       $additionalData = $message->getRaw('additionalData', null);
 
       $campaign = new Campaign($cid);
-      $campaign->getDataSource()->process(
+      $dataSource = $campaign->getDataSource();
+      if($startId == null && method_exists($dataSource, 'getLastId'))
+      {
+        $startId = $dataSource->getLastId($taskId);
+      }
+      $dataSource->process(
         $taskId, $cid, $started, $lastSent, $startId, $endId, $additionalData
       );
-
       $results[$taskId] = true;
     }
     $this->_batch = [];
