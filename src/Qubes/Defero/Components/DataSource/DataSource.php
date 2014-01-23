@@ -9,11 +9,13 @@
 namespace Qubes\Defero\Components\DataSource;
 
 use Cubex\Form\Form;
+use Cubex\Foundation\Container;
 use Cubex\Mapper\DataMapper;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 abstract class DataSource extends DataMapper
 {
+  protected $_connections;
   protected $_autoTimestamp = false;
   protected $_fixedProperties;
 
@@ -84,5 +86,55 @@ abstract class DataSource extends DataMapper
         $data[$k] = array_merge($thisData, $additionalData);
       }
     }
+  }
+
+  protected function _updateLastId($taskId, $campaignId, $lastId)
+  {
+    $path = $this->_getLastIdPath($campaignId, $taskId);
+    $fr   = fopen($path, 'w');
+    fwrite($fr, $lastId);
+    fclose($fr);
+  }
+
+  protected function _getLastIdPath($campaignId, $taskId)
+  {
+    $logsDir    = build_path(realpath(dirname(WEB_ROOT)), 'logs');
+    $folderName = class_shortname($this);
+    $logsDir    = build_path($logsDir, $folderName, $campaignId);
+    if(!file_exists($logsDir))
+    {
+      mkdir($logsDir, 0777, true);
+    }
+    $fileName = 'campaign-'
+    . preg_replace('/[\\\\\/\:\*\?]/', '-', $taskId)
+    . '.lastId';
+    $logsDir  = build_path($logsDir, $fileName);
+    return $logsDir;
+  }
+
+  public function getLastId($campaignId, $taskId)
+  {
+    $path = $this->_getLastIdPath($campaignId, $taskId);
+    if(file_exists($path))
+    {
+      return file_get_contents($path);
+    }
+  }
+
+  /**
+   * @return IDatabaseService
+   */
+  protected function _getConnection($serviceName)
+  {
+    if(!isset($this->_connections[$serviceName]))
+    {
+      $this->_connections[$serviceName] = Container::servicemanager()
+      ->getWithType(
+        $serviceName,
+        '\Cubex\Database\IDatabaseService'
+      );
+      $this->_connections[$serviceName]->query("SET NAMES 'utf8'");
+    }
+    return $this->_connections[$serviceName];
   }
 }
