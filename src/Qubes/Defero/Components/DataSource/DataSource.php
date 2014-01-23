@@ -88,31 +88,33 @@ abstract class DataSource extends DataMapper
     }
   }
 
-  protected static function _updateLastId($taskId, $lastId)
+  protected static function _updateLastId($taskId, $campaignId, $lastId)
   {
-    $path = self::_getLastIdPath($taskId);
+    $path = self::_getLastIdPath($campaignId, $taskId);
     $fr   = fopen($path, 'w');
     fwrite($fr, $lastId);
     fclose($fr);
   }
 
-  protected static function _getLastIdPath($taskId)
+  protected static function _getLastIdPath($campaignId, $taskId)
   {
-    $logsDir = realpath(dirname(WEB_ROOT)) . DS . 'logs';
-    $logsDir .= DS . $_REQUEST['__path__'];
+    $logsDir    = build_path(realpath(dirname(WEB_ROOT)), 'logs');
+    $folderName = last(explode("\\", get_class()));
+    $logsDir    = build_path($logsDir, $folderName, $campaignId);
     if(!file_exists($logsDir))
     {
       mkdir($logsDir, 0777, true);
     }
-    $logsDir .= DS . 'campaign-'
+    $fileName = 'campaign-'
     . preg_replace('/[\\\\\/\:\*\?]/', '-', $taskId)
     . '.lastId';
+    $logsDir  = build_path($logsDir, $fileName);
     return $logsDir;
   }
 
-  public function getLastId($taskId)
+  public function getLastId($campaignId, $taskId)
   {
-    $path = self::_getLastIdPath($taskId);
+    $path = self::_getLastIdPath($campaignId, $taskId);
     if(file_exists($path))
     {
       return file_get_contents($path);
