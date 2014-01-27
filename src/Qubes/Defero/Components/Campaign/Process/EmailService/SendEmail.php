@@ -17,7 +17,15 @@ class SendEmail extends StdProcess implements IEmailProcess
   {
     $userData = $this->_message->getArr('data');
 
-    $name  = trim($userData['firstname'] . ' ' . $userData['lastname']);
+    $name = null;
+    if(isset($userData['firstname']))
+    {
+      $name = $userData['firstname'];
+      if(isset($userData['lastname']))
+      {
+        $name .= ' ' . $userData['lastname'];
+      }
+    }
     $email = $userData['email'];
 
     Log::info("Sending to $name <$email>");
