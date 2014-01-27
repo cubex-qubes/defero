@@ -30,6 +30,58 @@ class CampaignsController extends BaseDeferoController
     '0 * * * *' => 'Every Hour',
   ];
 
+  public function renderClone($id)
+  {
+    $campaign = new Campaign($id);
+    $form     = new DeferoForm('cloneForm');
+    $form->addTextElement('currentReference', $campaign->reference);
+    $form->addTextElement('newReference');
+    $form->addSubmitElement('Clone');
+    $form->getElement('currentReference')->addAttribute('disabled');
+    $form->hydrate($this->request()->postVariables());
+    if(!$form->getData('newReference'))
+    {
+      return '<h3>Clone ' . $campaign->name . '</h3>' . $form;
+    }
+
+    try
+    {
+      $campaign->reference = $form->getData('newReference');
+      $campaign->saveAsNew();
+      $newId = $campaign->id();
+
+      $campaign    = new Campaign($newId);
+      $oldCampaign = new Campaign($id);
+      $languages   = $this->config('i18n')->getArr('languages');
+
+      $msg    = $campaign->message();
+      $oldMsg = $oldCampaign->message();
+      foreach($languages as $lang)
+      {
+        $msg->setLanguage($lang)->reload();
+        $oldMsg->setLanguage($lang)->reload();
+        $oldData = $oldMsg->jsonSerialize();
+        unset(
+        $oldData['id'], $oldData['campaign_id'],
+        $oldData['created_at'], $oldData['updated_at']
+        );
+        $msg->hydrate($oldData);
+        foreach($msg->getRawAttributes() as $attr)
+        {
+          $attr->setModified();
+        }
+        $msg->saveChanges();
+      }
+      return Redirect::to("/campaigns/{$newId}")
+        ->with("msg", new TransportMessage('info', 'Campaign Cloned'));
+    }
+    catch(\Exception $e)
+    {
+      return Redirect::to("/campaigns/{$id}")
+        ->with('msg', new TransportMessage("error", $e->getMessage()));
+    }
+  }
+
   /**
    * Show a blank campaign form
    *
@@ -284,6 +336,7 @@ class CampaignsController extends BaseDeferoController
     $routes = ResourceTemplate::getRoutes();
     array_unshift($routes, new StdRoute('/:id/send', 'send'));
     array_unshift($routes, new StdRoute('/:id/test', 'test'));
+    array_unshift($routes, new StdRoute('/:id/clone', 'clone'));
     array_unshift($routes, new StdRoute('/reorder', 'reorder'));
 
     return $routes;

@@ -31,6 +31,8 @@ $ds = $this->campaign->getDataSource();
          data-placement="bottom"
          data-html="true" data-container="body"
          data-prevent-default="true">Delete</a>
+      <a href="/campaigns/<?= $this->campaign->id() ?>/clone"
+         class="btn btn-warning">Clone</a>
       <a href="/campaigns/new" class="btn btn-primary">New</a>
     </div>
     <div class="btn-group">
