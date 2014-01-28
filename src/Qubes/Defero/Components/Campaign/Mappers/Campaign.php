@@ -82,6 +82,11 @@ class Campaign extends RecordMapper
   public $processors;
 
   /**
+   * @datatype text
+   */
+  public $availableLanguages;
+
+  /**
    * @datatype int
    */
   public $sortOrder;
@@ -132,6 +137,9 @@ class Campaign extends RecordMapper
 
     $this->_attribute('processors')
       ->setSerializer(Attribute::SERIALIZATION_JSON);
+
+    $this->_attribute('availableLanguages')
+    ->setSerializer(Attribute::SERIALIZATION_JSON);
   }
 
   /**

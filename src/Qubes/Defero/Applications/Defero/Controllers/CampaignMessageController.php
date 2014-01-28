@@ -83,6 +83,15 @@ class CampaignMessageController extends DeferoController
     $message->htmlContent = $htmlContent;
     $message->saveChanges();
 
+    if(!$campaign->availableLanguages)
+    {
+      $campaign->availableLanguages = [$this->getStr('hl')];
+    }
+
+    $campaign->availableLanguages[] = $this->getStr('hl');
+    $campaign->saveChanges();
+
+
     return Redirect::to(
       '/campaigns/' . $this->getStr(
         'id'
