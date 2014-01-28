@@ -95,9 +95,10 @@ class CampaignMessageController extends DeferoController
     $pattern = '/{[\!\?]([^{}]*|(?R))*}/i';
     while(preg_match($pattern, $string, $matches))
     {
-      $this->_lookup[md5($matches[0])] = $matches[0];
+      $match = $matches[0];
+      $this->_lookup[md5($match)] = $match;
 
-      $string = str_replace($matches[0], md5($matches[0]), $string);
+      $string = str_replace($match, md5($match), $string);
     }
     return nl2br($string); //just because google drops new lines
   }
