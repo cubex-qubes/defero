@@ -12,6 +12,7 @@ use Cubex\Facade\Redirect;
 use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Container;
 use Cubex\Routing\StdRoute;
+use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Applications\Defero\Forms\CampaignMessageForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignMessageView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
@@ -19,6 +20,7 @@ use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 class CampaignMessageController extends DeferoController
 {
   protected $_message;
+  protected $_lookup;
 
   public function renderIndex()
   {
@@ -63,7 +65,11 @@ class CampaignMessageController extends DeferoController
     $message->reload();
 
     $subject   = $this->translateString($message->subject);
-    $plainText = $this->translateString($message->plainText);
+    $plainText = $this->translateString(
+      $this->prepTextForTranslate($message->plainText)
+    );
+
+    $plainText = $this->reversePlaceHolders($plainText);
 
     $htmlContent = $message->htmlContent;
     while($this->translateBlock($htmlContent))
@@ -82,6 +88,42 @@ class CampaignMessageController extends DeferoController
         'id'
       ) . '/message/' . $this->getStr('hl')
     );
+  }
+
+  public function prepTextForTranslate($string)
+  {
+    $pattern = '/{[\!\?]([^{}]*|(?R))*}/i';
+    while(preg_match($pattern, $string, $matches))
+    {
+      $match = $matches[0];
+      $this->_lookup[md5($match)] = $match;
+
+      $string = str_replace($match, md5($match), $string);
+    }
+    return nl2br($string); //just because google drops new lines
+  }
+
+  private function _reversePlaceHolders($string)
+  {
+    foreach($this->_lookup as $key => $replace)
+    {
+      $string = str_replace($key, $replace, $string);
+    }
+    return $string;
+  }
+
+  public function reversePlaceHolders($string)
+  {
+    $reversed = $this->_reversePlaceHolders($string);
+    while($string != $reversed)
+    {
+      $string = $reversed;
+      $reversed = $this->_reversePlaceHolders($reversed);
+    }
+
+    //change <br> to new line
+    $reversed = preg_replace('/\<br(\s*)?\/?\>/i', "\n", $reversed);
+    return $reversed;
   }
 
   public function translateBlock(&$string)
