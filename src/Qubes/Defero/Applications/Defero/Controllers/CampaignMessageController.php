@@ -70,27 +70,31 @@ class CampaignMessageController extends DeferoController
     );
 
     $plainText = $this->reversePlaceHolders($plainText);
+    $language  = $this->getStr('hl');
 
     $htmlContent = $message->htmlContent;
     while($this->translateBlock($htmlContent))
     {
     }
 
-    $message->setLanguage($this->getStr('hl'));
+    $message->setLanguage($language);
     $message->reload();
     $message->subject     = $subject;
     $message->plainText   = $plainText;
     $message->htmlContent = $htmlContent;
     $message->saveChanges();
 
-    if(!$campaign->availableLanguages)
+    if($campaign->availableLanguages == null)
     {
-      $campaign->availableLanguages = [$this->getStr('hl')];
+      $campaign->availableLanguages = [$language => $language];
     }
-
-    $campaign->availableLanguages[] = $this->getStr('hl');
+    else
+    {
+      $availableLanguages            = (array)$campaign->availableLanguages;
+      $availableLanguages[$language] = $language;
+      $campaign->availableLanguages  = $availableLanguages;
+    }
     $campaign->saveChanges();
-
 
     return Redirect::to(
       '/campaigns/' . $this->getStr(
@@ -104,7 +108,7 @@ class CampaignMessageController extends DeferoController
     $pattern = '/{[\!\?]([^{}]*|(?R))*}/i';
     while(preg_match($pattern, $string, $matches))
     {
-      $match = $matches[0];
+      $match                      = $matches[0];
       $this->_lookup[md5($match)] = $match;
 
       $string = str_replace($match, md5($match), $string);
@@ -126,7 +130,7 @@ class CampaignMessageController extends DeferoController
     $reversed = $this->_reversePlaceHolders($string);
     while($string != $reversed)
     {
-      $string = $reversed;
+      $string   = $reversed;
       $reversed = $this->_reversePlaceHolders($reversed);
     }
 
