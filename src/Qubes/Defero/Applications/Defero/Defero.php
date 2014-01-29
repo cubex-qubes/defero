@@ -159,11 +159,6 @@ class Defero extends Application
     $campaignId = $campaign->id();
 
     $campaign = new Campaign($campaignId);
-    if(!$campaign->processors)
-    {
-      throw new \Exception('Cannot queue a Campaign with no Processors');
-    }
-
     $processorsCacheId = $cacheId . ':processors';
     $processors        = EphemeralCache::getCache(
       $processorsCacheId,
@@ -173,22 +168,46 @@ class Defero extends Application
     {
       $processors       = [];
       $processorsConfig = Container::get(Container::CONFIG)->get('processors');
-      foreach($campaign->processors as $processorData)
+      if($campaign->processors)
       {
-        $config = new Config();
-        $config->hydrate($processorData);
+        foreach($campaign->processors as $processorData)
+        {
+          $config = new Config();
+          $config->hydrate($processorData);
 
-        $configGroup = new ConfigGroup();
-        $configGroup->addConfig("process", $config);
-        $process = new ProcessDefinition();
-        $process->setProcessClass(
-          $processorsConfig->getStr($processorData->processorType)
-        );
-        $process->setQueueName("defero");
-        $process->setQueueService("queue");
-        $process->configure($configGroup);
-        $processors[] = $process;
+          $configGroup = new ConfigGroup();
+          $configGroup->addConfig("process", $config);
+          $process = new ProcessDefinition();
+          $process->setProcessClass(
+            $processorsConfig->getStr($processorData->processorType)
+          );
+          $process->setQueueName("defero");
+          $process->setQueueService("queue");
+          $process->configure($configGroup);
+          $processors[] = $process;
+        }
       }
+      else
+      {
+        $config           = Container::config()->get("default_processors");
+        if($config != null)
+        {
+          $processorKeys = $config->availableKeys();
+          foreach($processorKeys as $key)
+          {
+            $process = new ProcessDefinition();
+            $process->setProcessClass($config->getStr($key));
+            $process->setQueueName("defero");
+            $process->setQueueService("queue");
+            $processors[] = $process;
+          }
+        }
+        else
+        {
+          throw new \Exception("Cannot queue campaign No default processors found.");
+        }
+      }
+
       EphemeralCache::storeCache($processorsCacheId, $processors, __CLASS__);
     }
 
