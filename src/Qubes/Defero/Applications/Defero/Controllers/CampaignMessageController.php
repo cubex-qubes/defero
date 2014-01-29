@@ -37,6 +37,20 @@ class CampaignMessageController extends DeferoController
     if($form->isValid() && $form->csrfCheck(true))
     {
       $form->saveChanges();
+
+      $campaign = new Campaign($this->getInt('id'));
+      $language  = $this->getStr('hl');
+      if($campaign->availableLanguages == null)
+      {
+        $campaign->availableLanguages = [$language => $language];
+      }
+      else
+      {
+        $availableLanguages            = (array)$campaign->availableLanguages;
+        $availableLanguages[$language] = $language;
+        $campaign->availableLanguages  = $availableLanguages;
+      }
+      $campaign->saveChanges();
     }
     return $this->renderIndex();
   }
