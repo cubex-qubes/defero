@@ -39,7 +39,7 @@ class CampaignMessageController extends DeferoController
       $form->saveChanges();
 
       $campaign = new Campaign($this->getInt('id'));
-      $language  = $this->getStr('hl');
+      $language = $this->getStr('hl');
       if($campaign->availableLanguages == null)
       {
         $campaign->availableLanguages = [$language => $language];
@@ -79,12 +79,9 @@ class CampaignMessageController extends DeferoController
     $message->reload();
 
     $subject   = $this->translateString($message->subject);
-    $plainText = $this->translateString(
-      $this->prepTextForTranslate($message->plainText)
-    );
+    $plainText = $this->translateString($message->plainText);
 
-    $plainText = $this->reversePlaceHolders($plainText);
-    $language  = $this->getStr('hl');
+    $language = $this->getStr('hl');
 
     $htmlContent = $message->htmlContent;
     while($this->translateBlock($htmlContent))
@@ -132,9 +129,12 @@ class CampaignMessageController extends DeferoController
 
   private function _reversePlaceHolders($string)
   {
-    foreach($this->_lookup as $key => $replace)
+    if($this->_lookup != null)
     {
-      $string = str_replace($key, $replace, $string);
+      foreach($this->_lookup as $key => $replace)
+      {
+        $string = str_replace($key, $replace, $string);
+      }
     }
     return $string;
   }
@@ -180,21 +180,28 @@ class CampaignMessageController extends DeferoController
 
   public function translateString($string)
   {
-    // translate
-    $config         = Container::config()->get("i18n", new Config());
-    $translateClass = $config->getStr("translator", null);
-    if(!$translateClass)
+    if(!empty($string))
     {
-      throw new \Exception(
-        'Missing \'translator\' in i18n section of the config'
+      $this->prepTextForTranslate($string);
+      // translate
+      $config         = Container::config()->get("i18n", new Config());
+      $translateClass = $config->getStr("translator", null);
+      if(!$translateClass)
+      {
+        throw new \Exception(
+          'Missing \'translator\' in i18n section of the config'
+        );
+      }
+      $translator     = new $translateClass();
+      $translatedText = $translator->translate(
+        $string,
+        'en',
+        $this->getStr('hl')
       );
+      $string         = $this->reversePlaceHolders($translatedText);
     }
-    $translator = new $translateClass();
-    return $translator->translate(
-      $string,
-      'en',
-      $this->getStr('hl')
-    );
+
+    return $string;
   }
 
   public function getRoutes()
