@@ -17,6 +17,7 @@ class CampaignForm extends DeferoForm
     $this->getElement('dataSourceOptions')->setType(FormElement::NONE);
 
     $this->getElement('processors')->setType(FormElement::NONE);
+    $this->getElement('availableLanguages')->setType(FormElement::NONE);
     $this->getElement('lastSent')->setType(FormElement::NONE);
 
     $this->getElement('sortOrder')->setType(FormElement::NONE);
