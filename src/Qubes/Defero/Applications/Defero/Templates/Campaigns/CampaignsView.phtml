@@ -13,9 +13,16 @@
       </a>
     </div>
     <?= $this->campaignsSearch ?>
+    <?= $this->filterForm()->open() ?>
+    <?= $this->filterForm()->getElement('label') ?>
+    <?= $this->filterForm()->getElement('sendType') ?>
+    <?= $this->filterForm()->getElement('active') ?>
+    <?= $this->filterForm()->getElement('submit') ?>
+    <?= $this->filterForm()->close() ?>
   </div>
   <div>
-    <table id="campaigns" class="table table-striped table-bordered table-hover table-href">
+    <table id="campaigns"
+           class="table table-striped table-bordered table-hover table-href">
       <thead>
       <tr>
         <th></th>
@@ -59,7 +66,7 @@
             <a href="/campaigns/<?= $campaign->id() ?>/clone"
                title="Clone <?= $campaign->name ?>">
               <i class="icon-download-alt"></i>
-               </a>
+            </a>
             <a href="/campaigns/<?= $campaign->id() ?>/delete"
                title="Delete <?= $campaign->name ?>"
                class="js-popover"

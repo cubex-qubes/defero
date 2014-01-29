@@ -8,7 +8,6 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\FormElement;
-use Cubex\Mapper\Database\RecordCollection;
 use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
@@ -20,6 +19,7 @@ use Qubes\Defero\Applications\Defero\Forms\DeferoForm;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
+use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 
 class CampaignsController extends BaseDeferoController
@@ -255,10 +255,34 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderIndex($page = 1)
   {
-    $campaigns = (new RecordCollection(new Campaign()))
-      ->setOrderBy("sortOrder");
+    $postData = null;
+    if($postData = $this->request()->postVariables())
+    {
+      $where = [];
+      if($postData['label'] != "")
+      {
+        $where['label'] = $postData['label'];
+      }
+      if($postData['active'] != "")
+      {
+        $where['active'] = $postData['active'];
+      }
+      if($postData['sendType'] != "")
+      {
+        $where['send_type'] = $postData['sendType'];
+      }
+      $campaigns = Campaign::collection($where)->setOrderBy("sortOrder");
+    }
+    else
+    {
+      $campaigns = Campaign::collection()->setOrderBy("sortOrder");
+    }
 
-    return new CampaignsView($campaigns);
+    $options['sendTypeOptions'] = array_flip((new SendType())->getConstList());
+    $options['activeOptions']   = [1 => 'Yes', 0 => 'No'];
+    $options['labelOptions']    = Campaign::labels();
+
+    return new CampaignsView($campaigns, $options, $postData);
   }
 
   /**
@@ -338,6 +362,7 @@ class CampaignsController extends BaseDeferoController
     array_unshift($routes, new StdRoute('/:id/test', 'test'));
     array_unshift($routes, new StdRoute('/:id/clone', 'clone'));
     array_unshift($routes, new StdRoute('/reorder', 'reorder'));
+    array_unshift($routes, new StdRoute('/filter', 'index'));
 
     return $routes;
   }

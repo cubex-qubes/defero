@@ -98,7 +98,7 @@ class Campaign extends RecordMapper
     self::$_labels = $labels;
   }
 
-  public function labels()
+  public static function labels()
   {
     return self::$_labels;
   }
@@ -139,7 +139,7 @@ class Campaign extends RecordMapper
       ->setSerializer(Attribute::SERIALIZATION_JSON);
 
     $this->_attribute('availableLanguages')
-    ->setSerializer(Attribute::SERIALIZATION_JSON);
+      ->setSerializer(Attribute::SERIALIZATION_JSON);
   }
 
   /**
