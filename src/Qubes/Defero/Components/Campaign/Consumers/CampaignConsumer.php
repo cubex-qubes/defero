@@ -37,25 +37,6 @@ class CampaignConsumer implements IBatchQueueConsumer
     return true;
   }
 
-  protected function _incrementStep(IProcessMessage $message)
-  {
-    //Increment step to change currentProcess return
-    $message->setStep($message->getCurrentStep() + 1);
-  }
-
-  protected function _requeueMessage(IProcessMessage $message, $taskId)
-  {
-    if(!$message->isComplete())
-    {
-      \Queue::getAccessor($message->currentProcess()->getQueueService())
-        ->push(
-          new StdQueue($message->currentProcess()->getQueueName()),
-          serialize($message),
-          $this->_queueDelays[$taskId]
-        );
-    }
-  }
-
   public function runBatch()
   {
     $results = [];
@@ -64,23 +45,11 @@ class CampaignConsumer implements IBatchQueueConsumer
      */
     foreach($this->_batch as $taskId => $message)
     {
-      $processAll = true;
-      $pass       = true;
       try
       {
-        while(true)
+        foreach($message->getProcessQueue() as $currentProcess)
         {
-          $pass = $this->runProcess(
-            $message,
-            $message->currentProcess(),
-            $taskId
-          );
-          if($message->isComplete() || $pass == false)
-          {
-            break;
-          }
-          $message->incrementStep();
-          if(!$processAll)
+          if(!$this->runProcess($message, $currentProcess, $taskId))
           {
             break;
           }
@@ -89,13 +58,6 @@ class CampaignConsumer implements IBatchQueueConsumer
       catch(\Exception $e)
       {
         Log::error($e->getMessage());
-        $pass = false;
-      }
-
-      //If the process fails, the message should be dropped
-      if($pass)
-      {
-        $this->_requeueMessage($message, $taskId);
       }
 
       $results[$taskId] = true;
