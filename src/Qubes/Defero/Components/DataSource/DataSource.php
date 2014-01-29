@@ -124,7 +124,7 @@ abstract class DataSource extends DataMapper
   /**
    * @return IDatabaseService
    */
-  protected function _getConnection($serviceName)
+  public function getConnection($serviceName)
   {
     if(!isset($this->_connections[$serviceName]))
     {
