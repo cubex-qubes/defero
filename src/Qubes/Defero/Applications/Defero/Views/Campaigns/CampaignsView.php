@@ -49,8 +49,8 @@ class CampaignsView extends DeferoView
     if($this->_filterForm == null)
     {
       $labelOptions      = ['' => 'LABEL'] + $this->labelOptions;
-      $sendTypeOptions   = ['' => 'SEND TYPE'] + $this->labelOptions;
-      $activeOptions     = ['' => 'ACTIVE'] + $this->labelOptions;
+      $sendTypeOptions   = ['' => 'SEND TYPE'] + $this->sendTypeOptions;
+      $activeOptions     = ['' => 'ACTIVE'] + $this->activeOptions;
       $this->_filterForm = new Form('filterForm', '/campaigns/filter');
       $this->_filterForm->setDefaultElementTemplate('{{input}}');
       $this->_filterForm->addAttribute('class', 'form-search pull-right');
