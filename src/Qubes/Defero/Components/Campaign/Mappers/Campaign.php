@@ -199,7 +199,8 @@ class Campaign extends RecordMapper
 
   public function contacts()
   {
-    return $this->belongsTo(new Contact());
+    $contacts = $this->belongsTo(new Contact());
+    return $contacts::collection()->getKeyPair('id', 'reference');
   }
 
   /**
