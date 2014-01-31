@@ -8,6 +8,7 @@
 
 namespace Qubes\Defero\Components\DataSource;
 
+use Cubex\Database\IDatabaseService;
 use Cubex\Form\Form;
 use Cubex\Foundation\Container;
 use Cubex\Mapper\DataMapper;
@@ -122,6 +123,8 @@ abstract class DataSource extends DataMapper
   }
 
   /**
+   * @param string $serviceName
+   *
    * @return IDatabaseService
    */
   public function getConnection($serviceName)
