@@ -9,6 +9,7 @@
 namespace Qubes\Defero\Cli\Campaign;
 
 use Cubex\Cli\CliCommand;
+use Cubex\Cli\PidFile;
 use Cubex\Log\Log;
 use Cubex\Mapper\Database\RecordCollection;
 use Psr\Log\LogLevel;
@@ -19,8 +20,17 @@ class QueueCampaigns extends CliCommand
 {
   protected $_echoLevel = LogLevel::INFO;
 
+  /**
+   * @valuerequired
+   */
+  public $instanceName;
+
+  private $_pidFile;
+  
   public function execute()
   {
+    $this->_pidFile = new PidFile("", $this->instanceName);
+
     while(true)
     {
       $startedAt = time();
