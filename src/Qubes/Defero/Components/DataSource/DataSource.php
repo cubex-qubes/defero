@@ -107,8 +107,8 @@ abstract class DataSource extends DataMapper
       mkdir($logsDir, 0777, true);
     }
     $fileName = 'campaign-'
-    . preg_replace('/[\\\\\/\:\*\?]/', '-', $taskId)
-    . '.lastId';
+      . preg_replace('/[\\\\\/\:\*\?]/', '-', $taskId)
+      . '.lastId';
     $logsDir  = build_path($logsDir, $fileName);
     return $logsDir;
   }
@@ -132,10 +132,10 @@ abstract class DataSource extends DataMapper
     if(!isset($this->_connections[$serviceName]))
     {
       $this->_connections[$serviceName] = Container::servicemanager()
-      ->getWithType(
-        $serviceName,
-        '\Cubex\Database\IDatabaseService'
-      );
+        ->getWithType(
+          $serviceName,
+          '\Cubex\Database\IDatabaseService'
+        );
       $this->_connections[$serviceName]->query("SET NAMES 'utf8'");
     }
     return $this->_connections[$serviceName];

@@ -5,6 +5,7 @@
 
 namespace Qubes\Defero\Components\Campaign\Consumers;
 
+use Cubex\Log\Log;
 use Cubex\Queue\IBatchQueueConsumer;
 use Cubex\Queue\IQueue;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
@@ -46,15 +47,22 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
       $endId          = $message->getInt('endId', 0);
       $additionalData = $message->getRaw('additionalData', null);
 
-      $campaign = new Campaign($cid);
+      $campaign   = new Campaign($cid);
       $dataSource = $campaign->getDataSource();
       if($startId == null)
       {
         $startId = $dataSource->getLastId($cid, $taskId);
       }
-      $dataSource->process(
-        $taskId, $cid, $started, $lastSent, $startId, $endId, $additionalData
-      );
+      try
+      {
+        $dataSource->process(
+          $taskId, $cid, $started, $lastSent, $startId, $endId, $additionalData
+        );
+      }
+      catch(\Exception $e)
+      {
+        Log::error($e->getMessage());
+      }
       $results[$taskId] = true;
     }
     $this->_batch = [];
