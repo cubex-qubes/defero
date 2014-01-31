@@ -61,7 +61,7 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
       }
       catch(\Exception $e)
       {
-        Log::error($e->getMessage());
+        Log::error('Campaign ' . $cid . ': ' . $e->getMessage());
       }
       $results[$taskId] = true;
     }
