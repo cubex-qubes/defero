@@ -53,7 +53,7 @@ class Message extends I18nRecordMapper
   public function contacts()
   {
     return [0 => '- Campaign Default -'] + Contact::collection()->getKeyPair(
-      'id', 'name'
+      'id', 'reference'
     );
   }
 
