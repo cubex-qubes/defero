@@ -15,6 +15,12 @@ class Message extends I18nRecordMapper
 {
   public $campaignId;
 
+  /**
+   * @datatype tinyint
+   * @default  1
+   */
+  public $active;
+
   public $subject;
   /**
    * @datatype TEXT
@@ -33,6 +39,7 @@ class Message extends I18nRecordMapper
     $this->_addTranslationAttribute(
       ["subject", "plainText", "htmlContent", "contactId"]
     );
+    $this->_attribute('active')->addValidator(Validator::VALIDATE_BOOL);
   }
 
   /**

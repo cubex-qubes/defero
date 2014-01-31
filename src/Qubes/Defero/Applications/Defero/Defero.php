@@ -231,7 +231,8 @@ class Defero extends Application
         $msg->reload();
 
         if($userLanguage !== 'en'
-          && (!$msg->subject
+          && (!$msg->active
+            || !$msg->subject
             || ($campaign->sendType != SendType::PLAIN_TEXT
               && !$msg->htmlContent)
             || ($campaign->sendType != SendType::HTML_ONLY

@@ -9,6 +9,7 @@
 namespace Qubes\Defero\Cli\Campaign;
 
 use Cubex\Cli\CliCommand;
+use Cubex\Log\Log;
 use Cubex\Mapper\Database\RecordCollection;
 use Psr\Log\LogLevel;
 use Qubes\Defero\Applications\Defero\Defero;
@@ -20,22 +21,33 @@ class QueueCampaigns extends CliCommand
 
   public function execute()
   {
-    $startedAt = time();
-    $startedAt -= $startedAt % 60;
-    $collection = new RecordCollection(new Campaign());
-    foreach($collection as $campaign)
+    while(true)
     {
-      /** @var Campaign $campaign */
-      if(!$campaign->active)
+      $startedAt = time();
+      $startedAt -= $startedAt % 60;
+      $collection = new RecordCollection(new Campaign());
+      foreach($collection as $campaign)
       {
-        continue;
-      }
+        /** @var Campaign $campaign */
+        if(!$campaign->active)
+        {
+          continue;
+        }
 
-      if(!$campaign->isDue())
-      {
-        continue;
+        if(!$campaign->isDue())
+        {
+          continue;
+        }
+        try
+        {
+          Defero::pushCampaign($campaign->id(), $startedAt);
+        }
+        catch(\Exception $e)
+        {
+          Log::error('Campaign ' . $campaign->id() . ': ' . $e->getMessage());
+        }
       }
-      Defero::pushCampaign($campaign->id(), $startedAt);
+      sleep(30);
     }
   }
 }
