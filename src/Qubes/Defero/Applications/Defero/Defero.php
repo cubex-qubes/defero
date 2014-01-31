@@ -86,6 +86,7 @@ class Defero extends Application
       $startTime -= $startTime % 60;
     }
     $campaign = new Campaign($campaignId);
+    $campaign->reload();
     if(!$campaign->processors)
     {
       throw new \Exception('Cannot queue a Campaign with no Processors');
