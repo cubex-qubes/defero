@@ -8,6 +8,7 @@ namespace Qubes\Defero\Applications\Defero\Controllers;
 use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\FormElement;
+use Cubex\Foundation\Container;
 use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
@@ -21,6 +22,7 @@ use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Transport\ProcessDefinition;
 
 class CampaignsController extends BaseDeferoController
 {
@@ -243,7 +245,25 @@ class CampaignsController extends BaseDeferoController
    */
   public function postCreate()
   {
-    return $this->_updateCampaign();
+    $campaign   = new Campaign();
+    $config     = Container::config()->get("default_processors");
+    $processors = [];
+    if($config != null)
+    {
+      $processorKeys = $config->availableKeys();
+      foreach($processorKeys as $key)
+      {
+        $process = new ProcessDefinition();
+        $process->setProcessClass($config->getStr($key));
+        $process->setQueueName("defero");
+        $process->setQueueService("queue");
+        $processors[] = $process;
+      }
+    }
+
+    $campaign->processors = $processors;
+    $campaign->saveChanges();
+    return $this->_updateCampaign($campaign->id());
   }
 
   /**

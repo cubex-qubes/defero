@@ -159,7 +159,7 @@ class Defero extends Application
     }
     $campaignId = $campaign->id();
 
-    $campaign = new Campaign($campaignId);
+    $campaign          = new Campaign($campaignId);
     $processorsCacheId = $cacheId . ':processors';
     $processors        = EphemeralCache::getCache(
       $processorsCacheId,
@@ -190,23 +190,9 @@ class Defero extends Application
       }
       else
       {
-        $config           = Container::config()->get("default_processors");
-        if($config != null)
-        {
-          $processorKeys = $config->availableKeys();
-          foreach($processorKeys as $key)
-          {
-            $process = new ProcessDefinition();
-            $process->setProcessClass($config->getStr($key));
-            $process->setQueueName("defero");
-            $process->setQueueService("queue");
-            $processors[] = $process;
-          }
-        }
-        else
-        {
-          throw new \Exception("Cannot queue campaign No default processors found.");
-        }
+        throw new \Exception(
+          "Cannot queue campaign No default processors found."
+        );
       }
 
       EphemeralCache::storeCache($processorsCacheId, $processors, __CLASS__);
@@ -321,7 +307,9 @@ class Defero extends Application
     if(!is_numeric($reference))
     {
       $campaign = Campaign::collection()->loadOneWhere(
-        '%C = %s', 'reference', $reference
+        '%C = %s',
+        'reference',
+        $reference
       );
       if(!$campaign)
       {
