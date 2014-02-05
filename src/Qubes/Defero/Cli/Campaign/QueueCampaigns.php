@@ -39,22 +39,16 @@ class QueueCampaigns extends CliCommand
       foreach($collection as $campaign)
       {
         /** @var Campaign $campaign */
-        if(!$campaign->active)
+        if($campaign->isDue())
         {
-          continue;
-        }
-
-        if(!$campaign->isDue())
-        {
-          continue;
-        }
-        try
-        {
-          Defero::pushCampaign($campaign->id(), $startedAt);
-        }
-        catch(\Exception $e)
-        {
-          Log::error('Campaign ' . $campaign->id() . ': ' . $e->getMessage());
+          try
+          {
+            Defero::pushCampaign($campaign->id(), $startedAt);
+          }
+          catch(\Exception $e)
+          {
+            Log::error('Campaign ' . $campaign->id() . ': ' . $e->getMessage());
+          }
         }
       }
       sleep(30);
