@@ -99,14 +99,17 @@ $ds = $this->campaign->getDataSource();
       <?php
       echo '<span style="float:left;margin-right:20px" id="spark24h"'
       . ' data-max-queued="' . max($this->getQueued('24h')) . '"'
+      . ' data-max-test="' . max($this->getTest('24h')) . '"'
       . ' data-max-sent="' . max($this->getSent('24h')) . '"'
       . ' data-max-failed="' . max($this->getFailed('24h')) . '"'
       . ' data-queued="' . implode(',', $this->getQueued('24h')) . '"'
+      . ' data-test="' . implode(',', $this->getTest('24h')) . '"'
       . ' data-sent="' . implode(',', $this->getSent('24h')) . '"'
       . ' data-failed="' . implode(',', $this->getFailed('24h')) . '"'
       . '></span>';
       ?>
       <div>Total Queued: <?= number_format($this->getTotalQueued('24h')) ?></div>
+      <div>Total Test: <?= number_format($this->getTotalTest('24h')) ?></div>
       <div>Total Sent: <?= number_format($this->getTotalSent('24h')) ?></div>
       <div>Total Failed: <?= number_format($this->getTotalFailed('24h')) ?></div>
     </div></div>
@@ -116,14 +119,17 @@ $ds = $this->campaign->getDataSource();
       <?php
       echo '<span style="float:left;margin-right:20px" id="spark30d"'
       . ' data-max-queued="' . max($this->getQueued('30d')) . '"'
+      . ' data-max-test="' . max($this->getTest('30d')) . '"'
       . ' data-max-sent="' . max($this->getSent('30d')) . '"'
       . ' data-max-failed="' . max($this->getFailed('30d')) . '"'
       . ' data-queued="' . implode(',', $this->getQueued('30d')) . '"'
+      . ' data-test="' . implode(',', $this->getTest('30d')) . '"'
       . ' data-sent="' . implode(',', $this->getSent('30d')) . '"'
       . ' data-failed="' . implode(',', $this->getFailed('30d')) . '"'
       . '></span>';
       ?>
       <div>Total Queued: <?= number_format($this->getTotalQueued('30d')) ?></div>
+      <div>Total Test: <?= number_format($this->getTotalTest('30d')) ?></div>
       <div>Total Sent: <?= number_format($this->getTotalSent('30d')) ?></div>
       <div>Total Failed: <?= number_format($this->getTotalFailed('30d')) ?></div>
   </div></div>

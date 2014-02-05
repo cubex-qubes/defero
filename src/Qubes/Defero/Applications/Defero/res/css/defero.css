@@ -73,3 +73,7 @@ input[type="checkbox"] {
 .stat50wrapper {
   width: 50%;
 }
+
+.stat50wrapper h3 {
+  line-height: normal;
+}

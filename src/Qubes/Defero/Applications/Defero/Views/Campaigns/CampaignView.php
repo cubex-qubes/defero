@@ -44,9 +44,11 @@ class CampaignView extends DeferoView
       );
 
       $this->_stats['24h']->queued[] = $stats->queued;
+      $this->_stats['24h']->test[] = $stats->test;
       $this->_stats['24h']->sent[]   = $stats->sent;
       $this->_stats['24h']->failed[] = $stats->failed;
       $this->_stats['24h']->totalQueued += $stats->queued;
+      $this->_stats['24h']->totalTest += $stats->test;
       $this->_stats['24h']->totalSent += $stats->sent;
       $this->_stats['24h']->totalFailed += $stats->failed;
       $time += 3600;
@@ -68,9 +70,11 @@ class CampaignView extends DeferoView
       );
 
       $this->_stats['30d']->queued[] = $stats->queued;
+      $this->_stats['30d']->test[] = $stats->test;
       $this->_stats['30d']->sent[]   = $stats->sent;
       $this->_stats['30d']->failed[] = $stats->failed;
       $this->_stats['30d']->totalQueued += $stats->queued;
+      $this->_stats['30d']->totalTest += $stats->test;
       $this->_stats['30d']->totalSent += $stats->sent;
       $this->_stats['30d']->totalFailed += $stats->failed;
       $time += 86400;
@@ -80,6 +84,11 @@ class CampaignView extends DeferoView
   public function getQueued($key)
   {
     return $this->_stats[$key]->queued;
+  }
+
+  public function getTest($key)
+  {
+    return $this->_stats[$key]->test;
   }
 
   public function getSent($key)
@@ -95,6 +104,11 @@ class CampaignView extends DeferoView
   public function getTotalQueued($key)
   {
     return $this->_stats[$key]->totalQueued;
+  }
+
+  public function getTotalTest($key)
+  {
+    return $this->_stats[$key]->totalTest;
   }
 
   public function getTotalSent($key)
