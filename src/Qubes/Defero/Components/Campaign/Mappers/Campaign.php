@@ -246,7 +246,7 @@ class Campaign extends RecordMapper
 
   public function isDue()
   {
-    if($this->active && ($check = $this->nextRun()))
+    if($check = $this->nextRun())
     {
       $time = time();
       $time -= $time % 60;
