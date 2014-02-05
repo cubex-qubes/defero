@@ -15,8 +15,9 @@ class SendEmail extends StdProcess implements IEmailProcess
 {
   public function process()
   {
-    $userData = $this->_message->getArr('data');
-    $accessor = $userData['campaignActive'] ? 'email' : 'send_database';
+    $userData       = $this->_message->getArr('data');
+    $campaignActive = $this->_message->getInt('campaignActive');
+    $accessor       = $campaignActive ? 'email' : 'send_database';
 
     $name = null;
     if(isset($userData['firstname']))
@@ -81,7 +82,7 @@ class SendEmail extends StdProcess implements IEmailProcess
     {
       $statsCf->increment(
         $campaignId,
-        $hour . '|' . ($userData['campaignActive'] ? 'sent' : 'test')
+        $hour . '|' . ($campaignActive ? 'sent' : 'test')
       );
     }
     else
