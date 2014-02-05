@@ -16,6 +16,7 @@ class SendEmail extends StdProcess implements IEmailProcess
   public function process()
   {
     $userData = $this->_message->getArr('data');
+    $accessor = $userData['campaignActive'] ? 'email' : 'send_database';
 
     $name = null;
     if(isset($userData['firstname']))
@@ -30,7 +31,7 @@ class SendEmail extends StdProcess implements IEmailProcess
 
     Log::info("Sending to $name <$email>");
 
-    $mailer = Email::getAccessor('email');
+    $mailer = Email::getAccessor($accessor);
 
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
@@ -72,13 +73,16 @@ class SendEmail extends StdProcess implements IEmailProcess
     }
 
     $campaignId = $this->_message->getStr('campaignId');
-    $hour = time();
+    $hour       = time();
     $hour -= $hour % 3600;
     $statsCf = MailStatistic::cf();
 
     if($result !== false)
     {
-      $statsCf->increment($campaignId, $hour . '|sent');
+      $statsCf->increment(
+        $campaignId,
+        $hour . '|' . ($userData['campaignActive'] ? 'sent' : 'test')
+      );
     }
     else
     {

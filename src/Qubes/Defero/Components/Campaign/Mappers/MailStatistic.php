@@ -44,11 +44,14 @@ class MailStatistic extends CassandraMapper
     $slice = $cf->getSliceChunked($campaignId, $from, $to, false);
     foreach($slice as $k => $count)
     {
-      list($time, $type) = explode('|', $k);
+      list(, $type) = explode('|', $k);
       switch($type)
       {
         case 'queued':
           $stats->queued += $count;
+          break;
+        case 'test':
+          $stats->test += $count;
           break;
         case 'sent':
           $stats->sent += $count;
@@ -57,19 +60,6 @@ class MailStatistic extends CassandraMapper
           $stats->failed += $count;
           break;
       }
-      /*
-      $queued = isset($d[$time . '|queued']) ? $d[$time . '|queued'] : 0;
-      $sent   = isset($d[$time . '|sent']) ? $d[$time . '|sent'] : 0;
-      $failed = isset($d[$time . '|failed']) ? $d[$time . '|failed'] : 0;
-
-      $this->_stats['24h']->queued[] = $queued;
-      $this->_stats['24h']->sent[]   = $sent;
-      $this->_stats['24h']->failed[] = $failed;
-      $this->_stats['24h']->totalQueued += $queued;
-      $this->_stats['24h']->totalSent += $sent;
-      $this->_stats['24h']->totalFailed += $failed;
-      $time += 3600;
-      */
     }
     return $stats;
   }

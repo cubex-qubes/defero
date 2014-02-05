@@ -204,6 +204,7 @@ class Defero extends Application
       $data    = array_change_key_case($data);
       $message = new ProcessMessage();
       $message->setData('campaignId', $campaignId);
+      $message->setData('campaignActive', $campaign->active);
       $message->setData('mailerTracking', $campaign->trackingType);
       $message->setData('data', $data);
 

@@ -14,6 +14,7 @@ class CampaignStats
   public $dateFrom;
   public $dateTo;
   public $queued = 0;
+  public $test = 0;
   public $sent = 0;
   public $failed = 0;
 }
