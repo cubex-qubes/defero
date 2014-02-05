@@ -259,7 +259,7 @@ class Campaign extends RecordMapper
 
   public function nextRun()
   {
-    if(!$this->sendAt || !$this->active)
+    if(!$this->sendAt)
     {
       return null;
     }
