@@ -5,7 +5,6 @@
 
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
-use Cubex\Helpers\DateTimeHelper;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
@@ -39,12 +38,12 @@ class CampaignView extends DeferoView
     for($i = 24; $i > 0; $i--)
     {
       $stats = $this->campaign->getStats(
-        DateTimeHelper::dateTimeFromAnything($time),
-        DateTimeHelper::dateTimeFromAnything($time + 3599)
+        (new \DateTime())->setTimestamp($time),
+        (new \DateTime())->setTimestamp($time + 3599)
       );
 
       $this->_stats['24h']->queued[] = $stats->queued;
-      $this->_stats['24h']->test[] = $stats->test;
+      $this->_stats['24h']->test[]   = $stats->test;
       $this->_stats['24h']->sent[]   = $stats->sent;
       $this->_stats['24h']->failed[] = $stats->failed;
       $this->_stats['24h']->totalQueued += $stats->queued;
@@ -58,19 +57,18 @@ class CampaignView extends DeferoView
   private function _get30DaysStats()
   {
     $this->_stats['30d'] = new \stdClass();
-    $time                = strtotime(
-      '-29 days'
-    ); //so counting 30 days brings us to today
+    //so counting 30 days brings us to today
+    $time = strtotime('-29 days');
     $time -= $time % 86400; //round off to the hour
     for($i = 30; $i > 0; $i--)
     {
       $stats = $this->campaign->getStats(
-        DateTimeHelper::dateTimeFromAnything($time),
-        DateTimeHelper::dateTimeFromAnything($time + 86399)
+        (new \DateTime())->setTimestamp($time),
+        (new \DateTime())->setTimestamp($time + 86399)
       );
 
       $this->_stats['30d']->queued[] = $stats->queued;
-      $this->_stats['30d']->test[] = $stats->test;
+      $this->_stats['30d']->test[]   = $stats->test;
       $this->_stats['30d']->sent[]   = $stats->sent;
       $this->_stats['30d']->failed[] = $stats->failed;
       $this->_stats['30d']->totalQueued += $stats->queued;
