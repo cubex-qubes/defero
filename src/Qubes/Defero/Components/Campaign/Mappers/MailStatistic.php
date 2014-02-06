@@ -32,9 +32,9 @@ class MailStatistic extends CassandraMapper
     }
     else
     {
-      $to = $to->setTimezone((new \DateTimeZone('UTC')))->getTimestamp();
+      $to = $to->getTimestamp();
     }
-    $from = $from->setTimezone((new \DateTimeZone('UTC')))->getTimestamp();
+    $from = $from->getTimestamp();
 
     $stats             = new CampaignStats();
     $stats->campaignId = $campaignId;
