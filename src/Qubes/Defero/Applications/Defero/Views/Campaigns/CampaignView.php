@@ -58,8 +58,7 @@ class CampaignView extends DeferoView
   {
     $this->_stats['30d'] = new \stdClass();
     //so counting 30 days brings us to today
-    $time = strtotime('-29 days');
-    $time -= $time % 86400; //round off to the hour
+    $time = strtotime('-29 days 00:00:00');
     for($i = 30; $i > 0; $i--)
     {
       $stats = $this->campaign->getStats(
