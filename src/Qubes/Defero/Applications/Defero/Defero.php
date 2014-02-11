@@ -209,8 +209,8 @@ class Defero extends Application
       $message = new ProcessMessage();
       $message->setData('campaignId', $campaignId);
 
-      $campaign->active = isset($data['campaignActive']) ?
-        $data['campaignActive'] : $campaign->active;
+      $campaign->active = isset($data['campaignactive']) ?
+        $data['campaignactive'] : $campaign->active;
 
       $message->setData('campaignActive', $campaign->active);
       $message->setData('mailerTracking', $campaign->trackingType);
