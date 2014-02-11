@@ -201,15 +201,17 @@ class Defero extends Application
     $messages = [];
     foreach($batch as $data)
     {
-      $data    = array_change_key_case($data);
+      $data = array_change_key_case($data);
+      // move language here.
+      $userLanguage = $data['language'] = !empty($data['language']) ?
+        $data['language'] : 'en';
+
       $message = new ProcessMessage();
       $message->setData('campaignId', $campaignId);
       $message->setData('campaignActive', $campaign->active);
       $message->setData('mailerTracking', $campaign->trackingType);
       $message->setData('data', $data);
 
-      // move language here.
-      $userLanguage    = !empty($data['language']) ? $data['language'] : 'en';
       $languageCacheId = $cacheId . ':language:' . $userLanguage;
       $msg             = EphemeralCache::getCache($languageCacheId, __CLASS__);
       if($msg === null)

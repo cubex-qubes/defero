@@ -21,7 +21,7 @@ class MailStatistic extends CassandraMapper
   }
 
   public static function getCampaignStats(
-    $campaignId, \DateTime $from, \DateTime $to = null
+    $campaignId, \DateTime $from, \DateTime $to = null, $language = null
   )
   {
     $cf = self::cf();
@@ -44,21 +44,25 @@ class MailStatistic extends CassandraMapper
     $slice = $cf->getSliceChunked($campaignId, $from, $to, false);
     foreach($slice as $k => $count)
     {
-      list(, $type) = explode('|', $k);
-      switch($type)
+      list(, $typeLanguage) = explode('|', $k);
+      list($type, $lang) = explode('-', $typeLanguage);
+      if($language == null || $language == $lang)
       {
-        case 'queued':
-          $stats->queued += $count;
-          break;
-        case 'test':
-          $stats->test += $count;
-          break;
-        case 'sent':
-          $stats->sent += $count;
-          break;
-        case 'failed':
-          $stats->failed += $count;
-          break;
+        switch($type)
+        {
+          case 'queued':
+            $stats->queued += $count;
+            break;
+          case 'test':
+            $stats->test += $count;
+            break;
+          case 'sent':
+            $stats->sent += $count;
+            break;
+          case 'failed':
+            $stats->failed += $count;
+            break;
+        }
       }
     }
     return $stats;

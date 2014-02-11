@@ -78,16 +78,19 @@ class SendEmail extends StdProcess implements IEmailProcess
     $hour -= $hour % 3600;
     $statsCf = MailStatistic::cf();
 
+    $column = $hour . '|failed-' . $userData['language'];
     if($result !== false)
     {
+      $column = $hour . '|' . ($campaignActive ? 'sent' : 'test');
+      $column .= '-' . $userData['language'];
       $statsCf->increment(
         $campaignId,
-        $hour . '|' . ($campaignActive ? 'sent' : 'test')
+        $column
       );
     }
     else
     {
-      $statsCf->increment($campaignId, $hour . '|failed');
+      $statsCf->increment($campaignId, $column);
     }
     return false;
   }
