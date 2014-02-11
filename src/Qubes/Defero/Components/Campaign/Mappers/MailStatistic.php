@@ -45,7 +45,7 @@ class MailStatistic extends CassandraMapper
     foreach($slice as $k => $count)
     {
       list(, $typeLanguage) = explode('|', $k);
-      list($type, $lang) = explode('-', $typeLanguage);
+      list($type, $lang) = array_pad(explode('-', $typeLanguage), 2, null);
       if($language == null || $language == $lang)
       {
         switch($type)
