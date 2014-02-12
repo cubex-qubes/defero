@@ -28,6 +28,11 @@ class CampaignMessageView extends DeferoView
       '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
     );
 
+    $this->addJsBlock(
+      "CKEDITOR.config.allowedContent = true;" .
+      "CKEDITOR.config.autoParagraph = false;"
+    );
+
     $this->message   = $message;
     $this->languages = $languages;
     $this->form      = (new CampaignMessageForm('campaign_message'))
