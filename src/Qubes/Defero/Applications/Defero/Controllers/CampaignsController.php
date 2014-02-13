@@ -22,7 +22,6 @@ use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView;
 use Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
-use Qubes\Defero\Transport\ProcessDefinition;
 
 class CampaignsController extends BaseDeferoController
 {
@@ -251,13 +250,10 @@ class CampaignsController extends BaseDeferoController
     if($config != null)
     {
       $processorKeys = $config->availableKeys();
+
       foreach($processorKeys as $key)
       {
-        $process = new ProcessDefinition();
-        $process->setProcessClass($config->getStr($key));
-        $process->setQueueName("defero");
-        $process->setQueueService("queue");
-        $processors[] = $process;
+        $processors[]['processorType'] = $key;
       }
     }
 
