@@ -5,7 +5,7 @@
 namespace Qubes\Defero\Applications\Defero;
 
 use Cubex\Core\Application\Application;
-use Cubex\Data\Ephemeral\EphemeralCache;
+use Cubex\Data\Ephemeral\ExpiringEphemeralCache;
 use Cubex\Foundation\Config\Config;
 use Cubex\Foundation\Config\ConfigGroup;
 use Cubex\Foundation\Container;
@@ -147,21 +147,19 @@ class Defero extends Application
      * @var Campaign $campaign
      * @var Contact  $contact
      */
-    $campaign = EphemeralCache::getCache($cacheId, __CLASS__);
+    $campaign = ExpiringEphemeralCache::getCache($cacheId, __CLASS__);
     if($campaign === null)
     {
       $campaign = new Campaign($campaignId);
-      EphemeralCache::storeCache($cacheId, $campaign, __CLASS__);
+      ExpiringEphemeralCache::storeCache($cacheId, $campaign, __CLASS__, 60);
     }
     if(!$campaign || !$campaign->exists())
     {
       throw new \Exception('Campaign does not exist');
     }
-    $campaignId = $campaign->id();
-
-    $campaign          = new Campaign($campaignId);
+    $campaignId        = $campaign->id();
     $processorsCacheId = $cacheId . ':processors';
-    $processors        = EphemeralCache::getCache(
+    $processors        = ExpiringEphemeralCache::getCache(
       $processorsCacheId,
       __CLASS__
     );
@@ -195,7 +193,12 @@ class Defero extends Application
         );
       }
 
-      EphemeralCache::storeCache($processorsCacheId, $processors, __CLASS__);
+      ExpiringEphemeralCache::storeCache(
+        $processorsCacheId,
+        $processors,
+        __CLASS__,
+        60
+      );
     }
 
     $messages = [];
@@ -217,7 +220,10 @@ class Defero extends Application
       $message->setData('data', $data);
 
       $languageCacheId = $cacheId . ':language:' . $userLanguage;
-      $msg             = EphemeralCache::getCache($languageCacheId, __CLASS__);
+      $msg             = ExpiringEphemeralCache::getCache(
+        $languageCacheId,
+        __CLASS__
+      );
       if($msg === null)
       {
         $msg = $campaign->message();
@@ -238,16 +244,29 @@ class Defero extends Application
           $msg->reload();
         }
 
-        EphemeralCache::storeCache($languageCacheId, $msg, __CLASS__);
+        ExpiringEphemeralCache::storeCache(
+          $languageCacheId,
+          $msg,
+          __CLASS__,
+          60
+        );
       }
 
       $contactId      = $msg->contactId ? : $campaign->contactId;
       $contactCacheId = $cacheId . ':contact:' . $contactId;
-      $contact        = EphemeralCache::getCache($contactCacheId, __CLASS__);
+      $contact        = ExpiringEphemeralCache::getCache(
+        $contactCacheId,
+        __CLASS__
+      );
       if($contact === null)
       {
         $contact = new Contact($contactId);
-        EphemeralCache::storeCache($contactCacheId, $contact, __CLASS__);
+        ExpiringEphemeralCache::storeCache(
+          $contactCacheId,
+          $contact,
+          __CLASS__,
+          60
+        );
       }
       $data['signature'] = $contact->signature;
 
