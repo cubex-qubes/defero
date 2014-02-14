@@ -30,7 +30,8 @@ class CampaignMessageView extends DeferoView
 
     $this->addJsBlock(
       "CKEDITOR.config.allowedContent = true;" .
-      "CKEDITOR.config.autoParagraph = false;"
+      "CKEDITOR.config.autoParagraph = false;" .
+      "CKEDITOR.config.fullPage = true;"
     );
 
     $this->message   = $message;
