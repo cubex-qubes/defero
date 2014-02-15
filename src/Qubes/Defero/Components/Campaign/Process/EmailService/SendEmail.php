@@ -53,6 +53,10 @@ class SendEmail extends StdProcess implements IEmailProcess
         "X-Defero-MID",
         uniqid(class_shortname($mailer), true)
       );
+      $mailer->addHeader(
+        "X-Defero-PID",
+        getmypid()
+      );
     }
 
     $mailer->setFrom(
