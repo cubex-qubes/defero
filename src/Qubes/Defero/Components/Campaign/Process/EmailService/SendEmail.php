@@ -1,8 +1,4 @@
 <?php
-/**
- * @author gareth.evans
- */
-
 namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 
 use Cubex\Facade\Email;
@@ -15,9 +11,9 @@ class SendEmail extends StdProcess implements IEmailProcess
 {
   public function process()
   {
-    $userData       = $this->_message->getArr('data');
+    $userData = $this->_message->getArr('data');
     $campaignActive = $this->_message->getInt('campaignActive');
-    $accessor       = $campaignActive ? 'email' : 'send_database';
+    $accessor = $campaignActive ? 'email' : 'send_database';
 
     $name = null;
     if(isset($userData['firstname']))
@@ -49,6 +45,14 @@ class SendEmail extends StdProcess implements IEmailProcess
         $mailer->setTextBody($this->_message->getStr('plainText'));
         $mailer->setHtmlBody($this->_message->getStr('htmlContent'));
         break;
+    }
+
+    if($mailer instanceof \Cubex\Email\Service\Mail)
+    {
+      $mailer->addHeader(
+        "X-Defero-MID",
+        uniqid(class_shortname($mailer), true)
+      );
     }
 
     $mailer->setFrom(
