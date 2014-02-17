@@ -322,6 +322,16 @@ class CampaignsController extends BaseDeferoController
     if($form->isValid() && $form->csrfCheck(true))
     {
       $form->saveChanges();
+      if($form->sendAt == "X * * * *")
+      {
+        $campaign = new Campaign($id);
+        if($campaign->exists())
+        {
+          $cronMinute       = $id % 60;
+          $campaign->sendAt = "$cronMinute * * * *";
+          $campaign->saveChanges();
+        }
+      }
 
       $msg = "Campaign '{$form->name}'";
       $msg .= $id ? " Updated" : " Created";

@@ -37,7 +37,7 @@ class Message extends I18nRecordMapper
   protected function _configure()
   {
     $this->_addTranslationAttribute(
-      ["subject", "plainText", "htmlContent", "contactId"]
+      ["subject", "plainText", "htmlContent", "contactId", "active"]
     );
     $this->_attribute('active')->addValidator(Validator::VALIDATE_BOOL);
   }
