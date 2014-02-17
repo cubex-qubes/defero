@@ -28,7 +28,7 @@ class CampaignsController extends BaseDeferoController
   private $_sendAtOptions = [
     ''          => '',
     '* * * * *' => 'Every Minute',
-    '0 * * * *' => 'Every Hour',
+    '0 * * * *' => 'On the Hour',
   ];
 
   public function renderClone($id)
@@ -97,7 +97,9 @@ class CampaignsController extends BaseDeferoController
     {
       $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
     }
-    $this->_sendAtOptions['custom'] = 'Custom';
+    $cronMinute                                  = rand(1, 30);
+    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
+    $this->_sendAtOptions['custom']              = 'Custom';
     $sendAt->setType(FormElement::SELECT);
     $sendAt->setOptions($this->_sendAtOptions);
     return new CampaignFormView($campaignForm);
@@ -120,7 +122,9 @@ class CampaignsController extends BaseDeferoController
     {
       $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
     }
-    $this->_sendAtOptions['custom'] = 'Custom';
+    $cronMinute                                  = $id % 60;
+    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
+    $this->_sendAtOptions['custom']              = 'Custom';
 
     $sendAt->setType(FormElement::SELECT);
     $sendAt->setOptions($this->_sendAtOptions);
