@@ -20,8 +20,7 @@ class CampaignMessageForm extends DeferoForm
       ->setType(FormElement::TEXTAREA);
 
     $this->getElement('htmlContent')
-      ->setType(FormElement::TEXTAREA)
-      ->addAttribute('class', 'ckeditor');
+      ->setType(FormElement::TEXTAREA);
 
     $this->getElement('campaignId')
       ->setType(FormElement::NONE);

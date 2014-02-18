@@ -24,16 +24,6 @@ class CampaignMessageView extends DeferoView
 
   public function __construct(Message $message, $languages)
   {
-    $this->requireJs(
-      '//cdnjs.cloudflare.com/ajax/libs/ckeditor/4.0.1/ckeditor.js'
-    );
-
-    $this->addJsBlock(
-      "CKEDITOR.config.allowedContent = true;" .
-      "CKEDITOR.config.autoParagraph = false;" .
-      "CKEDITOR.config.fullPage = true;"
-    );
-
     $this->message   = $message;
     $this->languages = $languages;
     $this->form      = (new CampaignMessageForm('campaign_message'))
