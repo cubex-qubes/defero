@@ -5,6 +5,8 @@
 
 namespace Qubes\Defero\Applications\Defero\Helpers;
 
+use Cubex\Foundation\Container;
+
 class LanguageHelper
 {
   public static function getAvailableLanguages()
