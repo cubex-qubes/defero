@@ -40,6 +40,8 @@ class ProcessQueue extends CliCommand
    */
   public $instanceName;
 
+  public $priorityQueue;
+
   private $_pidFile;
 
   /**
@@ -68,6 +70,12 @@ class ProcessQueue extends CliCommand
       }
       $queue->setOwnKey($instance);
     }
+
+    if($this->argumentIsSet('priorityQueue'))
+    {
+      $this->queueName .= '_priority';
+    }
+
     Log::info("Starting to consume queue " . $this->queueName);
     $queue->consume(
       new StdQueue($this->queueName), new CampaignConsumer()

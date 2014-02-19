@@ -309,7 +309,14 @@ class Defero extends Application
 
     // queue
     \Queue::setDefaultQueueProvider("messagequeue");
-    \Queue::pushBatch(new StdQueue("defero_messages"), $messages);
+
+    // priority queue?
+    $queueName = 'defero_messages';
+    if($campaign->sendAt == '* * * * *')
+    {
+      $queueName .= '_priority';
+    }
+    \Queue::pushBatch(new StdQueue($queueName), $messages);
 
     // stats
     $hour = time();
