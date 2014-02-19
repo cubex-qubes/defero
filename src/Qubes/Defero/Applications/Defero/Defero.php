@@ -151,6 +151,7 @@ class Defero extends Application
     if($campaign === null)
     {
       $campaign = new Campaign($campaignId);
+      $campaign->reload();
       ExpiringEphemeralCache::storeCache($cacheId, $campaign, __CLASS__, 60);
     }
     if(!$campaign || !$campaign->exists())
