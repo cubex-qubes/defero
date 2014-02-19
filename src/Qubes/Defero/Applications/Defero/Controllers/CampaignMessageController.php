@@ -31,24 +31,34 @@ class CampaignMessageController extends DeferoController
 
   public function postIndex()
   {
-    $form = new CampaignMessageForm('campaign_message');
+    $postData = $this->request()->postVariables();
+    $form     = new CampaignMessageForm('campaign_message');
     $form->bindMapper($this->_getMessage());
-    $form->hydrate($this->request()->postVariables());
+    $form->hydrate($postData);
+
     if($form->isValid() && $form->csrfCheck(true))
     {
       $form->saveChanges();
 
-      $campaign = new Campaign($this->getInt('id'));
-      $language = $this->getStr('hl');
-      if($campaign->availableLanguages == null)
+      $languageIsActive = idx($postData, 'active') != null;
+      $campaign         = new Campaign($this->getInt('id'));
+      $language         = $this->getStr('hl');
+      if($campaign->availableLanguages == null && $languageIsActive)
       {
         $campaign->availableLanguages = [$language => $language];
       }
       else
       {
-        $availableLanguages            = (array)$campaign->availableLanguages;
-        $availableLanguages[$language] = $language;
-        $campaign->availableLanguages  = $availableLanguages;
+        $availableLanguages = (array)$campaign->availableLanguages;
+        if($languageIsActive)
+        {
+          $availableLanguages[$language] = $language;
+        }
+        else
+        {
+          unset($availableLanguages[$language]);
+        }
+        $campaign->availableLanguages = $availableLanguages;
       }
       $campaign->saveChanges();
     }
