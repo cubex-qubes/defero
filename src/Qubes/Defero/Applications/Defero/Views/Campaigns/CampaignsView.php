@@ -6,8 +6,10 @@
 namespace Qubes\Defero\Applications\Defero\Views\Campaigns;
 
 use Cubex\Form\Form;
+use Cubex\Foundation\Container;
 use Cubex\Mapper\Database\RecordCollection;
 use Qubes\Defero\Applications\Defero\Enums\TypeAheadEnum;
+use Qubes\Defero\Applications\Defero\Helpers\LanguageHelper;
 use Qubes\Defero\Applications\Defero\Views\Base\DeferoView;
 use Qubes\Defero\Applications\Defero\Views\Base\TypeAheadSearchFormView;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
@@ -82,5 +84,11 @@ class CampaignsView extends DeferoView
       );
     }
     return $this->_filterForm;
+  }
+
+  public function inactiveLanguages($activeLanguages)
+  {
+    $allLanguages = LanguageHelper::getAvailableLanguages();
+    return array_diff($allLanguages, $activeLanguages);
   }
 }

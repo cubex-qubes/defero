@@ -31,7 +31,7 @@
         <th>Subject</th>
         <th>Send Type</th>
         <th>Label</th>
-        <th>Languages</th>
+        <th title="Inactive Languages">Languages</th>
         <th>Active</th>
         <th></th>
       </tr>
@@ -54,7 +54,10 @@
           <td><?= $campaign->label ?></td>
           <td>
             <?php if($campaign->availableLanguages != null): ?>
-              <?= implode(',', (array)$campaign->availableLanguages); ?>
+              <?= implode(
+                ',',
+                $this->inactiveLanguages((array)$campaign->availableLanguages)
+              ); ?>
             <?php else: ?>
               --
             <?php endif; ?>
