@@ -58,12 +58,13 @@ class CampaignQueueConsumer implements IBatchQueueConsumer
         $dataSource->process(
           $taskId, $cid, $started, $lastSent, $startId, $endId, $additionalData
         );
+        $results[$taskId] = true;
       }
       catch(\Exception $e)
       {
         Log::error('Campaign ' . $cid . ': ' . $e->getMessage());
+        $results[$taskId] = false;
       }
-      $results[$taskId] = true;
     }
     $this->_batch = [];
     return $results;
