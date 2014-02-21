@@ -68,7 +68,7 @@ class CampaignConsumer implements IBatchQueueConsumer
 
   public function getBatchSize()
   {
-    return 1;
+    return 25;
   }
 
   public function runProcess(
