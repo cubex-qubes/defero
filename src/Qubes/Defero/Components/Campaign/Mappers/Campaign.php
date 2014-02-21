@@ -198,6 +198,11 @@ class Campaign extends RecordMapper
     return new SendType();
   }
 
+  public function prioritys()
+  {
+    return [1 => 'High', 5 => 'Medium', 10 => 'Low'];
+  }
+
   public function trackingTypes()
   {
     return new TrackingType();
