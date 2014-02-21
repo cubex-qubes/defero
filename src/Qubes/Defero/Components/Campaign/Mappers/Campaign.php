@@ -91,6 +91,12 @@ class Campaign extends RecordMapper
    */
   public $sortOrder;
 
+  /**
+   * @datatype int
+   * @default 1
+   */
+  public $priority;
+
   protected static $_labels;
 
   public static function setLabels($labels)

@@ -128,6 +128,13 @@ class CampaignsController extends BaseDeferoController
 
     $sendAt->setType(FormElement::SELECT);
     $sendAt->setOptions($this->_sendAtOptions);
+
+    $priority = $campaignForm->getElement('priority');
+    $priority
+      ->setType(FormElement::SELECT)
+      ->setOptions([1 => 1, 5 => 5, 10 => 10])
+      ->setDefault($priority->rawData());
+
     return new CampaignFormView(
       $campaignForm
     );
