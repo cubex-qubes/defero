@@ -166,8 +166,8 @@ class CampaignsController extends BaseDeferoController
       {
         try
         {
-          $msg = new TransportMessage("info", 'Test queued for user');
           Defero::pushMessage($id, $form->jsonSerialize());
+          $msg = new TransportMessage("info", 'Test queued for user');
         }
         catch(\Exception $e)
         {
