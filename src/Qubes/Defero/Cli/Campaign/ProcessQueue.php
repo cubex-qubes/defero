@@ -33,14 +33,19 @@ class ProcessQueue extends CliCommand
    *
    * @valuerequired
    */
-  public $queueName = 'defero_messages';
+  public $queueName = 'mailer.defero_messages_priority_';
 
   /**
    * @valuerequired
    */
   public $instanceName;
 
-  public $priorityQueue;
+  /**
+   * @valuerequired
+   * @required
+   * @validate int
+   */
+  public $priority;
 
   private $_pidFile;
 
@@ -71,14 +76,20 @@ class ProcessQueue extends CliCommand
       $queue->setOwnKey($instance);
     }
 
-    if($this->argumentIsSet('priorityQueue'))
+    $priority = (int)$this->priority;
+    if(in_array($priority, [1, 5, 10]))
     {
-      $this->queueName .= '_priority';
+      $this->queueName .= $priority;
+    }
+    else
+    {
+      throw new \Exception("Invalid priority. Supported values: 1 , 5, 10");
     }
 
     Log::info("Starting to consume queue " . $this->queueName);
     $queue->consume(
-      new StdQueue($this->queueName), new CampaignConsumer()
+      new StdQueue($this->queueName),
+      new CampaignConsumer()
     );
 
     Log::info("Exiting Defero Processor");
