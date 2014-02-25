@@ -305,4 +305,10 @@ class Campaign extends RecordMapper
   {
     return MailStatistic::getCampaignStats($this->id(), $from, $to, $language);
   }
+
+  public function delete()
+  {
+    $this->message()->delete();
+    parent::delete();
+  }
 }

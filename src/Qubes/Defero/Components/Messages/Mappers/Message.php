@@ -8,6 +8,7 @@ namespace Qubes\Defero\Components\Messages\Mappers;
 use Cubex\Data\Validator\Validator;
 use Cubex\Helpers\Inflection;
 use Cubex\Mapper\Database\I18n\I18nRecordMapper;
+use Cubex\Sprintf\ParseQuery;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 
@@ -85,5 +86,25 @@ class Message extends I18nRecordMapper
       }
     }
     return $variables;
+  }
+
+  public function delete()
+  {
+    $tableName = Inflection::pluralise(
+      $this->getTableName(false) . '_' . $this->getTextMapperTableAppend()
+    );
+
+    $connection = $this->conn();
+    $connection->query(
+      ParseQuery::parse(
+        $connection,
+        "DELETE FROM %T WHERE %C = %d",
+        $tableName,
+        'source_id',
+        $this->id()
+      )
+    );
+
+    parent::delete();
   }
 }
