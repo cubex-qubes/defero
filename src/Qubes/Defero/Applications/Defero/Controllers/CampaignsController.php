@@ -31,6 +31,210 @@ class CampaignsController extends BaseDeferoController
     '0 * * * *' => 'On the Hour',
   ];
 
+  /**
+   * Show a paginated list of campaigns
+   *
+   * @param int $page
+   *
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView
+   */
+  public function renderIndex($page = 1)
+  {
+    $postData = null;
+    if($postData = $this->request()->postVariables())
+    {
+      $where = [];
+      if($postData['label'] != "")
+      {
+        $where['label'] = $postData['label'];
+      }
+      if($postData['active'] != "")
+      {
+        $where['active'] = $postData['active'];
+      }
+      if($postData['sendType'] != "")
+      {
+        $where['send_type'] = $postData['sendType'];
+      }
+      $campaigns = Campaign::collection($where)->setOrderBy("sortOrder");
+    }
+    else
+    {
+      $campaigns = Campaign::collection()->setOrderBy("sortOrder");
+    }
+
+    $options['sendTypeOptions'] = array_flip((new SendType())->getConstList());
+    $options['activeOptions']   = [1 => 'Yes', 0 => 'No'];
+    $options['labelOptions']    = Campaign::labels();
+
+    return new CampaignsView($campaigns, $options, $postData);
+  }
+
+  /**
+   * Output a single campaign
+   *
+   * @param int $id
+   *
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
+   */
+  public function renderShow($id)
+  {
+    $campaign = new Campaign($id);
+    if($campaign->exists())
+    {
+      return new CampaignView($campaign);
+    }
+    else
+    {
+      return Redirect::to('/campaigns')->with(
+        'msg',
+        new TransportMessage('info', "Campaign $id does not exist.")
+      );
+    }
+  }
+
+  /**
+   * Show a blank campaign form
+   *
+   * @return CampaignFormView
+   */
+  public function renderNew()
+  {
+    $campaignForm = $this->_buildCampaignForm();
+    $sendAt       = $campaignForm->getElement('send_at');
+    $sendAtValue  = $sendAt->rawData();
+    if(!isset($this->_sendAtOptions[$sendAtValue]))
+    {
+      $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
+    }
+    $cronMinute                                  = rand(1, 30);
+    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
+    $this->_sendAtOptions['custom']              = 'Custom';
+    $sendAt->setType(FormElement::SELECT);
+    $sendAt->setOptions($this->_sendAtOptions);
+    return new CampaignFormView($campaignForm);
+  }
+
+  /**
+   * Create a new campaign
+   *
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
+   */
+  public function postCreate()
+  {
+    return $this->_updateCampaign();
+  }
+
+  /**
+   * Show a pre-populated campaign form
+   *
+   * @param int          $id
+   * @param CampaignForm $campaignForm
+   *
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
+   */
+  public function renderEdit($id, CampaignForm $campaignForm = null)
+  {
+    $campaignForm = $campaignForm ? : $this->_buildCampaignForm($id);
+    $sendAt       = $campaignForm->getElement('send_at');
+    $sendAtValue  = $sendAt->rawData();
+    if(!isset($this->_sendAtOptions[$sendAtValue]))
+    {
+      $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
+    }
+    $cronMinute                                  = $id % 60;
+    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
+    $this->_sendAtOptions['custom']              = 'Custom';
+
+    $sendAt->setType(FormElement::SELECT);
+    $sendAt->setOptions($this->_sendAtOptions);
+
+    return new CampaignFormView(
+      $campaignForm
+    );
+  }
+
+  /**
+   * Updates an existing campaign
+   *
+   * @param int $id
+   *
+   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
+   */
+  public function postUpdate($id)
+  {
+    return $this->_updateCampaign($id);
+  }
+
+  /**
+   * Helper method to handle create and update of campaigns. Will redirect to
+   * the specific campaign on success with a message. If there are any
+   * validation or CSRF errors we render the form again with information.
+   *
+   * @param null|int $id
+   *
+   * @return CampaignFormView
+   */
+  private function _updateCampaign($id = null)
+  {
+    $form = $this->_buildCampaignForm($id);
+    $form->hydrate($this->request()->postVariables());
+    if($id == null)
+    {
+      $config     = Container::config()->get("default_processors");
+      $processors = [];
+      if($config != null)
+      {
+        $processorKeys = $config->availableKeys();
+
+        foreach($processorKeys as $key)
+        {
+          $processors[]['processorType'] = $key;
+        }
+      }
+
+      $form->processors = $processors;
+    }
+
+    if($form->isValid() && $form->csrfCheck(true))
+    {
+      $form->saveChanges();
+      if($form->sendAt == "X * * * *")
+      {
+        $campaign = new Campaign($id);
+        if($campaign->exists())
+        {
+          $cronMinute       = $id % 60;
+          $campaign->sendAt = "$cronMinute * * * *";
+          $campaign->saveChanges();
+        }
+      }
+
+      $msg = "Campaign '{$form->name}'";
+      $msg .= $id ? " Updated" : " Created";
+
+      return Redirect::to("/campaigns/{$form->getMapper()->id()}")
+        ->with("msg", new TransportMessage("info", $msg));
+    }
+
+    return $this->renderEdit($id, $form);
+  }
+
+  /**
+   * Instantiates the form and binds the mapper. Also sets up the action based
+   * on an id existing or not.
+   *
+   * @param null|int $id
+   *
+   * @return CampaignForm
+   */
+  private function _buildCampaignForm($id = null)
+  {
+    $action = $id ? "/campaigns/{$id}" : "/campaigns";
+
+    return Campaign::buildCampaignForm($action, $id);
+  }
+
   public function renderClone($id)
   {
     $campaign = new Campaign($id);
@@ -81,69 +285,6 @@ class CampaignsController extends BaseDeferoController
       return Redirect::to("/campaigns/{$id}")
         ->with('msg', new TransportMessage("error", $e->getMessage()));
     }
-  }
-
-  /**
-   * Show a blank campaign form
-   *
-   * @return CampaignFormView
-   */
-  public function renderNew()
-  {
-    $campaignForm = $this->_buildCampaignForm();
-    $sendAt       = $campaignForm->getElement('send_at');
-    $sendAtValue  = $sendAt->rawData();
-    if(!isset($this->_sendAtOptions[$sendAtValue]))
-    {
-      $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
-    }
-    $cronMinute                                  = rand(1, 30);
-    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
-    $this->_sendAtOptions['custom']              = 'Custom';
-    $sendAt->setType(FormElement::SELECT);
-    $sendAt->setOptions($this->_sendAtOptions);
-    return new CampaignFormView($campaignForm);
-  }
-
-  /**
-   * Show a pre-populated campaign form
-   *
-   * @param int          $id
-   * @param CampaignForm $campaignForm
-   *
-   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
-   */
-  public function renderEdit($id, CampaignForm $campaignForm = null)
-  {
-    $campaignForm = $campaignForm ? : $this->_buildCampaignForm($id);
-    $sendAt       = $campaignForm->getElement('send_at');
-    $sendAtValue  = $sendAt->rawData();
-    if(!isset($this->_sendAtOptions[$sendAtValue]))
-    {
-      $this->_sendAtOptions[$sendAtValue] = $sendAtValue;
-    }
-    $cronMinute                                  = $id % 60;
-    $this->_sendAtOptions["$cronMinute * * * *"] = 'Every Hour';
-    $this->_sendAtOptions['custom']              = 'Custom';
-
-    $sendAt->setType(FormElement::SELECT);
-    $sendAt->setOptions($this->_sendAtOptions);
-
-    return new CampaignFormView(
-      $campaignForm
-    );
-  }
-
-  /**
-   * Update an existing campaign
-   *
-   * @param int $id
-   *
-   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
-   */
-  public function actionUpdate($id)
-  {
-    return $this->_updateCampaign($id);
   }
 
   public function renderTest($id)
@@ -216,7 +357,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @return \Cubex\Core\Http\Redirect
    */
-  public function actionDestroy($id)
+  public function postDestroy($id)
   {
     $campaign = new Campaign($id);
     $campaign->forceLoad();
@@ -226,137 +367,6 @@ class CampaignsController extends BaseDeferoController
       'msg',
       new TransportMessage('info', "Campaign '{$campaign->name}' deleted.")
     );
-  }
-
-  /**
-   * Output a single campaign
-   *
-   * @param int $id
-   *
-   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignView
-   */
-  public function renderShow($id)
-  {
-    $campaign = new Campaign($id);
-
-    return new CampaignView($campaign);
-  }
-
-  /**
-   * Create a new campaign
-   *
-   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignFormView
-   */
-  public function postCreate()
-  {
-    $campaign   = new Campaign();
-    $config     = Container::config()->get("default_processors");
-    $processors = [];
-    if($config != null)
-    {
-      $processorKeys = $config->availableKeys();
-
-      foreach($processorKeys as $key)
-      {
-        $processors[]['processorType'] = $key;
-      }
-    }
-
-    $campaign->processors = $processors;
-    $campaign->saveChanges();
-    return $this->_updateCampaign($campaign->id());
-  }
-
-  /**
-   * Show a paginated list of campaigns
-   *
-   * @param int $page
-   *
-   * @return \Qubes\Defero\Applications\Defero\Views\Campaigns\CampaignsView
-   */
-  public function renderIndex($page = 1)
-  {
-    $postData = null;
-    if($postData = $this->request()->postVariables())
-    {
-      $where = [];
-      if($postData['label'] != "")
-      {
-        $where['label'] = $postData['label'];
-      }
-      if($postData['active'] != "")
-      {
-        $where['active'] = $postData['active'];
-      }
-      if($postData['sendType'] != "")
-      {
-        $where['send_type'] = $postData['sendType'];
-      }
-      $campaigns = Campaign::collection($where)->setOrderBy("sortOrder");
-    }
-    else
-    {
-      $campaigns = Campaign::collection()->setOrderBy("sortOrder");
-    }
-
-    $options['sendTypeOptions'] = array_flip((new SendType())->getConstList());
-    $options['activeOptions']   = [1 => 'Yes', 0 => 'No'];
-    $options['labelOptions']    = Campaign::labels();
-
-    return new CampaignsView($campaigns, $options, $postData);
-  }
-
-  /**
-   * Helper method to handle create and update of campaigns. Will redirect to
-   * the specific campaign on success with a message. If there are any
-   * validation or CSRF errors we render the form again with information.
-   *
-   * @param null|int $id
-   *
-   * @return CampaignFormView
-   */
-  private function _updateCampaign($id = null)
-  {
-    $form = $this->_buildCampaignForm($id);
-    $form->hydrate($this->request()->postVariables());
-
-    if($form->isValid() && $form->csrfCheck(true))
-    {
-      $form->saveChanges();
-      if($form->sendAt == "X * * * *")
-      {
-        $campaign = new Campaign($id);
-        if($campaign->exists())
-        {
-          $cronMinute       = $id % 60;
-          $campaign->sendAt = "$cronMinute * * * *";
-          $campaign->saveChanges();
-        }
-      }
-
-      $msg = "Campaign '{$form->name}'";
-      $msg .= $id ? " Updated" : " Created";
-
-      return Redirect::to("/campaigns/{$form->getMapper()->id()}")
-        ->with("msg", new TransportMessage("info", $msg));
-    }
-
-    return $this->renderEdit($id, $form);
-  }
-
-  /**
-   * Instantiates the form and binds the mapper. Also sets up the action based
-   * on an id existing or not.
-   *
-   * @param null|int $id
-   *
-   * @return CampaignForm
-   */
-  private function _buildCampaignForm($id = null)
-  {
-    $action = $id ? "/campaigns/{$id}" : "/campaigns";
-
-    return Campaign::buildCampaignForm($action, $id);
   }
 
   public function renderReorder()
