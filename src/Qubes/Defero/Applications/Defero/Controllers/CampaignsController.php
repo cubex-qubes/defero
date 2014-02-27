@@ -357,7 +357,7 @@ class CampaignsController extends BaseDeferoController
    *
    * @return \Cubex\Core\Http\Redirect
    */
-  public function postDestroy($id)
+  public function actionDestroy($id)
   {
     $campaign = new Campaign($id);
     $campaign->forceLoad();
