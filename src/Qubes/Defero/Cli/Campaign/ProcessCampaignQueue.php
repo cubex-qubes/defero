@@ -22,7 +22,7 @@ use Qubes\Defero\Components\Campaign\Consumers\CampaignQueueConsumer;
 class ProcessCampaignQueue extends CliCommand
 {
   protected $_echoLevel = LogLevel::INFO;
-  protected $_defaultLogLevel = LogLevel::DEBUG;
+  protected $_defaultLogLevel = LogLevel::INFO;
 
   /**
    * Queue Provider Service to read messages from
