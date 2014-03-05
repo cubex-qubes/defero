@@ -130,7 +130,7 @@ class CampaignConsumer implements IBatchQueueConsumer
    */
   public function waitTime($waits = 0)
   {
-    return rand(50, 70);
+    return rand(10, 30);
   }
 
   /**
