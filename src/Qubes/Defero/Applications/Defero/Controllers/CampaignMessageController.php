@@ -42,7 +42,7 @@ class CampaignMessageController extends DeferoController
 
       $languageIsActive = idx($postData, 'active') != null;
       $campaign         = new Campaign($this->getInt('id'));
-      $language         = $this->getStr('hl');
+      $language         = $this->getStr('hl', 'en');
       if($campaign->availableLanguages == null && $languageIsActive)
       {
         $campaign->availableLanguages = [$language => $language];
