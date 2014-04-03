@@ -15,6 +15,8 @@ use Cubex\Mapper\Database\RecordCollection;
 use Psr\Log\LogLevel;
 use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
+use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
+use Qubes\Defero\Components\Cron\CronParser;
 
 class QueueCampaigns extends CliCommand
 {
@@ -26,7 +28,7 @@ class QueueCampaigns extends CliCommand
   public $instanceName;
 
   private $_pidFile;
-  
+
   public function execute()
   {
     $this->_pidFile = new PidFile("", $this->instanceName);
@@ -44,10 +46,66 @@ class QueueCampaigns extends CliCommand
           try
           {
             Defero::pushCampaign($campaign->id(), $startedAt);
+
+            if(CronParser::isValid($campaign->sendAt))
+            {
+              // check average sends on scheduled
+              $avgEndDate   = (new \DateTime())->setTimestamp($startedAt);
+              $avgStartDate = CronParser::prevRun(
+                $campaign->sendAt, $avgEndDate->getTimestamp()
+              );
+              $avgEndDate->sub($avgStartDate->diff($avgEndDate));
+              $avgStartDate->setTime($avgStartDate->format('H') - 1, 0, 0);
+              $latestStats = MailStatistic::getCampaignStats(
+                $campaign->id(), $avgStartDate, $avgEndDate
+              );
+              $diff        = $avgStartDate->diff($avgEndDate);
+              $diffLatest  = max(
+                1,
+                intval($diff->format('%i')) +
+                intval($diff->format('%h') * 60) +
+                intval($diff->format('%d') * 3600)
+              );
+
+              $avgEndDate->sub(new \DateInterval('PT1H'));
+              $avgStartDate->sub(new \DateInterval('PT2H'));
+              $avgStats = MailStatistic::getCampaignStats(
+                $campaign->id(), $avgStartDate, $avgEndDate
+              );
+              $diff     = $avgStartDate->diff($avgEndDate);
+              $diffAvg  = max(
+                1,
+                intval($diff->format('%i')) +
+                intval($diff->format('%h') * 60) +
+                intval($diff->format('%d') * 3600)
+              );
+
+              $compareLatest = ($latestStats->sent / $diffLatest) * 60;
+              $compareAvg    = ($avgStats->sent / $diffAvg) * 60;
+              $threshold     = ($compareAvg * 0.2) + 5;
+
+              if($compareLatest < $compareAvg - $threshold)
+              {
+                Log::warning(
+                  $campaign->id() . ' sending below average: '
+                  . $compareLatest . ' / ' . $compareAvg . ' ~ ' . $threshold
+                );
+              }
+              else if($compareLatest > $compareAvg + $threshold)
+              {
+                Log::warning(
+                  $campaign->id() . ' sending above average: '
+                  . $compareLatest . ' / ' . $compareAvg . ' ~ ' . $threshold
+                );
+              }
+            }
           }
           catch(\Exception $e)
           {
-            Log::error('Campaign ' . $campaign->id() . ': ' . $e->getMessage());
+            Log::error(
+              'Campaign ' . $campaign->id() . ': ' . $e->getMessage()
+              . ' (Line: ' . $e->getLine() . ')'
+            );
           }
         }
       }
