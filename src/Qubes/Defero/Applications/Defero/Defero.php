@@ -210,13 +210,24 @@ class Defero extends Application
       $userLanguage = $data['language'] = !empty($data['language']) ?
         $data['language'] : 'en';
 
-      $message = new ProcessMessage();
-      $message->setData('campaignId', $campaignId);
-
-      $campaign->active = isset($data['campaignactive']) ?
+      $active = isset($data['campaignactive']) ?
         $data['campaignactive'] : $campaign->active;
 
-      $message->setData('campaignActive', $campaign->active);
+      $message = new ProcessMessage();
+      $message->setData('campaignId', $campaignId);
+      $message->setData('campaignActive', $active);
+      if(!$active)
+      {
+        $message->setData('emailService', 'email_test');
+      }
+      elseif($campaign->priority == 1)
+      {
+        $message->setData('emailService', 'email_priority');
+      }
+      else
+      {
+        $message->setData('emailService', 'email');
+      }
       $message->setData('mailerTracking', $campaign->trackingType);
       $message->setData('data', $data);
 

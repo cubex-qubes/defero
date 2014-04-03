@@ -11,9 +11,11 @@ class SendEmail extends StdProcess implements IEmailProcess
 {
   public function process()
   {
-    $userData = $this->_message->getArr('data');
+    $userData       = $this->_message->getArr('data');
     $campaignActive = $this->_message->getInt('campaignActive');
-    $accessor = $campaignActive ? 'email' : 'send_database';
+    $serviceName    = $this->_message->getStr(
+      'emailService', $campaignActive ? 'email' : 'email_test'
+    );
 
     $name = null;
     if(isset($userData['firstname']))
@@ -26,9 +28,9 @@ class SendEmail extends StdProcess implements IEmailProcess
     }
     $email = $userData['email'];
 
-    Log::info("Sending to $name <$email>");
+    Log::info("Sending to $name <$email> using $serviceName");
 
-    $mailer = Email::getAccessor($accessor);
+    $mailer = Email::getAccessor($serviceName);
 
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
