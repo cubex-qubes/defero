@@ -79,7 +79,9 @@ class SendEmail extends StdProcess implements IEmailProcess
     catch(\Exception $e)
     {
       $result = false;
-      Log::error($e->getMessage());
+      Log::error(
+        $e->getMessage() . ' (' . $this->_message->getStr('senderEmail') . ')'
+      );
       Email::getServiceManager()->destroy('email');
     }
 
