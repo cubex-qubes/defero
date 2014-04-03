@@ -82,7 +82,7 @@ class QueueCampaigns extends CliCommand
 
               $compareLatest = ($latestStats->sent / $diffLatest) * 60;
               $compareAvg    = ($avgStats->sent / $diffAvg) * 60;
-              $threshold     = ($compareAvg * 0.2) + 5;
+              $threshold     = ($compareAvg * 0.4) + 10;
 
               if($compareLatest < $compareAvg - $threshold)
               {
