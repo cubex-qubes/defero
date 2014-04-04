@@ -87,15 +87,23 @@ class QueueCampaigns extends CliCommand
               if($compareLatest < $compareAvg - $threshold)
               {
                 Log::warning(
-                  $campaign->id() . ' sending below average: '
-                  . $compareLatest . ' / ' . $compareAvg . ' ~ ' . $threshold
+                  'Sending below average', [
+                    'campaign'  => $campaign->id(),
+                    'latest'    => $compareLatest,
+                    'previous'  => $compareAvg,
+                    'threshold' => $threshold,
+                  ]
                 );
               }
               else if($compareLatest > $compareAvg + $threshold)
               {
                 Log::warning(
-                  $campaign->id() . ' sending above average: '
-                  . $compareLatest . ' / ' . $compareAvg . ' ~ ' . $threshold
+                  'Sending above average', [
+                    'campaign'  => $campaign->id(),
+                    'latest'    => $compareLatest,
+                    'previous'  => $compareAvg,
+                    'threshold' => $threshold,
+                  ]
                 );
               }
             }
