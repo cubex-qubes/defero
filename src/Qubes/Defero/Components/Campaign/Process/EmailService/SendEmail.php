@@ -31,7 +31,6 @@ class SendEmail extends StdProcess implements IEmailProcess
     Log::info("Sending to $name <$email> using $serviceName");
 
     $mailer = Email::getAccessor($serviceName);
-
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
 
@@ -78,9 +77,8 @@ class SendEmail extends StdProcess implements IEmailProcess
     }
     catch(\Exception $e)
     {
+      Log::debug($e->getMessage());
       $result = false;
-      Log::error($e->getMessage() . PHP_EOL . $email);
-      Email::getServiceManager()->destroy('email');
     }
 
     $campaignId = $this->_message->getStr('campaignId');
