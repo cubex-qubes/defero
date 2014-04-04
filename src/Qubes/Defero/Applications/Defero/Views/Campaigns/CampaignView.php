@@ -32,6 +32,11 @@ class CampaignView extends DeferoView
   private function _get24hrsStats()
   {
     $this->_stats['24h'] = new \stdClass();
+    $this->_stats['24h']->totalQueued = 0;
+    $this->_stats['24h']->totalTest = 0;
+    $this->_stats['24h']->totalSent = 0;
+    $this->_stats['24h']->totalFailed = 0;
+
     $time                = strtotime('-23 hours');
     $time -= $time % 3600; //round off to the hour
 
@@ -57,6 +62,11 @@ class CampaignView extends DeferoView
   private function _get30DaysStats()
   {
     $this->_stats['30d'] = new \stdClass();
+    $this->_stats['30d']->totalQueued = 0;
+    $this->_stats['30d']->totalTest = 0;
+    $this->_stats['30d']->totalSent = 0;
+    $this->_stats['30d']->totalFailed = 0;
+
     //so counting 30 days brings us to today
     $time = strtotime('-29 days 00:00:00');
     for($i = 30; $i > 0; $i--)
