@@ -37,7 +37,6 @@ class SearchLibrary
         "%C LIKE %~ OR %C LIKE %~", 'name', $query, 'label', $query
       )
       ->setColumns([$campaignsSelect, "name"])
-      ->orderByKeys(["key"])
       ->setOrderByQuery("name")
       ->jsonSerialize();
 
