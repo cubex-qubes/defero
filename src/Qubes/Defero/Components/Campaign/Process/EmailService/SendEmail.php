@@ -5,6 +5,7 @@ use Cubex\Facade\Email;
 use Cubex\Log\Log;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
+use Qubes\Defero\Components\Campaign\Mappers\MailStatisticsByBrand;
 use Qubes\Defero\Transport\StdProcess;
 
 class SendEmail extends StdProcess implements IEmailProcess
@@ -14,7 +15,8 @@ class SendEmail extends StdProcess implements IEmailProcess
     $userData       = $this->_message->getArr('data');
     $campaignActive = $this->_message->getInt('campaignActive');
     $serviceName    = $this->_message->getStr(
-      'emailService', $campaignActive ? 'email' : 'email_test'
+      'emailService',
+      $campaignActive ? 'email' : 'email_test'
     );
 
     $name = null;
@@ -84,6 +86,25 @@ class SendEmail extends StdProcess implements IEmailProcess
     $campaignId = $this->_message->getStr('campaignId');
     $hour       = time();
     $hour -= $hour % 3600;
+
+    if(isset($userData['statskey']))
+    {
+      $brandStatsCf = MailStatisticsByBrand::cf();
+      $column       = $hour . '|failed|' . $userData['statskey'] .
+        '|' . $userData['language'];
+      if($result !== false)
+      {
+        $column = $hour . '|' . ($campaignActive ? 'sent' : 'test');
+        $column .= '|' . $userData['statskey'] .
+          '|' . $userData['language'];
+        $brandStatsCf->increment($campaignId, $column);
+      }
+      else
+      {
+        $brandStatsCf->increment($campaignId, $column);
+      }
+    }
+
     $statsCf = MailStatistic::cf();
 
     $column = $hour . '|failed-' . $userData['language'];
@@ -91,15 +112,13 @@ class SendEmail extends StdProcess implements IEmailProcess
     {
       $column = $hour . '|' . ($campaignActive ? 'sent' : 'test');
       $column .= '-' . $userData['language'];
-      $statsCf->increment(
-        $campaignId,
-        $column
-      );
+      $statsCf->increment($campaignId, $column);
     }
     else
     {
       $statsCf->increment($campaignId, $column);
     }
+
     return false;
   }
 }
