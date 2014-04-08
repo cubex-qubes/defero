@@ -114,6 +114,10 @@ class Defero extends Application
       \Log::info('Queued Campaign ' . $campaignId);
       return true;
     }
+    \Log::info(
+      'Campaign ' . $campaignId . ' already queued'
+      . ' ~ ' . $lastTime . ' ' . $startTime
+    );
     return false;
   }
 

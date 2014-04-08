@@ -21,6 +21,7 @@ use Qubes\Defero\Components\Cron\CronParser;
 class QueueCampaigns extends CliCommand
 {
   protected $_echoLevel = LogLevel::INFO;
+  protected $_defaultLogLevel = LogLevel::INFO;
 
   /**
    * @valuerequired
