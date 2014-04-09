@@ -10,6 +10,8 @@ use Qubes\Defero\Components\Campaign\Stats\CampaignStats;
 
 class MailStatisticsByBrand extends CassandraMapper
 {
+  protected $_cassandraConnection = 'cass_analytics';
+
   public function getTableName($plural = true)
   {
     return "MailerStatisticsByBrand";
