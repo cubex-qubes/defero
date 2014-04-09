@@ -255,11 +255,14 @@ class Campaign extends RecordMapper
       ->bindMapper(new Campaign($id));
   }
 
-  public function isDue()
+  public function isDue($time = null)
   {
-    if($check = $this->nextRun())
+    if(!$time)
     {
       $time = time();
+    }
+    if($check = $this->nextRun($time))
+    {
       $time -= $time % 60;
       $check = $check->getTimestamp();
       $check -= $check % 60;
@@ -268,7 +271,7 @@ class Campaign extends RecordMapper
     return false;
   }
 
-  public function nextRun()
+  public function nextRun($time = null)
   {
     if(!$this->sendAt)
     {
@@ -280,7 +283,7 @@ class Campaign extends RecordMapper
       return DateTimeHelper::dateTimeFromAnything($this->sendAt);
     }
 
-    $nr = CronParser::nextRun($this->sendAt, null, true);
+    $nr = CronParser::nextRun($this->sendAt, $time, true);
     return $nr ? : null;
   }
 

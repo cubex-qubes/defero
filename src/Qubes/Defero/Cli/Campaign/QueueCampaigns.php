@@ -46,7 +46,7 @@ class QueueCampaigns extends CliCommand
       foreach($collection as $campaign)
       {
         /** @var Campaign $campaign */
-        if($campaign->isDue())
+        if($campaign->isDue($startedAt))
         {
           try
           {
