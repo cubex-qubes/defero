@@ -123,7 +123,7 @@ class QueueCampaigns extends CliCommand
         }
         else
         {
-          Log::info('Campaign ' . $campaign->id() . ' not due');
+          Log::debug('Campaign ' . $campaign->id() . ' not due');
         }
       }
       $endTime = time();
