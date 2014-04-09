@@ -39,6 +39,10 @@ class QueueCampaigns extends CliCommand
       $startedAt = time();
       $startedAt -= $startedAt % 60;
       $collection = new RecordCollection(new Campaign());
+      if(!$collection->hasMappers())
+      {
+        Log::warning('No mappers found');
+      }
       foreach($collection as $campaign)
       {
         /** @var Campaign $campaign */
@@ -117,8 +121,17 @@ class QueueCampaigns extends CliCommand
             );
           }
         }
+        else
+        {
+          Log::warning('Campaign ' . $campaign->id() . ' not due');
+        }
       }
-      sleep(30);
+      $endTime = time();
+      $endTime -= $endTime % 60;
+      if($endTime == $startedAt)
+      {
+        sleep(30);
+      }
     }
   }
 }
