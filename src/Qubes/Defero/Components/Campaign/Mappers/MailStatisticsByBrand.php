@@ -6,7 +6,6 @@
 namespace Qubes\Defero\Components\Campaign\Mappers;
 
 use Cubex\Cassandra\CassandraMapper;
-use Qubes\Defero\Components\Campaign\Stats\CampaignStats;
 
 class MailStatisticsByBrand extends CassandraMapper
 {
@@ -18,7 +17,7 @@ class MailStatisticsByBrand extends CassandraMapper
   }
 
   public static function getCampaignStats(
-    $campaignId, \DateTime $from, \DateTime $to = null, $keyIn = null,
+    $campaignId, \DateTime $from, \DateTime $to = null,
     $language = null
   )
   {
@@ -34,32 +33,31 @@ class MailStatisticsByBrand extends CassandraMapper
     }
     $from = $from->getTimestamp();
 
-    $stats             = new CampaignStats();
-    $stats->campaignId = $campaignId;
-    $stats->dateFrom   = $from;
-    $stats->dateTo     = $to;
-
+    $stats = [];
     $slice = $cf->getSliceChunked($campaignId, $from, $to, false);
     foreach($slice as $k => $count)
     {
       list(, $type, $key, $lang) = explode('|', $k);
-      if(($language == null || $language == $lang)
-        && ($keyIn == null || $keyIn == $key)
-      )
+      if(($language == null || $language == $lang))
       {
+        if(!isset($stats[$key]))
+        {
+          $stats[$key] = new \stdClass();
+        }
+
         switch($type)
         {
           case 'queued':
-            $stats->queued += $count;
+            $stats[$key]->queued += $count;
             break;
           case 'test':
-            $stats->test += $count;
+            $stats[$key]->test += $count;
             break;
           case 'sent':
-            $stats->sent += $count;
+            $stats[$key]->sent += $count;
             break;
           case 'failed':
-            $stats->failed += $count;
+            $stats[$key]->failed += $count;
             break;
         }
       }
