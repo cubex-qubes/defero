@@ -42,7 +42,11 @@ class MailStatisticsByBrand extends CassandraMapper
       {
         if(!isset($stats[$key]))
         {
-          $stats[$key] = new \stdClass();
+          $stats[$key]         = new \stdClass();
+          $stats[$key]->queued = 0;
+          $stats[$key]->test   = 0;
+          $stats[$key]->sent   = 0;
+          $stats[$key]->failed = 0;
         }
 
         switch($type)
