@@ -282,6 +282,11 @@ class Campaign extends RecordMapper
       return DateTimeHelper::dateTimeFromAnything($this->sendAt);
     }
 
+    if(is_int($time))
+    {
+      $time = (new \DateTime())->setTimestamp($time);
+    }
+
     $nr = CronParser::nextRun($this->sendAt, $time, true);
     return $nr ? : null;
   }

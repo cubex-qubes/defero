@@ -57,7 +57,8 @@ class QueueCampaigns extends CliCommand
               // check average sends on scheduled
               $avgEndDate   = (new \DateTime())->setTimestamp($startedAt);
               $avgStartDate = CronParser::prevRun(
-                $campaign->sendAt, $avgEndDate->getTimestamp()
+                $campaign->sendAt,
+                $avgEndDate
               );
               $avgEndDate->sub($avgStartDate->diff($avgEndDate));
               $avgStartDate->setTime($avgStartDate->format('H') - 1, 0, 0);
