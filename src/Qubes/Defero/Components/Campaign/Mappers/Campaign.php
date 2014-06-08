@@ -16,10 +16,9 @@ use Qubes\Defero\Applications\Defero\Forms\CampaignForm;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Enums\TrackingType;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
-use Qubes\Defero\Components\Cron\CronParser;
-use Qubes\Defero\Components\DataSource\DataSourceConditionsTrait;
 use Qubes\Defero\Components\DataSource\DataSource;
 use Qubes\Defero\Components\Messages\Mappers\Message;
+use TomK\CronParser\CronParser;
 
 class Campaign extends RecordMapper
 {

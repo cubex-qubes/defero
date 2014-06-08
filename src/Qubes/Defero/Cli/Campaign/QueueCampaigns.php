@@ -16,7 +16,7 @@ use Psr\Log\LogLevel;
 use Qubes\Defero\Applications\Defero\Defero;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
-use Qubes\Defero\Components\Cron\CronParser;
+use TomK\CronParser\CronParser;
 
 class QueueCampaigns extends CliCommand
 {

@@ -18,7 +18,8 @@
     "swiftmailer/swiftmailer": "v5.0.1",
     "themed/sidekick": "*",
     "bundl/debugger": "*",
-    "qubes/bootstrap": "*"
+    "qubes/bootstrap": "*",
+    "tomk/cronparser": "*"
   },
   "autoload":          {
     "psr-0": {
