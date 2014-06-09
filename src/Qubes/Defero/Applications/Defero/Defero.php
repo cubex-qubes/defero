@@ -224,9 +224,9 @@ class Defero extends Application
       {
         $message->setData('emailService', 'email_test');
       }
-      elseif($campaign->priority == 1)
+      elseif($campaign->emailService)
       {
-        $message->setData('emailService', 'email_priority');
+        $message->setData('emailService', $campaign->emailService);
       }
       else
       {

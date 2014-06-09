@@ -9,6 +9,7 @@ namespace Qubes\Defero\Components\Campaign\Mappers;
 use Cubex\Data\Attribute\Attribute;
 use Cubex\Data\Validator\Validator;
 use Cubex\Foundation\Config\ConfigTrait;
+use Cubex\Foundation\Container;
 use Cubex\Helpers\DateTimeHelper;
 use Cubex\Helpers\Strings;
 use Cubex\Mapper\Database\RecordMapper;
@@ -95,6 +96,8 @@ class Campaign extends RecordMapper
    * @default 1
    */
   public $priority;
+
+  public $emailService;
 
   protected static $_labels;
 
@@ -200,6 +203,14 @@ class Campaign extends RecordMapper
   public function prioritys()
   {
     return [1 => 'High', 5 => 'Medium', 10 => 'Low'];
+  }
+
+  public function emailServices()
+  {
+    $services = Container::servicemanager()->getAllWithType(
+      '\Cubex\Email\IEmailService'
+    );
+    return array_combine($services,$services);
   }
 
   public function trackingTypes()
