@@ -210,7 +210,7 @@ class Campaign extends RecordMapper
     $services = Container::servicemanager()->getAllWithType(
       '\Cubex\Email\IEmailService'
     );
-    return array_combine($services,$services);
+    return array_combine($services, $services);
   }
 
   public function trackingTypes()
