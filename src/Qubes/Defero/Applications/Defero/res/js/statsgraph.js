@@ -3,12 +3,27 @@
  */
 
 jQuery(function() {
+  var formatNumber = function (num, prec, groupsize, groupsep, decsep) {
+    var p, i;
+    num = (prec === false ? parseFloat(num).toString() : num.toFixed(prec)).split('');
+    p = (p = $.inArray('.', num)) < 0 ? num.length : p;
+    if (p < num.length) {
+      num[p] = decsep;
+    }
+    for (i = p - groupsize; i > 0; i -= groupsize) {
+      num.splice(i, 0, groupsep);
+    }
+    return num.join('');
+  };
+
   var hourly = function(sparkline, options, fields) {
     var x = fields.x;
     var date = new Date();
     var hour = date.getHours()-Math.abs(23-x);
     date.setHours(hour,0,0);
-    return date.toLocaleString('en-GB', {hour12:false}) + '<br/><span style="color: '+options.get('lineColor')+'">&#9679;</span> '+options.get('tooltipPrefix')+fields.y+options.get('tooltipSuffix');
+    var value = formatNumber(fields.y, false, options.get('numberDigitGroupCount'), options.get('numberDigitGroupSep'), options.get('numberDecimalMark'));
+    return date.toLocaleString('en-GB', {hour12:false}) +
+      '<br/><span style="color: '+options.get('lineColor')+'">&#9679;</span> '+options.get('tooltipPrefix')+value+options.get('tooltipSuffix');
   };
   var daily = function(sparkline, options, fields) {
     var x = fields.x;
@@ -16,7 +31,9 @@ jQuery(function() {
     var days = date.getDate()-Math.abs(29-x);
     date.setDate(days);
     date.setHours(0,0,0);
-    return date.toLocaleDateString('en-GB') + '<br/><span style="color: '+options.get('lineColor')+'">&#9679;</span> '+options.get('tooltipPrefix')+fields.y+options.get('tooltipSuffix');
+    var value = formatNumber(fields.y, false, options.get('numberDigitGroupCount'), options.get('numberDigitGroupSep'), options.get('numberDecimalMark'));
+    return date.toLocaleDateString('en-GB') +
+      '<br/><span style="color: '+options.get('lineColor')+'">&#9679;</span> '+options.get('tooltipPrefix')+value+options.get('tooltipSuffix');
   };
 
   var spark24h = jQuery('#spark24h'),
