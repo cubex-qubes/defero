@@ -20,14 +20,12 @@ use TomK\CronParser\CronParser;
 
 class QueueCampaigns extends CliCommand
 {
-  protected $_echoLevel = LogLevel::INFO;
-  protected $_defaultLogLevel = LogLevel::INFO;
-
   /**
    * @valuerequired
    */
   public $instanceName;
-
+  protected $_echoLevel = LogLevel::INFO;
+  protected $_defaultLogLevel = LogLevel::INFO;
   private $_pidFile;
 
   public function execute()
@@ -63,7 +61,9 @@ class QueueCampaigns extends CliCommand
               $avgEndDate->sub($avgStartDate->diff($avgEndDate));
               $avgStartDate->setTime($avgStartDate->format('H') - 1, 0, 0);
               $latestStats = MailStatistic::getCampaignStats(
-                $campaign->id(), $avgStartDate, $avgEndDate
+                $campaign->id(),
+                $avgStartDate,
+                $avgEndDate
               );
               $diff        = $avgStartDate->diff($avgEndDate);
               $diffLatest  = max(
@@ -76,7 +76,9 @@ class QueueCampaigns extends CliCommand
               $avgEndDate->sub(new \DateInterval('PT1H'));
               $avgStartDate->sub(new \DateInterval('PT2H'));
               $avgStats = MailStatistic::getCampaignStats(
-                $campaign->id(), $avgStartDate, $avgEndDate
+                $campaign->id(),
+                $avgStartDate,
+                $avgEndDate
               );
               $diff     = $avgStartDate->diff($avgEndDate);
               $diffAvg  = max(
@@ -90,27 +92,19 @@ class QueueCampaigns extends CliCommand
               $compareAvg    = ($avgStats->sent / $diffAvg) * 60;
               $threshold     = ($compareAvg * 0.4) + 10;
 
+              $avgData = [
+                'campaign'  => $campaign->id(),
+                'latest'    => $compareLatest,
+                'previous'  => $compareAvg,
+                'threshold' => $threshold,
+              ];
               if($compareLatest < $compareAvg - $threshold)
               {
-                Log::warning(
-                  'Sending below average', [
-                    'campaign'  => $campaign->id(),
-                    'latest'    => $compareLatest,
-                    'previous'  => $compareAvg,
-                    'threshold' => $threshold,
-                  ]
-                );
+                Log::warning('Sending below average', $avgData);
               }
               else if($compareLatest > $compareAvg + $threshold)
               {
-                Log::warning(
-                  'Sending above average', [
-                    'campaign'  => $campaign->id(),
-                    'latest'    => $compareLatest,
-                    'previous'  => $compareAvg,
-                    'threshold' => $threshold,
-                  ]
-                );
+                Log::warning('Sending above average', $avgData);
               }
             }
           }
