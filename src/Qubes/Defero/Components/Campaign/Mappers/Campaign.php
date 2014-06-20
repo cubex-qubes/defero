@@ -99,6 +99,9 @@ class Campaign extends RecordMapper
 
   public $emailService;
 
+  public $warnMin;
+  public $warnMax;
+
   protected static $_labels;
 
   public static function setLabels($labels)

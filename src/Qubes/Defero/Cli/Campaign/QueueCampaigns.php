@@ -73,38 +73,21 @@ class QueueCampaigns extends CliCommand
                 intval($diff->format('%d') * 3600)
               );
 
-              $avgEndDate->sub(new \DateInterval('PT1H'));
-              $avgStartDate->sub(new \DateInterval('PT2H'));
-              $avgStats = MailStatistic::getCampaignStats(
-                $campaign->id(),
-                $avgStartDate,
-                $avgEndDate
-              );
-              $diff     = $avgStartDate->diff($avgEndDate);
-              $diffAvg  = max(
-                1,
-                intval($diff->format('%i')) +
-                intval($diff->format('%h') * 60) +
-                intval($diff->format('%d') * 3600)
-              );
+              $latestHourly = ($latestStats->sent / $diffLatest) * 60;
 
-              $compareLatest = ($latestStats->sent / $diffLatest) * 60;
-              $compareAvg    = ($avgStats->sent / $diffAvg) * 60;
-              $threshold     = ($compareAvg * 0.4) + 10;
-
-              $avgData = [
-                'campaign'  => $campaign->id(),
-                'latest'    => $compareLatest,
-                'previous'  => $compareAvg,
-                'threshold' => $threshold,
-              ];
-              if($compareLatest < $compareAvg - $threshold)
+              if(($campaign->warnMin && ($latestHourly < $campaign->warnMin))
+                || ($campaign->warnMax && ($latestHourly > $campaign->warnMax))
+              )
               {
-                Log::warning('Sending below average', $avgData);
-              }
-              else if($compareLatest > $compareAvg + $threshold)
-              {
-                Log::warning('Sending above average', $avgData);
+                Log::warning(
+                  'Sending outside threshold',
+                  [
+                    'campaign' => $campaign->id(),
+                    'average'  => $latestHourly,
+                    'warnMin'  => $campaign->warnMin,
+                    'warnMax'  => $campaign->warnMax,
+                  ]
+                );
               }
             }
           }
