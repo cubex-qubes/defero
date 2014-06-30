@@ -51,8 +51,8 @@ class MailStatistic extends CassandraMapper
       $to,
       false,
       null,
-      100,
-      1000
+      10,
+      500
     );
     foreach($campaignSlice as $campaignId => $slice)
     {
