@@ -45,13 +45,21 @@ class MailStatistic extends CassandraMapper
 
     $stats = [];
 
-    $campaignSlice = $cf->multiGetSliceChunked($campaigns, $from, $to, false);
+    $campaignSlice = $cf->multiGetSliceChunked(
+      $campaigns,
+      $from,
+      $to,
+      false,
+      null,
+      100,
+      1000
+    );
     foreach($campaignSlice as $campaignId => $slice)
     {
-      $stats[$campaignId] = new CampaignStats();
+      $stats[$campaignId]             = new CampaignStats();
       $stats[$campaignId]->campaignId = $campaignId;
-      $stats[$campaignId]->dateFrom = $from;
-      $stats[$campaignId]->dateTo = $to;
+      $stats[$campaignId]->dateFrom   = $from;
+      $stats[$campaignId]->dateTo     = $to;
       foreach($slice as $k => $count)
       {
         list(, $typeLanguage) = explode('|', $k);
