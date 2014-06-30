@@ -206,10 +206,24 @@ class Defero extends Application
       );
     }
 
+    $blacklistDomains = [];
+    foreach(Container::config()->get('blacklist')->getArr('domains', []) as $d)
+    {
+      $blacklistDomains[] = preg_quote($d, '/');
+    }
+    $blacklistRegex = '/('.implode(',',$blacklistDomains).')$/i';
+
     $messages = [];
     foreach($batch as $data)
     {
       $data = array_change_key_case($data);
+
+      // check blacklist
+      if($blacklistDomains && preg_match($blacklistRegex, $data['email']))
+      {
+        continue;
+      }
+
       // move language here.
       $userLanguage = $data['language'] = !empty($data['language']) ?
         $data['language'] : 'en';
