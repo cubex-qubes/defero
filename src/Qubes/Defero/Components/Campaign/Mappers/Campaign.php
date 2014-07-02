@@ -54,6 +54,10 @@ class Campaign extends RecordMapper
    */
   public $sendType;
   public $contactId;
+  /**
+   * @datatype varchar(250)
+   */
+  public $replyTo;
 
   /**
    * @enumclass \Qubes\Defero\Components\Campaign\Enums\TrackingType

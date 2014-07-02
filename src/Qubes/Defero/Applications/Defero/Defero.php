@@ -246,6 +246,12 @@ class Defero extends Application
       {
         $message->setData('emailService', 'email');
       }
+
+      if($campaign->replyTo)
+      {
+        $message->setData('replyTo', $campaign->replyTo);
+      }
+
       $message->setData('mailerTracking', $campaign->trackingType);
       $message->setData('data', $data);
 
