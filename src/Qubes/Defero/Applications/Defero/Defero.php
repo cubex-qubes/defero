@@ -211,7 +211,7 @@ class Defero extends Application
     {
       $blacklistDomains[] = preg_quote($d, '/');
     }
-    $blacklistRegex = '/('.implode(',',$blacklistDomains).')$/i';
+    $blacklistRegex = '/('.implode('|',$blacklistDomains).')$/i';
 
     $messages = [];
     foreach($batch as $data)
