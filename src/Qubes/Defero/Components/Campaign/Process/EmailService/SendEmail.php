@@ -78,6 +78,13 @@ class SendEmail extends StdProcess implements IEmailProcess
     {
       $mailer->setSender($replyTo);
     }
+    else
+    {
+      $mailer->setSender(
+        $this->_message->getStr('senderEmail'),
+        $this->_message->getStr('senderName')
+      );
+    }
 
     try
     {
