@@ -19,7 +19,7 @@ class MailerLog extends CassandraMapper
    */
   public function getTableName($plural = true)
   {
-    return "Mailer_log";
+    return "Mailer_Log";
   }
 
   /**
