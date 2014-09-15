@@ -1,9 +1,11 @@
 <?php
 namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 
+use Cubex\Email\Mailer;
 use Cubex\Facade\Email;
 use Cubex\Log\Log;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
+use Qubes\Defero\Components\Campaign\Mappers\MailerLog;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatisticsByBrand;
 use Qubes\Defero\Transport\StdProcess;
@@ -131,6 +133,8 @@ class SendEmail extends StdProcess implements IEmailProcess
     {
       $statsCf->increment($campaignId, $column);
     }
+
+    MailerLog::addLogEntry($userData['user_id'], $campaignId);
 
     return false;
   }
