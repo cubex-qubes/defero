@@ -41,14 +41,14 @@ class SendEmail extends StdProcess implements IEmailProcess
     switch($this->_message->getStr('sendType'))
     {
       case (SendType::PLAIN_TEXT):
-        $mailer->setTextBody($this->_message->getStr('plainText'));
+        $mailer->setTextBody($this->_message->getStr('plainText') ?: null);
         break;
       case (SendType::HTML_ONLY):
-        $mailer->setHtmlBody($this->_message->getStr('htmlContent'));
+        $mailer->setHtmlBody($this->_message->getStr('htmlContent') ?: null);
         break;
       case (SendType::HTML_AND_PLAIN):
-        $mailer->setTextBody($this->_message->getStr('plainText'));
-        $mailer->setHtmlBody($this->_message->getStr('htmlContent'));
+        $mailer->setTextBody($this->_message->getStr('plainText') ?: null);
+        $mailer->setHtmlBody($this->_message->getStr('htmlContent') ?: null);
         break;
     }
 
