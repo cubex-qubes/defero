@@ -41,4 +41,4 @@ class MailerLog extends CassandraMapper
       $userId, [$mailerId => time()]
     );
   }
-} 
+}
