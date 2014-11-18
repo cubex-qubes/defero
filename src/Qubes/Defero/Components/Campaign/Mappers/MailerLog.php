@@ -32,13 +32,11 @@ class MailerLog extends CassandraMapper
    */
   public static function addLogEntry($userId, $mailerId)
   {
-    if(self::$_mailerLog !== null)
+    if(self::$_mailerLog === null)
     {
       self::$_mailerLog = new static();
     }
 
-    self::$_mailerLog->getCf()->insert(
-      $userId, [$mailerId => time()]
-    );
+    self::$_mailerLog->getCf()->insert($userId, [$mailerId => time()]);
   }
 }
