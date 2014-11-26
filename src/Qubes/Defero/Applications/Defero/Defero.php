@@ -276,8 +276,15 @@ class Defero extends Application
           )
         )
         {
-          $msg->setLanguage('en');
-          $msg->reload();
+          //for non eng if html and plain but no html we shouldn't default to english
+          if($campaign->sendType == SendType::HTML_AND_PLAIN && !$msg->htmlContent && $msg->plainText)
+          {
+          }
+          else
+          {
+            $msg->setLanguage('en');
+            $msg->reload();
+          }
         }
 
         ExpiringEphemeralCache::storeCache(
