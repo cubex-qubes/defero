@@ -360,10 +360,20 @@ class Defero extends Application
     \Queue::pushBatch(new StdQueue($queueName), $messages);
 
     // stats
-    $hour = time();
-    $hour -= $hour % 3600;
-    $statsCf = MailStatistic::cf();
-    $statsCf->increment($campaignId, $hour . '|queued', count($messages));
+    try
+    {
+      $hour = time();
+      $hour -= $hour % 3600;
+      $statsCf = MailStatistic::cf();
+      $statsCf->increment($campaignId, $hour . '|queued', count($messages));
+    }
+    catch(\Exception $e)
+    {
+      \Log::error(
+        'Error writing stats for campaign ' . $campaignId . ' : '
+        . $e->getMessage()
+      );
+    }
 
     \Log::info(
       'Queued ' . count($messages) . ' messages for Campaign ' . $campaignId
