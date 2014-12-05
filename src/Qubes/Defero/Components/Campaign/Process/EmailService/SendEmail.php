@@ -32,9 +32,13 @@ class SendEmail extends StdProcess implements IEmailProcess
     }
     $email = $userData['email'];
 
-    Log::info("Sending to $name <$email> using $serviceName");
-
     $mailer = Email::getAccessor($serviceName);
+
+    $mid = uniqid(class_shortname($mailer), true);
+    $pid = getmypid();
+
+    Log::info("Sending to $name <$email> : PID:" . $pid . ", MID:" . $mid);
+
     $mailer->addRecipient($email, $name);
     $mailer->setSubject($this->_message->getStr('subject'));
 
@@ -54,14 +58,8 @@ class SendEmail extends StdProcess implements IEmailProcess
 
     if($mailer instanceof \Cubex\Email\Service\Mail)
     {
-      $mailer->addHeader(
-        "X-Defero-MID",
-        uniqid(class_shortname($mailer), true)
-      );
-      $mailer->addHeader(
-        "X-Defero-PID",
-        getmypid()
-      );
+      $mailer->addHeader("X-Defero-MID", $mid);
+      $mailer->addHeader("X-Defero-PID", $pid);
     }
 
     $mailer->setFrom(
@@ -91,11 +89,15 @@ class SendEmail extends StdProcess implements IEmailProcess
     try
     {
       $result = $mailer->send();
+      Log::debug('Sent message PID=' . $pid . ', MID=' . $mid);
     }
     catch(\Exception $e)
     {
-      Log::debug($e->getMessage());
       $result = false;
+      Log::debug(
+        'Error sending message: ' . $e->getMessage()
+        . " : PID=" . $pid . ", MID=" . $mid
+      );
     }
 
     $campaignId = $this->_message->getStr('campaignId');
