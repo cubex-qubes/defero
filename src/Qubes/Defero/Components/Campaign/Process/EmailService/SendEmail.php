@@ -136,7 +136,10 @@ class SendEmail extends StdProcess implements IEmailProcess
       $statsCf->increment($campaignId, $column);
     }
 
-    MailerLog::addLogEntry($userData['user_id'], $campaignId);
+    if(isset($userData['user_id']))
+    {
+      MailerLog::addLogEntry($userData['user_id'], $campaignId);
+    }
 
     return false;
   }
