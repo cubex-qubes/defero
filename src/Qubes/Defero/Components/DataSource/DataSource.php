@@ -116,18 +116,19 @@ abstract class DataSource extends DataMapper
 
   protected function _getLastIdPath($campaignId, $taskId)
   {
-    $logsDir    = build_path(realpath(dirname(WEB_ROOT)), 'logs');
-    $folderName = class_shortname($this);
-    $logsDir    = build_path($logsDir, $folderName, $campaignId);
-    if(!file_exists($logsDir))
+    $campaignDir = build_path(
+      "/var/lib/defero",
+      class_shortname($this),
+      $campaignId
+    );
+    if(!file_exists($campaignDir))
     {
-      mkdir($logsDir, 0777, true);
+      mkdir($campaignDir, 0777, true);
     }
     $fileName = 'campaign-'
       . preg_replace('/[\\\\\/\:\*\?]/', '-', $taskId)
       . '.lastId';
-    $logsDir  = build_path($logsDir, $fileName);
-    return $logsDir;
+    return build_path($campaignDir, $fileName);
   }
 
   public function getLastId($campaignId, $taskId)
