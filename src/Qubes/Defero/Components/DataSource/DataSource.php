@@ -92,9 +92,26 @@ abstract class DataSource extends DataMapper
   protected function _updateLastId($taskId, $campaignId, $lastId)
   {
     $path = $this->_getLastIdPath($campaignId, $taskId);
-    $fr   = fopen($path, 'w');
-    fwrite($fr, $lastId);
-    fclose($fr);
+
+    // Perform a safe atomic save
+    $tempFile = $path . '.tmp';
+    $fr   = fopen($tempFile, 'w');
+    if($fr)
+    {
+      $success = true;
+      if(fwrite($fr, $lastId) === false)
+      {
+        $success = false;
+      }
+      if(!fclose($fr))
+      {
+        $success = false;
+      }
+      if($success)
+      {
+        rename($tempFile, $path);
+      }
+    }
   }
 
   protected function _getLastIdPath($campaignId, $taskId)
