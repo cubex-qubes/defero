@@ -134,10 +134,7 @@ abstract class DataSource extends DataMapper
   public function getLastId($campaignId, $taskId)
   {
     $path = $this->_getLastIdPath($campaignId, $taskId);
-    if(file_exists($path))
-    {
-      return file_get_contents($path);
-    }
+    return file_exists($path) ? file_get_contents($path) : null;
   }
 
   /**
