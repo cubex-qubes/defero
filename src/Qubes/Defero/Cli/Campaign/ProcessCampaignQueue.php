@@ -50,6 +50,7 @@ class ProcessCampaignQueue extends CliCommand
    */
   public function execute()
   {
+    $this->_logger->setInstanceName($this->instanceName);
     $this->_pidFile = new PidFile("", $this->instanceName);
 
     echo Shell::colourText(
