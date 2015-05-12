@@ -148,6 +148,10 @@ class Campaign extends RecordMapper
       ->addValidator(Validator::VALIDATE_INT)
       ->setRequired(true);
 
+    $this->_attribute('priority')
+      ->addValidator(Validator::VALIDATE_INT)
+      ->setRequired(true);
+
     $this->_attribute('active')->addValidator(Validator::VALIDATE_BOOL);
 
     $this->_attribute('processors')
@@ -209,7 +213,7 @@ class Campaign extends RecordMapper
 
   public function prioritys()
   {
-    return [1 => 'High', 5 => 'Medium', 10 => 'Low'];
+    return [0 => '--SELECT--', 1 => 'High', 5 => 'Medium', 10 => 'Low'];
   }
 
   public function emailServices()
