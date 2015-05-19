@@ -78,13 +78,13 @@ class ProcessQueue extends CliCommand
     }
 
     $priority = (int)$this->priority;
-    if(in_array($priority, [1, 5, 10]))
+    if(in_array($priority, [1, 5, 10, 99]))
     {
       $this->queueName .= $priority;
     }
     else
     {
-      throw new \Exception("Invalid priority. Supported values: 1 , 5, 10");
+      throw new \Exception("Invalid priority. Supported values: 1 , 5, 10, 99");
     }
 
     Log::info("Starting to consume queue " . $this->queueName);
