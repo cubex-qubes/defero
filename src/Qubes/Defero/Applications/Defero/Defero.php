@@ -353,8 +353,15 @@ class Defero extends Application
     \Queue::setDefaultQueueProvider("messagequeue");
 
     // prioritize
-    $priority  = (int)$campaign->priority;
-    $priority  = ($priority < 0) ? 1 : $priority;
+    if($campaign->active)
+    {
+      $priority  = (int)$campaign->priority;
+      $priority  = ($priority < 0) ? 1 : $priority;
+    }
+    else
+    {
+      $priority = 99;
+    }
     $queueName = 'mailer.defero_messages_priority_' . $priority;
 
     \Queue::pushBatch(new StdQueue($queueName), $messages);
