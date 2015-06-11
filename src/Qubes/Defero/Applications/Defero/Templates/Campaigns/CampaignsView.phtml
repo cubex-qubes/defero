@@ -38,22 +38,22 @@
       </thead>
       <tbody>
       <?php foreach($this->campaigns as $campaign): ?>
-        <tr data-href="/campaigns/<?= $campaign->id() ?>"
-            data-cid="<?= $campaign->id() ?>"
+        <tr data-href="/campaigns/<?= $campaign->id ?>"
+            data-cid="<?= $campaign->id ?>"
             class="js-href"
-            title="View <?= $campaign->name ?> (<?= $campaign->dataSource ?>)">
+            title="View <?= $campaign->name ?> (<?= $campaign->data_source ?>)">
           <td>
-            <a href="/campaigns/<?= $campaign->id() ?>"
-               title="View <?= $campaign->name ?> (<?= $campaign->dataSource ?>)">
-              #<?= $campaign->id() ?>
+            <a href="/campaigns/<?= $campaign->id ?>"
+               title="View <?= $campaign->name ?> (<?= $campaign->data_source ?>)">
+              #<?= $campaign->id ?>
             </a>
           </td>
           <td><?= $campaign->name ?></td>
-          <td><?= $campaign->message()->subject ?></td>
-          <td><?= $campaign->getTitledSendType() ?></td>
+          <td><?= $campaign->subject ?></td>
+          <td><?= $campaign->titledSendType ?></td>
           <td><?= $campaign->label ?></td>
           <td>
-            <?php if($campaign->availableLanguages != null): ?>
+            <?php if($campaign->availableLanguages): ?>
               <?= implode(
                 ',',
                 $this->inactiveLanguages((array)$campaign->availableLanguages)
@@ -62,19 +62,19 @@
               --
             <?php endif; ?>
           </td>
-          <td><?= $campaign->active ? "Yes" : "No" ?></td>
+          <td><?= $campaign->active == '1' ? "Yes" : "No" ?></td>
           <td>
-            <a href="/campaigns/<?= $campaign->id() ?>/edit"
+            <a href="/campaigns/<?= $campaign->id ?>/edit"
                title="Edit <?= $campaign->name ?>">
               <i class="icon-edit"></i></a>
-            <a href="/campaigns/<?= $campaign->id() ?>/clone"
+            <a href="/campaigns/<?= $campaign->id ?>/clone"
                title="Clone <?= $campaign->name ?>">
               <i class="icon-download-alt"></i>
             </a>
-            <a href="/campaigns/<?= $campaign->id() ?>/delete"
+            <a href="/campaigns/<?= $campaign->id ?>/delete"
                title="Delete <?= $campaign->name ?>"
                class="js-popover"
-               data-content="<?= $this->getDeletePopover($campaign->id()) ?>"
+               data-content="<?= $this->getDeletePopover($campaign->id) ?>"
                data-html="true"
                data-prevent-default="true"
                data-placement="left">

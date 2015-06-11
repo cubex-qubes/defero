@@ -17,7 +17,7 @@ use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 class CampaignsView extends DeferoView
 {
   /**
-   * @var Campaign[]
+   * @var \stdClass[]
    */
   public $campaigns;
 
@@ -28,7 +28,7 @@ class CampaignsView extends DeferoView
   public $campaignsSearch;
   protected $_filterForm;
 
-  public function __construct(RecordCollection $campaigns, $options, $postData)
+  public function __construct(array $campaigns, $options, $postData)
   {
     $this->requireJsPackage("campaigns");
     $this->requireJs("jquery-sortable-min");

@@ -9,6 +9,7 @@ use Cubex\Core\Http\Response;
 use Cubex\Data\Transportable\TransportMessage;
 use Cubex\Form\FormElement;
 use Cubex\Foundation\Container;
+use Cubex\Helpers\Strings;
 use Cubex\Routing\StdRoute;
 use Cubex\Routing\Templates\ResourceTemplate;
 use Cubex\Facade\Redirect;
@@ -40,10 +41,12 @@ class CampaignsController extends BaseDeferoController
    */
   public function renderIndex($page = 1)
   {
-    $postData = null;
-    if($postData = $this->request()->postVariables())
+    $db = (new Campaign())->connection();
+
+    $postData = $this->request()->postVariables();
+    $where = [];
+    if($postData)
     {
-      $where = [];
       if($postData['label'] != "")
       {
         $where['label'] = $postData['label'];
@@ -56,11 +59,34 @@ class CampaignsController extends BaseDeferoController
       {
         $where['send_type'] = $postData['sendType'];
       }
-      $campaigns = Campaign::collection($where)->setOrderBy("sortOrder");
     }
-    else
+
+    $query = "SELECT c.id, c.name, c.data_source, t.subject, c.send_type, c.label,
+      c.available_languages, c.active
+      FROM defero_campaign_campaigns c
+      INNER JOIN defero_messages m ON c.id=m.campaign_id
+      INNER JOIN defero_message_translations t ON m.id=t.source_id
+      WHERE t.language='en'";
+
+    foreach($where as $field => $value)
     {
-      $campaigns = Campaign::collection()->setOrderBy("sortOrder");
+      $query .= ' AND c.' . $db->escapeColumnName($field) . "='" . $db->escapeString($value) . "'";
+    }
+    $query .= ' ORDER BY sort_order';
+
+    /**
+     * @var \mysqli_result $results
+     */
+    $results = $db->query($query);
+
+    $campaigns = [];
+    while($row = $results->fetch_object())
+    {
+      $row->titledSendType = Strings::titleize(
+        (new SendType())->constFromValue((string)$row->send_type)
+      );
+      $row->availableLanguages = json_decode($row->available_languages);
+      $campaigns[] = $row;
     }
 
     $options['sendTypeOptions'] = array_flip((new SendType())->getConstList());
