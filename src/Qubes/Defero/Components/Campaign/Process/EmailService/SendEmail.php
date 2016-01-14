@@ -8,6 +8,7 @@ use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\MailerLog;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatisticsByBrand;
+use Qubes\Defero\Components\Campaign\Mappers\SentEmailLog;
 use Qubes\Defero\Transport\StdProcess;
 
 class SendEmail extends StdProcess implements IEmailProcess
@@ -138,6 +139,14 @@ class SendEmail extends StdProcess implements IEmailProcess
       $userData['user_id'] = 0;
     }
     MailerLog::addLogEntry($userData['user_id'], $campaignId);
+
+    if($result != false)
+    {
+      if($campaignActive)
+      {
+        SentEmailLog::addLogEntry($userData['user_id'], $campaignId);
+      }
+    }
 
     return false;
   }

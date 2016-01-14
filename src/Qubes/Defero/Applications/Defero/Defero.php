@@ -13,6 +13,7 @@ use Cubex\Queue\StdQueue;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
 use Qubes\Defero\Components\Campaign\Mappers\Campaign;
 use Qubes\Defero\Components\Campaign\Mappers\MailStatistic;
+use Qubes\Defero\Components\Campaign\Mappers\SentEmailLog;
 use Qubes\Defero\Components\Contact\Mappers\Contact;
 use Qubes\Defero\Transport\ProcessDefinition;
 use Qubes\Defero\Transport\ProcessMessage;
@@ -213,6 +214,55 @@ class Defero extends Application
     }
     $blacklistRegex = '/(' . implode('|', $blacklistDomains) . ')$/i';
 
+    //grab all user_ids from $batch, check SentEmailLog
+    $logKeys    = [];
+    $keyedBatch = []; //use this to recover $batch
+    foreach($batch as $data)
+    {
+      if(isset($data['user_id']))
+      {
+        $logKeys[]                    = $data['user_id'] . '-' . $campaignId;
+        $keyedBatch[$data['user_id']] = $data;
+      }
+    }
+
+    if($logKeys)
+    {
+      try
+      {
+        //check if we sent this campaign to users today or the previous day
+        $yesterday = date('Y-m-d', strtotime('-1 day'));
+        $today     = date('Y-m-d');
+        $result    = SentEmailLog::cf()->multiGet(
+          $logKeys,
+          [$yesterday, $today]
+        );
+
+        foreach($result as $key => $column)
+        {
+          if(is_array($column)
+            && (isset($column[$yesterday]) || isset($column[$today]))
+          )
+          {
+            list($userId, $cId) = explode('-', $key);
+            //remove user from keyedBatch because they have already
+            // received this campaign
+            unset($keyedBatch[$userId]);
+            \Log::debug(
+              "Skipping user because they already got this campaign: [user_id:"
+              . $data['user_id'] . ', campaign_id: ' . $campaignId . "]"
+            );
+          }
+        }
+
+        $batch = array_values($keyedBatch);
+      }
+      catch(\Exception $e)
+      {
+        \Log::error("Email Deduping Failed: " . $e->getMessage());
+      }
+    }
+
     $messages = [];
     foreach($batch as $data)
     {
@@ -295,7 +345,7 @@ class Defero extends Application
         );
       }
 
-      $contactId      = $msg->contactId ? : $campaign->contactId;
+      $contactId      = $msg->contactId ?: $campaign->contactId;
       $contactCacheId = $cacheId . ':contact:' . $contactId;
       $contact        = ExpiringEphemeralCache::getCache(
         $contactCacheId,
@@ -355,8 +405,8 @@ class Defero extends Application
     // prioritize
     if($campaign->active)
     {
-      $priority  = (int)$campaign->priority;
-      $priority  = ($priority < 0) ? 1 : $priority;
+      $priority = (int)$campaign->priority;
+      $priority = ($priority < 0) ? 1 : $priority;
     }
     else
     {
