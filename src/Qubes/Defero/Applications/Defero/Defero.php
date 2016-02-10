@@ -217,6 +217,7 @@ class Defero extends Application
     //grab all user_ids from $batch, check SentEmailLog
     $logKeys    = [];
     $keyedBatch = []; //use this to recover $batch
+    $dedupe = true;
     foreach($batch as $data)
     {
       if(isset($data['user_id']))
@@ -224,9 +225,14 @@ class Defero extends Application
         $logKeys[]                    = $data['user_id'] . '-' . $campaignId;
         $keyedBatch[$data['user_id']] = $data;
       }
+
+      if(isset($data['dedupe']))
+      {
+        $dedupe = false;
+      }
     }
 
-    if($logKeys)
+    if($logKeys && $dedupe)
     {
       try
       {
