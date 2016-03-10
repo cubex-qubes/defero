@@ -217,7 +217,7 @@ class Defero extends Application
     //grab all user_ids from $batch, check SentEmailLog
     $logKeys    = [];
     $keyedBatch = []; //use this to recover $batch
-    $dedupe = true;
+    $dedupe     = true;
     foreach($batch as $data)
     {
       if(isset($data['user_id']))
@@ -254,7 +254,7 @@ class Defero extends Application
             //remove user from keyedBatch because they have already
             // received this campaign
             unset($keyedBatch[$userId]);
-            \Log::debug(
+            \Log::info(
               "Skipping user because they already got this campaign: [user_id:"
               . $data['user_id'] . ', campaign_id: ' . $campaignId . "]"
             );

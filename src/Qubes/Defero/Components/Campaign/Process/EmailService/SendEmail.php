@@ -140,7 +140,7 @@ class SendEmail extends StdProcess implements IEmailProcess
     }
     MailerLog::addLogEntry($userData['user_id'], $campaignId);
 
-    if($result != false)
+    if($result !== false)
     {
       if($campaignActive)
       {
