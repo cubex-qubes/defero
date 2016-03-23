@@ -106,7 +106,6 @@ class SendEmail extends StdProcess implements IEmailProcess
       $result = false;
     }
 
-
     $hour       = time();
     $hour -= $hour % 3600;
 
