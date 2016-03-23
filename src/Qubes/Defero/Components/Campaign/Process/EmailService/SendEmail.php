@@ -2,6 +2,7 @@
 namespace Qubes\Defero\Components\Campaign\Process\EmailService;
 
 use Cubex\Email\Mailer;
+use Cubex\Email\Service\DatabaseMailer;
 use Cubex\Facade\Email;
 use Cubex\Log\Log;
 use Qubes\Defero\Components\Campaign\Enums\SendType;
@@ -64,6 +65,13 @@ class SendEmail extends StdProcess implements IEmailProcess
         getmypid()
       );
     }
+
+    $campaignId = $this->_message->getStr('campaignId');
+    if($mailer instanceof DatabaseMailer)
+    {
+      $mailer->setCampaignId($campaignId);
+    }
+
     $mailer->setFrom(
       $this->_message->getStr('senderEmail'),
       $this->_message->getStr('senderName')
@@ -98,7 +106,7 @@ class SendEmail extends StdProcess implements IEmailProcess
       $result = false;
     }
 
-    $campaignId = $this->_message->getStr('campaignId');
+
     $hour       = time();
     $hour -= $hour % 3600;
 
